@@ -1,161 +1,136 @@
 #include "VRDriver.hpp"
-#include <Driver/HMDDevice.hpp>
-#include <Driver/TrackerDevice.hpp>
-#include <Driver/ControllerDevice.hpp>
-#include <Driver/TrackingReferenceDevice.hpp>
 
-vr::EVRInitError ExampleDriver::VRDriver::Init(vr::IVRDriverContext* pDriverContext)
+vr::EVRInitError WheelchairDriver::VRDriver::Init(vr::IVRDriverContext *pDriverContext)
 {
-    // Perform driver context initialisation
-    if (vr::EVRInitError init_error = vr::InitServerDriverContext(pDriverContext); init_error != vr::EVRInitError::VRInitError_None) {
-        return init_error;
-    }
+	// Perform driver context initialisation
+	if (vr::EVRInitError init_error = vr::InitServerDriverContext(pDriverContext); init_error != vr::EVRInitError::VRInitError_None) {
+		return init_error;
+	}
 
-    Log("Activating ExampleDriver...");
+	Log("Activating Wheelchair Driver");
 
-    // Add a HMD
-    this->AddDevice(std::make_shared<HMDDevice>("Example_HMDDevice"));
+	// Add a couple controllers
+	this->AddWheelchairController(std::make_shared<VRController>("Wheelchair_WheelchairController"));
 
-    // Add a couple controllers
-    this->AddDevice(std::make_shared<ControllerDevice>("Example_ControllerDevice_Left", ControllerDevice::Handedness::LEFT));
-    this->AddDevice(std::make_shared<ControllerDevice>("Example_ControllerDevice_Right", ControllerDevice::Handedness::RIGHT));
-
-    // Add a tracker
-    this->AddDevice(std::make_shared<TrackerDevice>("Example_TrackerDevice"));
-
-    // Add a couple tracking references
-    this->AddDevice(std::make_shared<TrackingReferenceDevice>("Example_TrackingReference_A"));
-    this->AddDevice(std::make_shared<TrackingReferenceDevice>("Example_TrackingReference_B"));
-
-    Log("ExampleDriver Loaded Successfully");
+	Log("Wheelchair Driver Loaded Successfully");
 
 	return vr::VRInitError_None;
 }
 
-void ExampleDriver::VRDriver::Cleanup()
+void WheelchairDriver::VRDriver::Cleanup()
 {
 }
 
-void ExampleDriver::VRDriver::RunFrame()
+void WheelchairDriver::VRDriver::RunFrame()
 {
-    // Collect events
-    vr::VREvent_t event;
-    std::vector<vr::VREvent_t> events;
-    while (vr::VRServerDriverHost()->PollNextEvent(&event, sizeof(event)))
-    {
-        events.push_back(event);
-    }
-    this->openvr_events_ = events;
+	Log("Run frame");
 
-    // Update frame timing
-    std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
-    this->frame_timing_ = std::chrono::duration_cast<std::chrono::milliseconds>(now - this->last_frame_time_);
-    this->last_frame_time_ = now;
+	// Collect events
+	vr::VREvent_t event;
+	std::vector<vr::VREvent_t> events;
+	while (vr::VRServerDriverHost()->PollNextEvent(&event, sizeof(event))) {
+		events.push_back(event);
+	}
+	this->openvr_events_ = events;
 
-    // Update devices
-    for (auto& device : this->devices_)
-        device->Update();
+	// Update frame timing
+	std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
+	this->frame_timing_ = std::chrono::duration_cast<std::chrono::milliseconds>(now - this->last_frame_time_);
+	this->last_frame_time_ = now;
+
+	// Update devices
+	if (wheelchairController_ != nullptr) {
+		wheelchairController_->Update();
+	}
 }
 
-bool ExampleDriver::VRDriver::ShouldBlockStandbyMode()
+bool WheelchairDriver::VRDriver::ShouldBlockStandbyMode()
 {
-    return false;
+	return false;
 }
 
-void ExampleDriver::VRDriver::EnterStandby()
-{
-}
-
-void ExampleDriver::VRDriver::LeaveStandby()
+void WheelchairDriver::VRDriver::EnterStandby()
 {
 }
 
-std::vector<std::shared_ptr<ExampleDriver::IVRDevice>> ExampleDriver::VRDriver::GetDevices()
+void WheelchairDriver::VRDriver::LeaveStandby()
 {
-    return this->devices_;
 }
 
-std::vector<vr::VREvent_t> ExampleDriver::VRDriver::GetOpenVREvents()
+bool WheelchairDriver::VRDriver::AddWheelchairController(std::shared_ptr<VRController> wheelchairController)
 {
-    return this->openvr_events_;
+	vr::ETrackedDeviceClass openvr_device_class = vr::ETrackedDeviceClass::TrackedDeviceClass_Controller;
+
+	bool result = vr::VRServerDriverHost()->TrackedDeviceAdded(wheelchairController->GetSerial().c_str(), openvr_device_class,
+	                                                           wheelchairController.get());
+
+	if (result) {
+		this->wheelchairController_ = wheelchairController;
+	}
+
+	return result;
 }
 
-std::chrono::milliseconds ExampleDriver::VRDriver::GetLastFrameTime()
+std::shared_ptr<WheelchairDriver::VRController> WheelchairDriver::VRDriver::GetWheelchairController()
 {
-    return this->frame_timing_;
+	return this->wheelchairController_;
 }
 
-bool ExampleDriver::VRDriver::AddDevice(std::shared_ptr<IVRDevice> device)
+std::vector<vr::VREvent_t> WheelchairDriver::VRDriver::GetOpenVREvents()
 {
-    vr::ETrackedDeviceClass openvr_device_class;
-    // Remember to update this switch when new device types are added
-    switch (device->GetDeviceType()) {
-        case DeviceType::CONTROLLER:
-            openvr_device_class = vr::ETrackedDeviceClass::TrackedDeviceClass_Controller;
-            break;
-        case DeviceType::HMD:
-            openvr_device_class = vr::ETrackedDeviceClass::TrackedDeviceClass_HMD;
-            break;
-        case DeviceType::TRACKER:
-            openvr_device_class = vr::ETrackedDeviceClass::TrackedDeviceClass_GenericTracker;
-            break;
-        case DeviceType::TRACKING_REFERENCE:
-            openvr_device_class = vr::ETrackedDeviceClass::TrackedDeviceClass_TrackingReference;
-            break;
-        default:
-            return false;
-    }
-    bool result = vr::VRServerDriverHost()->TrackedDeviceAdded(device->GetSerial().c_str(), openvr_device_class, device.get());
-    if(result)
-        this->devices_.push_back(device);
-    return result;
+	return this->openvr_events_;
 }
 
-ExampleDriver::SettingsValue ExampleDriver::VRDriver::GetSettingsValue(std::string key)
+std::chrono::milliseconds WheelchairDriver::VRDriver::GetLastFrameTime()
 {
-    vr::EVRSettingsError err = vr::EVRSettingsError::VRSettingsError_None;
-    int int_value = vr::VRSettings()->GetInt32(settings_key_.c_str(), key.c_str(), &err);
-    if (err == vr::EVRSettingsError::VRSettingsError_None) {
-        return int_value;
-    }
-    err = vr::EVRSettingsError::VRSettingsError_None;
-    float float_value = vr::VRSettings()->GetFloat(settings_key_.c_str(), key.c_str(), &err);
-    if (err == vr::EVRSettingsError::VRSettingsError_None) {
-        return float_value;
-    }
-    err = vr::EVRSettingsError::VRSettingsError_None;
-    bool bool_value = vr::VRSettings()->GetBool(settings_key_.c_str(), key.c_str(), &err);
-    if (err == vr::EVRSettingsError::VRSettingsError_None) {
-        return bool_value;
-    }
-    std::string str_value;
-    str_value.reserve(1024);
-    vr::VRSettings()->GetString(settings_key_.c_str(), key.c_str(), str_value.data(), 1024, &err);
-    if (err == vr::EVRSettingsError::VRSettingsError_None) {
-        return str_value;
-    }
-    err = vr::EVRSettingsError::VRSettingsError_None;
-
-    return SettingsValue();
+	return this->frame_timing_;
 }
 
-void ExampleDriver::VRDriver::Log(std::string message)
+WheelchairDriver::VRDriver::SettingsValue WheelchairDriver::VRDriver::GetSettingsValue(std::string key)
 {
-    std::string message_endl = message + "\n";
-    vr::VRDriverLog()->Log(message_endl.c_str());
+	vr::EVRSettingsError err = vr::EVRSettingsError::VRSettingsError_None;
+	int int_value = vr::VRSettings()->GetInt32(settings_key_.c_str(), key.c_str(), &err);
+	if (err == vr::EVRSettingsError::VRSettingsError_None) {
+		return int_value;
+	}
+	err = vr::EVRSettingsError::VRSettingsError_None;
+	float float_value = vr::VRSettings()->GetFloat(settings_key_.c_str(), key.c_str(), &err);
+	if (err == vr::EVRSettingsError::VRSettingsError_None) {
+		return float_value;
+	}
+	err = vr::EVRSettingsError::VRSettingsError_None;
+	bool bool_value = vr::VRSettings()->GetBool(settings_key_.c_str(), key.c_str(), &err);
+	if (err == vr::EVRSettingsError::VRSettingsError_None) {
+		return bool_value;
+	}
+	std::string str_value;
+	str_value.reserve(1024);
+	vr::VRSettings()->GetString(settings_key_.c_str(), key.c_str(), str_value.data(), 1024, &err);
+	if (err == vr::EVRSettingsError::VRSettingsError_None) {
+		return str_value;
+	}
+	err = vr::EVRSettingsError::VRSettingsError_None;
+
+	return SettingsValue();
 }
 
-vr::IVRDriverInput* ExampleDriver::VRDriver::GetInput()
+void WheelchairDriver::VRDriver::Log(std::string message)
 {
-    return vr::VRDriverInput();
+	std::string message_endl = message + "\n";
+	vr::VRDriverLog()->Log(message_endl.c_str());
 }
 
-vr::CVRPropertyHelpers* ExampleDriver::VRDriver::GetProperties()
+vr::IVRDriverInput *WheelchairDriver::VRDriver::GetInput()
 {
-    return vr::VRProperties();
+	return vr::VRDriverInput();
 }
 
-vr::IVRServerDriverHost* ExampleDriver::VRDriver::GetDriverHost()
+vr::CVRPropertyHelpers *WheelchairDriver::VRDriver::GetProperties()
 {
-    return vr::VRServerDriverHost();
+	return vr::VRProperties();
+}
+
+vr::IVRServerDriverHost *WheelchairDriver::VRDriver::GetDriverHost()
+{
+	return vr::VRServerDriverHost();
 }

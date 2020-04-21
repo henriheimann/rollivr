@@ -5,10 +5,11 @@
 
 #include <openvr_driver.h>
 
-#include <Driver/IVRDriver.hpp>
+extern "C" __declspec(dllexport) void *HmdDriverFactory(const char *interface_name, int *return_code);
 
-extern "C" __declspec(dllexport) void* HmdDriverFactory(const char* interface_name, int* return_code);
+namespace WheelchairDriver
+{
+	class VRDriver;
 
-namespace ExampleDriver {
-    std::shared_ptr<ExampleDriver::IVRDriver> GetDriver();
+	std::shared_ptr<VRDriver> GetDriver();
 }
