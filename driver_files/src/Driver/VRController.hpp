@@ -3,8 +3,6 @@
 #include <chrono>
 #include <cmath>
 
-#include <linalg.h>
-
 #include <Native/DriverFactory.hpp>
 
 namespace WheelchairDriver

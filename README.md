@@ -1,10 +1,14 @@
 # Wheelchair OpenVR Driver
 
 ## Building
+
+- Boost and OpenVR libraries need to be installed
+    - Recommended installation via https://github.com/Microsoft/vcpkg
+    - Make sure to install x64-windows triplets
 - Clone the project and submodules
 	- `git clone --recursive <Repo URL>`
-- Build project with CMake
-	- `cd ovr-wheelchair-driver && cmake .`
+- Build project with CMake (omit `-DCMAKE_TOOLCHAIN_FILE` if you are not using vcpkg)
+	- `cd ovr-wheelchair-driver && cmake . -DCMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake`
 - Build with Visual Studio
 	- Driver folder structure and files will be copied to the output folder as `wheelchair`.
 	
