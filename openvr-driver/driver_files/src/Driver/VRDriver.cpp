@@ -23,8 +23,6 @@ void WheelchairDriver::VRDriver::Cleanup()
 
 void WheelchairDriver::VRDriver::RunFrame()
 {
-	Log("Run frame");
-
 	// Collect events
 	vr::VREvent_t event;
 	std::vector<vr::VREvent_t> events;

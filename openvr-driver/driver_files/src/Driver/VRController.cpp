@@ -4,6 +4,8 @@
 #include <Windows.h>
 #include <sstream>
 
+#include <serial/serial.h>
+
 WheelchairDriver::VRController::VRController(std::string serial) :
 		serial_(serial)
 {
@@ -40,10 +42,6 @@ void WheelchairDriver::VRController::Update()
 	SYSTEMTIME localTime;
 	GetLocalTime(&localTime);
 	bool pressed = (localTime.wSecond % 2) == 0;
-
-	std::ostringstream ss;
-	ss << "Button pressed: " << pressed;
-	GetDriver()->Log(ss.str());
 
 	if (localTime.wSecond % 2 == 0) {
 		GetDriver()->GetInput()->UpdateBooleanComponent(this->a_button_click_component_, true, 0);
@@ -111,6 +109,18 @@ vr::EVRInitError WheelchairDriver::VRController::Activate(uint32_t unObjectId)
 	                                                controller_not_ready_file.c_str());
 	GetDriver()->GetProperties()->SetStringProperty(props, vr::Prop_NamedIconPathDeviceAlertLow_String,
 	                                                controller_not_ready_file.c_str());
+
+	std::vector<serial::PortInfo> devices_found = serial::list_ports();
+	std::vector<serial::PortInfo>::iterator iter = devices_found.begin();
+
+	GetDriver()->Log("Serial Ports:");
+	while( iter != devices_found.end() ) {
+		serial::PortInfo device = *iter++;
+
+		std::ostringstream ss;
+		ss << device.port.c_str() << device.description.c_str() << device.hardware_id.c_str();
+		GetDriver()->Log(ss.str());
+	}
 
 	return vr::EVRInitError::VRInitError_None;
 }

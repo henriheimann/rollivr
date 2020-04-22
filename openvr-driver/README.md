@@ -2,10 +2,12 @@
 
 ## Building
 
-- Boost and OpenVR libraries need to be installed
+- A valid binary distribution of github.com/wjwwood/serial (included for Windows x64) must exist in the lib folder
+    - Serial can currently not be easily build without catkin installed (use github.com/blabdouze/serial)
+- OpenVR libraries need to be installed
     - Recommended installation via https://github.com/Microsoft/vcpkg
     - Make sure to install x64-windows triplets
-- Clone the project and submodules
+    - Clone the project and submodules
 	- `git clone --recursive <Repo URL>`
 - Build project with CMake (omit `-DCMAKE_TOOLCHAIN_FILE` if you are not using vcpkg)
 	- `cd ovr-wheelchair-driver && cmake . -DCMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake`

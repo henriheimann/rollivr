@@ -24,9 +24,8 @@ endif()
 # Find OpenVR
 find_package(OpenVR REQUIRED)
 
-# Find Boost
-set(BOOST_USE_STATIC_LIBS ON)
-find_package(Boost REQUIRED COMPONENTS system)
+# Find precompiled serial library
+add_subdirectory(libraries/serial)
 
 # Wheelchair Driver
 set(DRIVER_NAME "wheelchair")
@@ -36,9 +35,8 @@ file(GLOB_RECURSE SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/driver_files/src/*.cpp")
 add_library("${WHEELCHAIR_PROJECT}" SHARED "${HEADERS}" "${SOURCES}")
 
 target_include_directories("${WHEELCHAIR_PROJECT}" PUBLIC "${OPENVR_INCLUDE_DIR}")
-target_include_directories("${WHEELCHAIR_PROJECT}" PUBLIC "${Boost_INCLUDE_DIRS}")
 target_include_directories("${WHEELCHAIR_PROJECT}" PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/driver_files/src/")
-target_link_libraries("${WHEELCHAIR_PROJECT}" PUBLIC ${OPENVR_LIBRARY} ${Boost_LIBRARIES})
+target_link_libraries("${WHEELCHAIR_PROJECT}" PUBLIC ${OPENVR_LIBRARY} serial)
 source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}/driver_files/src" PREFIX "Header Files" FILES ${HEADERS})
 source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}/driver_files/src" PREFIX "Source Files" FILES ${SOURCES})
 set_property(TARGET "${WHEELCHAIR_PROJECT}" PROPERTY CXX_STANDARD 17)
