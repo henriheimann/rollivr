@@ -114,7 +114,7 @@ vr::EVRInitError WheelchairDriver::VRController::Activate(uint32_t unObjectId)
 	std::vector<serial::PortInfo>::iterator iter = devices_found.begin();
 
 	GetDriver()->Log("Serial Ports:");
-	while( iter != devices_found.end() ) {
+	while(iter != devices_found.end()) {
 		serial::PortInfo device = *iter++;
 
 		std::ostringstream ss;

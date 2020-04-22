@@ -26,7 +26,7 @@
 {
 	"external_drivers" : 
 	[
-		"C:\\<Path to Repo>\\ovr-wheelchair-driver\\build\\Debug\\wheelchair"
+		"C:\\<Path to Repo>\\openvr-driver\\build\\Debug\\wheelchair"
 	]
 }
 ```
