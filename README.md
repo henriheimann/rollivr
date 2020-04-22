@@ -1,6 +1,10 @@
-# Wheelchair OpenVR Driver
+# Wheelchair OpenVR Controller
 
-## Building
+## Arduino Software
+
+## OpenVR Driver
+
+### Building
 
 - A valid binary distribution of github.com/wjwwood/serial (included for Windows x64) must exist in the lib folder
     - Serial can currently not be easily build without catkin installed (use github.com/blabdouze/serial)
@@ -14,7 +18,7 @@
 - Build with Visual Studio
 	- Driver folder structure and files will be copied to the output folder as `wheelchair`.
 	
-## Installation
+### Installation
 
 - Navigate to `C:\Users\<Username>\AppData\Local\openvr` and find the `openvrpaths.vrpath` file. Open this file with your text editor of choice, and under `"external_drivers"`, add another entry with the location of the `wheelchair` folder. For example mine looks like this after adding the entry:
 
