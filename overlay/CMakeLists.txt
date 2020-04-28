@@ -20,6 +20,11 @@ endforeach()
 # Correct QT_FLAGS having semicolons, which break the compile step on POSIX
 list(REMOVE_DUPLICATES QT_FLAGS)
 
+# Find the windeployqt executable
+get_target_property(QT5_QMAKE_EXECUTABLE Qt5::qmake IMPORTED_LOCATION)
+get_filename_component(QT5_WINDEPLOYQT_EXECUTABLE ${QT5_QMAKE_EXECUTABLE} PATH)
+set(QT5_WINDEPLOYQT_EXECUTABLE "${QT5_WINDEPLOYQT_EXECUTABLE}/windeployqt.exe")
+
 set(TARGET_NAME overlay)
 
 add_executable(${TARGET_NAME}
@@ -49,4 +54,5 @@ set_target_properties(${TARGET_NAME}
   COMPILE_FLAGS "${QT_FLAGS}"
 )
 
-#setTargetOutputDirectory(${TARGET_NAME})
+# Deploy with windeployqt to add all required .dll files to the output directory
+add_custom_command(TARGET ${TARGET_NAME} POST_BUILD COMMAND ${QT5_WINDEPLOYQT_EXECUTABLE} $<TARGET_FILE:${TARGET_NAME}>)

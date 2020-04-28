@@ -7,11 +7,8 @@
 - OpenVR libraries need to be installed
     - Recommended installation via https://github.com/Microsoft/vcpkg
     - Make sure to install x64-windows triplets
-- Qt5 has to be installed
-    - Download from https://www.qt.io/download-open-source
-    - Set environment variables `QT_QMAKE_EXECUTABLE`, `Qt5_DIR` and `Qt5Core_DIR` or tell CMake about Qt another way
-- Build project with CMake (omit `-DCMAKE_TOOLCHAIN_FILE` if you are not using vcpkg)
-	- `cd ovr-wheelchair-driver && cmake . -DCMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake`
+- Qt5 has to be installed (https://www.qt.io/download-open-source)
+- Execute CMake `cd ovr-wheelchair-driver && cmake . -DCMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake -DCMAKE_PREFIX_PATH=C:\Qt\5.14.2\msvc2017_64\lib\cmake`
 - Build with Visual Studio, Clion or the IDE of your choice
 	- Driver folder structure and files will be copied to the output folder as `wheelchair`.
 	
