@@ -42,9 +42,9 @@ endif()
 
 ## Sources
 set(serial_SRCS
-    src/serial.cc
-    include/serial/serial.h
-    include/serial/v8stdint.h
+        src/serial.cc
+        include/serial/serial.h
+        include/serial/v8stdint.h
 )
 
 if(APPLE)
@@ -110,7 +110,7 @@ if(USE_CATKIN)
 else()
     set(EXPORT_TARGET_NAME serialTargets)
 
-    install(EXPORT ${EXPORT_TARGET_NAME} DESTINATION cmake/)
+    install(EXPORT ${EXPORT_TARGET_NAME} DESTINATION cmake)
     # Include module with fuction 'write_basic_package_version_file' and 'configure_package_config_file'
     include(CMakePackageConfigHelpers)
 
@@ -131,7 +131,7 @@ else()
 
     # Install config file generated
     install(DIRECTORY ${OUTPUT_CMAKE_EXPORT_GENERATED_FILES}/ 
-        DESTINATION cmake/)
+        DESTINATION cmake)
 
 
     ## Install headers
