@@ -1,11 +1,6 @@
 //====== Copyright Valve Corporation, All rights reserved. =======
 
-#ifndef OPENVROVERLAYCONTROLLER_H
-#define OPENVROVERLAYCONTROLLER_H
-
-#ifdef _WIN32
 #pragma once
-#endif
 
 #include "openvr.h"
 
@@ -21,17 +16,17 @@
 #include <QtWidgets/QGraphicsScene>
 #include <QtGui/QOffscreenSurface>
 
-class COpenVROverlayController : public QObject
+class WheelchairOverlayController : public QObject
 {
 	Q_OBJECT
 	typedef QObject BaseClass;
 
 public:
-    static COpenVROverlayController *SharedInstance();
+    static WheelchairOverlayController *SharedInstance();
 
 public:
-    COpenVROverlayController();
-    virtual ~COpenVROverlayController();
+    WheelchairOverlayController();
+    virtual ~WheelchairOverlayController();
 
 	bool Init();
 	void Shutdown();
@@ -83,6 +78,3 @@ private:
 	QPointF m_ptLastMouse;
 	Qt::MouseButtons m_lastMouseButtons;
 };
-
-
-#endif // OPENVROVERLAYCONTROLLER_H

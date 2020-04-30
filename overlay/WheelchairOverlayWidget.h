@@ -4,7 +4,7 @@
 #include <QtWidgets/QWidget>
 
 namespace Ui {
-class OverlayWidget;
+class WheelchairOverlayWidget;
 }
 
 class OverlayWidget : public QWidget
@@ -19,7 +19,7 @@ private slots:
     void on_pushButton_clicked();
 
 private:
-    Ui::OverlayWidget *ui;
+    Ui::WheelchairOverlayWidget *ui;
 };
 
 #endif // OVERLAYWIDGET_H

@@ -1,17 +1,17 @@
-#include "DriverFactory.hpp"
+#include "WheelchairDriverFactory.h"
 
-#include <Driver/VRDriver.hpp>
+#include <Driver/WheelchairDriver.h>
 
 #include <thread>
 
-static std::shared_ptr<WheelchairDriver::VRDriver> driver;
+static std::shared_ptr<WheelchairDriver> driver;
 
 void *HmdDriverFactory(const char *interface_name, int *return_code)
 {
 	if (std::strcmp(interface_name, vr::IServerTrackedDeviceProvider_Version) == 0) {
 		if (!driver) {
 			// Instantiate concrete impl
-			driver = std::make_shared<WheelchairDriver::VRDriver>();
+			driver = std::make_shared<WheelchairDriver>();
 		}
 		// We always have at least 1 ref to the shared ptr in "driver" so passing out raw pointer is ok
 		return driver.get();
@@ -24,7 +24,10 @@ void *HmdDriverFactory(const char *interface_name, int *return_code)
 	return nullptr;
 }
 
-std::shared_ptr<WheelchairDriver::VRDriver> WheelchairDriver::GetDriver()
+namespace WheelchairDriverFactory
 {
-	return driver;
+	std::shared_ptr<WheelchairDriver> GetDriver()
+	{
+		return driver;
+	}
 }

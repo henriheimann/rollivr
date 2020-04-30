@@ -23,14 +23,14 @@ add_subdirectory(libraries/serial)
 
 # Wheelchair Driver
 set(DRIVER_NAME "wheelchair")
-set(TARGET_NAME "driver_${DRIVER_NAME}")
+set(TARGET_NAME "${DRIVER_NAME}_driver")
 add_library("${TARGET_NAME}" SHARED
-        "driver_files/src/Driver/VRController.cpp"
-        "driver_files/src/Driver/VRController.hpp"
-        "driver_files/src/Driver/VRDriver.cpp"
-        "driver_files/src/Driver/VRDriver.hpp"
-        "driver_files/src/Native/DriverFactory.cpp"
-        "driver_files/src/Native/DriverFactory.hpp"
+        "driver_files/src/Driver/WheelchairController.cpp"
+        "driver_files/src/Driver/WheelchairController.h"
+        "driver_files/src/Driver/WheelchairDriver.cpp"
+        "driver_files/src/Driver/WheelchairDriver.h"
+        "driver_files/src/Native/WheelchairDriverFactory.cpp"
+        "driver_files/src/Native/WheelchairDriverFactory.h"
 )
 
 target_include_directories("${TARGET_NAME}" PUBLIC "${OPENVR_INCLUDE_DIR}")

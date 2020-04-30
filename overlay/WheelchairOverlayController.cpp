@@ -1,7 +1,7 @@
 //====== Copyright Valve Corporation, All rights reserved. =======
 
 
-#include "openvroverlaycontroller.h"
+#include "WheelchairOverlayController.h"
 
 
 #include <QOpenGLFramebufferObjectFormat>
@@ -19,13 +19,13 @@ using namespace vr;
 //-----------------------------------------------------------------------------
 // Purpose:
 //-----------------------------------------------------------------------------
-COpenVROverlayController *s_pSharedVRController = NULL;
+WheelchairOverlayController *s_pSharedVRController = NULL;
 
-COpenVROverlayController *COpenVROverlayController::SharedInstance()
+WheelchairOverlayController *WheelchairOverlayController::SharedInstance()
 {
 	if ( !s_pSharedVRController )
 	{
-        s_pSharedVRController = new COpenVROverlayController();
+        s_pSharedVRController = new WheelchairOverlayController();
 	}
 	return s_pSharedVRController;
 }
@@ -34,7 +34,7 @@ COpenVROverlayController *COpenVROverlayController::SharedInstance()
 //-----------------------------------------------------------------------------
 // Purpose:
 //-----------------------------------------------------------------------------
-COpenVROverlayController::COpenVROverlayController()
+WheelchairOverlayController::WheelchairOverlayController()
 	: BaseClass()
 	, m_strVRDriver( "No Driver" )
 	, m_strVRDisplay( "No Display" )
@@ -56,8 +56,9 @@ COpenVROverlayController::COpenVROverlayController()
 //-----------------------------------------------------------------------------
 // Purpose:
 //-----------------------------------------------------------------------------
-COpenVROverlayController::~COpenVROverlayController()
+WheelchairOverlayController::~WheelchairOverlayController()
 {
+
 }
 
 
@@ -84,7 +85,7 @@ QString GetTrackedDeviceString( vr::IVRSystem *pHmd, vr::TrackedDeviceIndex_t un
 //-----------------------------------------------------------------------------
 // Purpose:
 //-----------------------------------------------------------------------------
-bool COpenVROverlayController::Init()
+bool WheelchairOverlayController::Init()
 {
 	bool bSuccess = true;
 
@@ -147,7 +148,7 @@ bool COpenVROverlayController::Init()
 //-----------------------------------------------------------------------------
 // Purpose:
 //-----------------------------------------------------------------------------
-void COpenVROverlayController::Shutdown()
+void WheelchairOverlayController::Shutdown()
 {
 	DisconnectFromVRRuntime();
 
@@ -167,7 +168,7 @@ void COpenVROverlayController::Shutdown()
 //-----------------------------------------------------------------------------
 // Purpose:
 //-----------------------------------------------------------------------------
-void COpenVROverlayController::OnSceneChanged( const QList<QRectF>& )
+void WheelchairOverlayController::OnSceneChanged( const QList<QRectF>& )
 {
 	// skip rendering if the overlay isn't visible
     if( ( m_ulOverlayHandle == k_ulOverlayHandleInvalid ) || !vr::VROverlay() ||
@@ -196,7 +197,7 @@ void COpenVROverlayController::OnSceneChanged( const QList<QRectF>& )
 //-----------------------------------------------------------------------------
 // Purpose:
 //-----------------------------------------------------------------------------
-void COpenVROverlayController::OnTimeoutPumpEvents()
+void WheelchairOverlayController::OnTimeoutPumpEvents()
 {
     if( !vr::VRSystem() )
 		return;
@@ -313,7 +314,7 @@ void COpenVROverlayController::OnTimeoutPumpEvents()
 //-----------------------------------------------------------------------------
 // Purpose:
 //-----------------------------------------------------------------------------
-void COpenVROverlayController::SetWidget( QWidget *pWidget )
+void WheelchairOverlayController::SetWidget( QWidget *pWidget )
 {
 	if( m_pScene )
 	{
@@ -341,7 +342,7 @@ void COpenVROverlayController::SetWidget( QWidget *pWidget )
 //-----------------------------------------------------------------------------
 // Purpose:
 //-----------------------------------------------------------------------------
-bool COpenVROverlayController::ConnectToVRRuntime()
+bool WheelchairOverlayController::ConnectToVRRuntime()
 {
     m_eLastHmdError = vr::VRInitError_None;
     vr::IVRSystem *pVRSystem = vr::VR_Init( &m_eLastHmdError, vr::VRApplication_Overlay );
@@ -360,7 +361,7 @@ bool COpenVROverlayController::ConnectToVRRuntime()
 }
 
 
-void COpenVROverlayController::DisconnectFromVRRuntime()
+void WheelchairOverlayController::DisconnectFromVRRuntime()
 {
 	vr::VR_Shutdown();
 }
@@ -369,7 +370,7 @@ void COpenVROverlayController::DisconnectFromVRRuntime()
 //-----------------------------------------------------------------------------
 // Purpose:
 //-----------------------------------------------------------------------------
-QString COpenVROverlayController::GetVRDriverString()
+QString WheelchairOverlayController::GetVRDriverString()
 {
 	return m_strVRDriver;
 }
@@ -378,7 +379,7 @@ QString COpenVROverlayController::GetVRDriverString()
 //-----------------------------------------------------------------------------
 // Purpose:
 //-----------------------------------------------------------------------------
-QString COpenVROverlayController::GetVRDisplayString()
+QString WheelchairOverlayController::GetVRDisplayString()
 {
 	return m_strVRDisplay;
 }
@@ -387,7 +388,7 @@ QString COpenVROverlayController::GetVRDisplayString()
 //-----------------------------------------------------------------------------
 // Purpose:
 //-----------------------------------------------------------------------------
-bool COpenVROverlayController::BHMDAvailable()
+bool WheelchairOverlayController::BHMDAvailable()
 {
     return vr::VRSystem() != NULL;
 }
@@ -397,7 +398,7 @@ bool COpenVROverlayController::BHMDAvailable()
 // Purpose:
 //-----------------------------------------------------------------------------
 
-vr::HmdError COpenVROverlayController::GetLastHmdError()
+vr::HmdError WheelchairOverlayController::GetLastHmdError()
 {
 	return m_eLastHmdError;
 }

@@ -1,9 +1,9 @@
-#include "overlaywidget.h"
-#include "ui_overlaywidget.h"
+#include "WheelchairOverlayWidget.h"
+#include "ui_WheelchairOverlayWidget.h"
 
 OverlayWidget::OverlayWidget(QWidget *parent) :
     QWidget(parent),
-    ui(new Ui::OverlayWidget)
+    ui(new Ui::WheelchairOverlayWidget)
 {
     ui->setupUi(this);
 }

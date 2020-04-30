@@ -1,22 +1,24 @@
-#include "VRController.hpp"
-#include "VRDriver.hpp"
+#include "WheelchairController.h"
+#include "WheelchairDriver.h"
 
 #include <Windows.h>
 #include <sstream>
 
 #include <serial/serial.h>
 
-WheelchairDriver::VRController::VRController(std::string serial) :
+using namespace WheelchairDriverFactory;
+
+WheelchairController::WheelchairController(std::string serial) :
 		serial_(serial)
 {
 }
 
-std::string WheelchairDriver::VRController::GetSerial()
+std::string WheelchairController::GetSerial()
 {
 	return this->serial_;
 }
 
-void WheelchairDriver::VRController::Update()
+void WheelchairController::Update()
 {
 	GetDriver()->Log("Controller update");
 
@@ -36,8 +38,10 @@ void WheelchairDriver::VRController::Update()
 		//}
 	}
 
+
+
 	// Setup pose for this frame
-	auto pose = VRController::MakeDefaultPose();
+	auto pose = WheelchairController::MakeDefaultPose();
 
 	SYSTEMTIME localTime;
 	GetLocalTime(&localTime);
@@ -54,12 +58,12 @@ void WheelchairDriver::VRController::Update()
 	this->last_pose_ = pose;
 }
 
-vr::TrackedDeviceIndex_t WheelchairDriver::VRController::GetDeviceIndex()
+vr::TrackedDeviceIndex_t WheelchairController::GetDeviceIndex()
 {
 	return this->device_index_;
 }
 
-vr::EVRInitError WheelchairDriver::VRController::Activate(uint32_t unObjectId)
+vr::EVRInitError WheelchairController::Activate(uint32_t unObjectId)
 {
 	this->device_index_ = unObjectId;
 
@@ -125,21 +129,21 @@ vr::EVRInitError WheelchairDriver::VRController::Activate(uint32_t unObjectId)
 	return vr::EVRInitError::VRInitError_None;
 }
 
-void WheelchairDriver::VRController::Deactivate()
+void WheelchairController::Deactivate()
 {
 	this->device_index_ = vr::k_unTrackedDeviceIndexInvalid;
 }
 
-void WheelchairDriver::VRController::EnterStandby()
+void WheelchairController::EnterStandby()
 {
 }
 
-void *WheelchairDriver::VRController::GetComponent(const char *pchComponentNameAndVersion)
+void *WheelchairController::GetComponent(const char *pchComponentNameAndVersion)
 {
 	return nullptr;
 }
 
-void WheelchairDriver::VRController::DebugRequest(
+void WheelchairController::DebugRequest(
 		const char *pchRequest, char *pchResponseBuffer, uint32_t unResponseBufferSize)
 {
 	if (unResponseBufferSize >= 1) {
@@ -147,7 +151,7 @@ void WheelchairDriver::VRController::DebugRequest(
 	}
 }
 
-vr::DriverPose_t WheelchairDriver::VRController::GetPose()
+vr::DriverPose_t WheelchairController::GetPose()
 {
 	return last_pose_;
 }

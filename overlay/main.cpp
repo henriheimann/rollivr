@@ -1,5 +1,6 @@
-#include "overlaywidget.h"
-#include "openvroverlaycontroller.h"
+#include "WheelchairOverlayWidget.h"
+#include "WheelchairOverlayController.h"
+
 #include <QtWidgets/QApplication>
 
 int main(int argc, char *argv[])
@@ -7,12 +8,8 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
     OverlayWidget *pOverlayWidget = new OverlayWidget;
 
-    COpenVROverlayController::SharedInstance()->Init();
-
-    COpenVROverlayController::SharedInstance()->SetWidget( pOverlayWidget );
-
-    // don't show widgets that you're going display in an overlay
-    //w.show();
+    WheelchairOverlayController::SharedInstance()->Init();
+    WheelchairOverlayController::SharedInstance()->SetWidget(pOverlayWidget );
 
     return a.exec();
 }

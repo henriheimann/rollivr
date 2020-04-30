@@ -25,15 +25,15 @@ get_target_property(QT5_QMAKE_EXECUTABLE Qt5::qmake IMPORTED_LOCATION)
 get_filename_component(QT5_WINDEPLOYQT_EXECUTABLE ${QT5_QMAKE_EXECUTABLE} PATH)
 set(QT5_WINDEPLOYQT_EXECUTABLE "${QT5_WINDEPLOYQT_EXECUTABLE}/windeployqt.exe")
 
-set(TARGET_NAME overlay)
+set(TARGET_NAME wheelchair_overlay)
 
 add_executable(${TARGET_NAME}
   ${SHARED_SRC_FILES}
         main.cpp
-        openvroverlaycontroller.cpp
-        openvroverlaycontroller.h
-        overlaywidget.cpp
-        overlaywidget.h
+        WheelchairOverlayController.cpp
+        WheelchairOverlayController.h
+        WheelchairOverlayWidget.cpp
+        WheelchairOverlayWidget.h
 )
 
 add_definitions(${QT_DEFINITIONS})

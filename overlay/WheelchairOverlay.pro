@@ -1,29 +1,21 @@
-#-------------------------------------------------
-#
-# Project created by QtCreator 2015-06-10T16:57:45
-#
-#-------------------------------------------------
-
 QT       += core gui
 QT       += core gui opengl
 CONFIG   += c++11
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = HelloWorldOverlay
+TARGET = WheelchairOverlay
 TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        overlaywidget.cpp \
-    openvroverlaycontroller.cpp
+        OverlayWidget.cpp \
+        OverlayController.cpp
 
-HEADERS  += overlaywidget.h \
-    openvroverlaycontroller.h
+HEADERS += OverlayWidget.h \
+        OverlayController.h
 
-FORMS    += overlaywidget.ui
-
-INCLUDEPATH += ../../headers
+FORMS += OverlayWidget.ui
 
 win32:contains(QMAKE_HOST.arch, x86_64) {
     LIBS += -L../../lib/win64 -lopenvr_api

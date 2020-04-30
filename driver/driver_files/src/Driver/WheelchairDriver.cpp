@@ -1,6 +1,8 @@
-#include "VRDriver.hpp"
+#include "WheelchairDriver.h"
 
-vr::EVRInitError WheelchairDriver::VRDriver::Init(vr::IVRDriverContext *pDriverContext)
+using namespace WheelchairDriverFactory;
+
+vr::EVRInitError WheelchairDriver::Init(vr::IVRDriverContext *pDriverContext)
 {
 	// Perform driver context initialisation
 	if (vr::EVRInitError init_error = vr::InitServerDriverContext(pDriverContext); init_error != vr::EVRInitError::VRInitError_None) {
@@ -10,18 +12,18 @@ vr::EVRInitError WheelchairDriver::VRDriver::Init(vr::IVRDriverContext *pDriverC
 	Log("Activating Wheelchair Driver");
 
 	// Add a couple controllers
-	this->AddWheelchairController(std::make_shared<VRController>("Wheelchair_WheelchairController"));
+	this->AddWheelchairController(std::make_shared<WheelchairController>("Wheelchair_WheelchairController"));
 
 	Log("Wheelchair Driver Loaded Successfully");
 
 	return vr::VRInitError_None;
 }
 
-void WheelchairDriver::VRDriver::Cleanup()
+void WheelchairDriver::Cleanup()
 {
 }
 
-void WheelchairDriver::VRDriver::RunFrame()
+void WheelchairDriver::RunFrame()
 {
 	// Collect events
 	vr::VREvent_t event;
@@ -42,20 +44,20 @@ void WheelchairDriver::VRDriver::RunFrame()
 	}
 }
 
-bool WheelchairDriver::VRDriver::ShouldBlockStandbyMode()
+bool WheelchairDriver::ShouldBlockStandbyMode()
 {
 	return false;
 }
 
-void WheelchairDriver::VRDriver::EnterStandby()
+void WheelchairDriver::EnterStandby()
 {
 }
 
-void WheelchairDriver::VRDriver::LeaveStandby()
+void WheelchairDriver::LeaveStandby()
 {
 }
 
-bool WheelchairDriver::VRDriver::AddWheelchairController(std::shared_ptr<VRController> wheelchairController)
+bool WheelchairDriver::AddWheelchairController(std::shared_ptr<WheelchairController> wheelchairController)
 {
 	vr::ETrackedDeviceClass openvr_device_class = vr::ETrackedDeviceClass::TrackedDeviceClass_Controller;
 
@@ -69,22 +71,22 @@ bool WheelchairDriver::VRDriver::AddWheelchairController(std::shared_ptr<VRContr
 	return result;
 }
 
-std::shared_ptr<WheelchairDriver::VRController> WheelchairDriver::VRDriver::GetWheelchairController()
+std::shared_ptr<WheelchairController> WheelchairDriver::GetWheelchairController()
 {
 	return this->wheelchairController_;
 }
 
-std::vector<vr::VREvent_t> WheelchairDriver::VRDriver::GetOpenVREvents()
+std::vector<vr::VREvent_t> WheelchairDriver::GetOpenVREvents()
 {
 	return this->openvr_events_;
 }
 
-std::chrono::milliseconds WheelchairDriver::VRDriver::GetLastFrameTime()
+std::chrono::milliseconds WheelchairDriver::GetLastFrameTime()
 {
 	return this->frame_timing_;
 }
 
-WheelchairDriver::VRDriver::SettingsValue WheelchairDriver::VRDriver::GetSettingsValue(std::string key)
+WheelchairDriver::SettingsValue WheelchairDriver::GetSettingsValue(std::string key)
 {
 	vr::EVRSettingsError err = vr::EVRSettingsError::VRSettingsError_None;
 	int int_value = vr::VRSettings()->GetInt32(settings_key_.c_str(), key.c_str(), &err);
@@ -112,23 +114,23 @@ WheelchairDriver::VRDriver::SettingsValue WheelchairDriver::VRDriver::GetSetting
 	return SettingsValue();
 }
 
-void WheelchairDriver::VRDriver::Log(std::string message)
+void WheelchairDriver::Log(std::string message)
 {
 	std::string message_endl = message + "\n";
 	vr::VRDriverLog()->Log(message_endl.c_str());
 }
 
-vr::IVRDriverInput *WheelchairDriver::VRDriver::GetInput()
+vr::IVRDriverInput *WheelchairDriver::GetInput()
 {
 	return vr::VRDriverInput();
 }
 
-vr::CVRPropertyHelpers *WheelchairDriver::VRDriver::GetProperties()
+vr::CVRPropertyHelpers *WheelchairDriver::GetProperties()
 {
 	return vr::VRProperties();
 }
 
-vr::IVRServerDriverHost *WheelchairDriver::VRDriver::GetDriverHost()
+vr::IVRServerDriverHost *WheelchairDriver::GetDriverHost()
 {
 	return vr::VRServerDriverHost();
 }
