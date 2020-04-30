@@ -25,16 +25,16 @@ add_subdirectory(libraries/serial)
 set(DRIVER_NAME "wheelchair")
 set(TARGET_NAME "${DRIVER_NAME}_driver")
 add_library("${TARGET_NAME}" SHARED
-        "driver_files/src/WheelchairController.cpp"
-        "driver_files/src/WheelchairController.h"
-        "driver_files/src/WheelchairDriver.cpp"
-        "driver_files/src/WheelchairDriver.h"
-        "driver_files/src/WheelchairDriverFactory.cpp"
-        "driver_files/src/WheelchairDriverFactory.h"
+        "src/WheelchairController.cpp"
+        "src/WheelchairController.h"
+        "src/WheelchairDriver.cpp"
+        "src/WheelchairDriver.h"
+        "src/WheelchairDriverFactory.cpp"
+        "src/WheelchairDriverFactory.h"
 )
 
 target_include_directories("${TARGET_NAME}" PUBLIC "${OPENVR_INCLUDE_DIR}")
-target_include_directories("${TARGET_NAME}" PUBLIC "driver_files/src")
+target_include_directories("${TARGET_NAME}" PUBLIC "src")
 target_link_libraries("${TARGET_NAME}" PUBLIC ${OPENVR_LIBRARY} serial)
 set_property(TARGET "${TARGET_NAME}" PROPERTY CXX_STANDARD 17)
 
@@ -43,7 +43,7 @@ add_custom_command(
     TARGET ${TARGET_NAME}
     PRE_BUILD 
     COMMAND ${CMAKE_COMMAND} -E copy_directory 
-    ${CMAKE_CURRENT_SOURCE_DIR}/driver_files/driver/
+    ${CMAKE_CURRENT_SOURCE_DIR}/driver_files/
     $<TARGET_FILE_DIR:${TARGET_NAME}>
 )
 

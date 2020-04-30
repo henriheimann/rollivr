@@ -32,11 +32,11 @@ set(TARGET_NAME wheelchair_overlay)
 
 add_executable(${TARGET_NAME}
   ${SHARED_SRC_FILES}
-        main.cpp
-        WheelchairOverlayController.cpp
-        WheelchairOverlayController.h
-        WheelchairOverlayWidget.cpp
-        WheelchairOverlayWidget.h
+        src/main.cpp
+        src/WheelchairOverlayController.cpp
+        src/WheelchairOverlayController.h
+        src/WheelchairOverlayWidget.cpp
+        src/WheelchairOverlayWidget.h
 )
 
 add_definitions(${QT_DEFINITIONS})
