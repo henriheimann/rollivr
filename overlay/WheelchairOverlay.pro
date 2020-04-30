@@ -9,13 +9,13 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        OverlayWidget.cpp \
+        WheelchairOverlayWidget.cpp \
         OverlayController.cpp
 
-HEADERS += OverlayWidget.h \
+HEADERS += WheelchairOverlayWidget.h \
         OverlayController.h
 
-FORMS += OverlayWidget.ui
+FORMS += WheelchairOverlayWidget.ui
 
 win32:contains(QMAKE_HOST.arch, x86_64) {
     LIBS += -L../../lib/win64 -lopenvr_api

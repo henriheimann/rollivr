@@ -1,5 +1,4 @@
-#ifndef OVERLAYWIDGET_H
-#define OVERLAYWIDGET_H
+#pragma once
 
 #include <QtWidgets/QWidget>
 
@@ -7,19 +6,21 @@ namespace Ui {
 class WheelchairOverlayWidget;
 }
 
-class OverlayWidget : public QWidget
+class WheelchairOverlayWidget : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit OverlayWidget(QWidget *parent = 0);
-    ~OverlayWidget();
+    explicit WheelchairOverlayWidget(QWidget *parent = nullptr);
+    ~WheelchairOverlayWidget() override;
+
+signals:
+	void Test();
 
 private slots:
-    void on_pushButton_clicked();
+    void on_quitOverlayPushButton_clicked();
+	void on_testPushButton_clicked();
 
 private:
-    Ui::WheelchairOverlayWidget *ui;
+    Ui::WheelchairOverlayWidget *m_ui;
 };
-
-#endif // OVERLAYWIDGET_H

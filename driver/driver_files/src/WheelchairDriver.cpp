@@ -31,16 +31,16 @@ void WheelchairDriver::RunFrame()
 	while (vr::VRServerDriverHost()->PollNextEvent(&event, sizeof(event))) {
 		events.push_back(event);
 	}
-	this->openvr_events_ = events;
+	this->m_openvrEvents = events;
 
 	// Update frame timing
 	std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
-	this->frame_timing_ = std::chrono::duration_cast<std::chrono::milliseconds>(now - this->last_frame_time_);
-	this->last_frame_time_ = now;
+	this->m_frameTiming = std::chrono::duration_cast<std::chrono::milliseconds>(now - this->m_lastFrameTime);
+	this->m_lastFrameTime = now;
 
 	// Update devices
-	if (wheelchairController_ != nullptr) {
-		wheelchairController_->Update();
+	if (m_wheelchairController != nullptr) {
+		m_wheelchairController->Update();
 	}
 }
 
@@ -65,7 +65,7 @@ bool WheelchairDriver::AddWheelchairController(std::shared_ptr<WheelchairControl
 	                                                           wheelchairController.get());
 
 	if (result) {
-		this->wheelchairController_ = wheelchairController;
+		this->m_wheelchairController = wheelchairController;
 	}
 
 	return result;
@@ -73,39 +73,39 @@ bool WheelchairDriver::AddWheelchairController(std::shared_ptr<WheelchairControl
 
 std::shared_ptr<WheelchairController> WheelchairDriver::GetWheelchairController()
 {
-	return this->wheelchairController_;
+	return this->m_wheelchairController;
 }
 
 std::vector<vr::VREvent_t> WheelchairDriver::GetOpenVREvents()
 {
-	return this->openvr_events_;
+	return this->m_openvrEvents;
 }
 
 std::chrono::milliseconds WheelchairDriver::GetLastFrameTime()
 {
-	return this->frame_timing_;
+	return this->m_frameTiming;
 }
 
 WheelchairDriver::SettingsValue WheelchairDriver::GetSettingsValue(std::string key)
 {
 	vr::EVRSettingsError err = vr::EVRSettingsError::VRSettingsError_None;
-	int int_value = vr::VRSettings()->GetInt32(settings_key_.c_str(), key.c_str(), &err);
+	int int_value = vr::VRSettings()->GetInt32(m_settingsKey.c_str(), key.c_str(), &err);
 	if (err == vr::EVRSettingsError::VRSettingsError_None) {
 		return int_value;
 	}
 	err = vr::EVRSettingsError::VRSettingsError_None;
-	float float_value = vr::VRSettings()->GetFloat(settings_key_.c_str(), key.c_str(), &err);
+	float float_value = vr::VRSettings()->GetFloat(m_settingsKey.c_str(), key.c_str(), &err);
 	if (err == vr::EVRSettingsError::VRSettingsError_None) {
 		return float_value;
 	}
 	err = vr::EVRSettingsError::VRSettingsError_None;
-	bool bool_value = vr::VRSettings()->GetBool(settings_key_.c_str(), key.c_str(), &err);
+	bool bool_value = vr::VRSettings()->GetBool(m_settingsKey.c_str(), key.c_str(), &err);
 	if (err == vr::EVRSettingsError::VRSettingsError_None) {
 		return bool_value;
 	}
 	std::string str_value;
 	str_value.reserve(1024);
-	vr::VRSettings()->GetString(settings_key_.c_str(), key.c_str(), str_value.data(), 1024, &err);
+	vr::VRSettings()->GetString(m_settingsKey.c_str(), key.c_str(), str_value.data(), 1024, &err);
 	if (err == vr::EVRSettingsError::VRSettingsError_None) {
 		return str_value;
 	}

@@ -1,4 +1,5 @@
-//====== Copyright Valve Corporation, All rights reserved. =======
+// Adapted code from: https://github.com/ValveSoftware/openvr/tree/master/samples/helloworldoverlay
+// Copyright Valve Corporation, All rights reserved.
 
 #pragma once
 
@@ -16,6 +17,8 @@
 #include <QtWidgets/QGraphicsScene>
 #include <QtGui/QOffscreenSurface>
 
+class WheelchairOverlayWidget;
+
 class WheelchairOverlayController : public QObject
 {
 	Q_OBJECT
@@ -26,25 +29,26 @@ public:
 
 public:
     WheelchairOverlayController();
-    virtual ~WheelchairOverlayController();
+    ~WheelchairOverlayController() override = default;
 
 	bool Init();
 	void Shutdown();
 	void EnableRestart();
 
 	bool BHMDAvailable();
-    vr::IVRSystem *GetVRSystem();
 	vr::HmdError GetLastHmdError();
 
 	QString GetVRDriverString();
 	QString GetVRDisplayString();
-	QString GetName() { return m_strName; }
+	QString GetName() { return m_name; }
 
-	void SetWidget( QWidget *pWidget );
+	void SetWidget(WheelchairOverlayWidget *widget);
 
 public slots:
-	void OnSceneChanged( const QList<QRectF>& );
+	void OnSceneChanged(const QList<QRectF>&);
 	void OnTimeoutPumpEvents();
+
+	void OnTest();
 
 protected:
 
@@ -52,29 +56,28 @@ private:
 	bool ConnectToVRRuntime();
 	void DisconnectFromVRRuntime();
 
-	vr::TrackedDevicePose_t m_rTrackedDevicePose[ vr::k_unMaxTrackedDeviceCount ];
-	QString m_strVRDriver;
-	QString m_strVRDisplay;
-	QString m_strName;
+	vr::TrackedDevicePose_t m_trackedDevicePose[vr::k_unMaxTrackedDeviceCount];
+	QString m_vrDriver;
+	QString m_vrDisplay;
+	QString m_name;
 
-	vr::HmdError m_eLastHmdError;
+	vr::HmdError m_lastHmdError;
 
 private:
-	vr::HmdError m_eCompositorError;
-	vr::HmdError m_eOverlayError;
-	vr::VROverlayHandle_t m_ulOverlayHandle;
-    vr::VROverlayHandle_t m_ulOverlayThumbnailHandle;
+	vr::HmdError m_compositorError;
+	vr::HmdError m_overlayError;
+	vr::VROverlayHandle_t m_overlayHandle;
+    vr::VROverlayHandle_t m_overlayThumbnailHandle;
 
-	QOpenGLContext *m_pOpenGLContext;
-	QGraphicsScene *m_pScene;
-	QOpenGLFramebufferObject *m_pFbo;
-	QOffscreenSurface *m_pOffscreenSurface;
+	QOpenGLContext *m_openGLContext;
+	QGraphicsScene *m_scene;
+	QOpenGLFramebufferObject *m_fbo;
+	QOffscreenSurface *m_offscreenSurface;
 
-	QTimer *m_pPumpEventsTimer;
+	QTimer *m_pumpEventsTimer;
 
-	// the widget we're drawing into the texture
-	QWidget *m_pWidget;
+	WheelchairOverlayWidget *m_widget;
 
-	QPointF m_ptLastMouse;
+	QPointF m_lastMousePoint;
 	Qt::MouseButtons m_lastMouseButtons;
 };

@@ -1,6 +1,6 @@
 #include "WheelchairDriverFactory.h"
 
-#include <Driver/WheelchairDriver.h>
+#include <WheelchairDriver.h>
 
 #include <thread>
 

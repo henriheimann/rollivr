@@ -3,7 +3,7 @@
 #include <chrono>
 #include <cmath>
 
-#include <Native/WheelchairDriverFactory.h>
+#include <WheelchairDriverFactory.h>
 
 class WheelchairController : public vr::ITrackedDeviceServerDriver
 {
@@ -51,10 +51,10 @@ public:
 	}
 
 private:
-	vr::TrackedDeviceIndex_t device_index_ = vr::k_unTrackedDeviceIndexInvalid;
-	std::string serial_;
+	vr::TrackedDeviceIndex_t m_deviceIndex = vr::k_unTrackedDeviceIndexInvalid;
+	std::string m_serial;
 
-	vr::DriverPose_t last_pose_;
+	vr::DriverPose_t m_lastPose;
 
-	vr::VRInputComponentHandle_t a_button_click_component_ = 0;
+	vr::VRInputComponentHandle_t m_aButtonClickComponent = 0;
 };

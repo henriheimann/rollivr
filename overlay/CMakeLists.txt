@@ -25,6 +25,9 @@ get_target_property(QT5_QMAKE_EXECUTABLE Qt5::qmake IMPORTED_LOCATION)
 get_filename_component(QT5_WINDEPLOYQT_EXECUTABLE ${QT5_QMAKE_EXECUTABLE} PATH)
 set(QT5_WINDEPLOYQT_EXECUTABLE "${QT5_WINDEPLOYQT_EXECUTABLE}/windeployqt.exe")
 
+# ----------------------------------- Find OpenVR -----------------------------------
+find_package(GLM REQUIRED)
+
 set(TARGET_NAME wheelchair_overlay)
 
 add_executable(${TARGET_NAME}
@@ -41,7 +44,7 @@ if(NOT "${CMAKE_BUILD_TYPE}" EQUAL "Debug")
     add_definitions(-DQT_NO_DEBUG)
 endif()
 
-target_include_directories("${TARGET_NAME}" PUBLIC "${OPENVR_INCLUDE_DIR}")
+target_include_directories("${TARGET_NAME}" PUBLIC "${OPENVR_INCLUDE_DIR}" "${GLM_INCLUDE_DIR}")
 target_link_libraries(${TARGET_NAME}
   ${QT_LIBRARIES}
   ${OPENVR_LIBRARY}

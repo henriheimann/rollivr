@@ -4,7 +4,7 @@
 
 ### Driver and Overlay
 
-- OpenVR libraries need to be installed
+- OpenVR and GLM libraries need to be installed
     - Recommended installation via https://github.com/Microsoft/vcpkg
     - Make sure to install x64-windows triplets
 - Qt5 has to be installed (https://www.qt.io/download-open-source)

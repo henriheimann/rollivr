@@ -53,10 +53,10 @@ public:
 	};
 
 private:
-	std::shared_ptr<WheelchairController> wheelchairController_;
-	std::vector<vr::VREvent_t> openvr_events_;
-	std::chrono::milliseconds frame_timing_ = std::chrono::milliseconds(16);
-	std::chrono::system_clock::time_point last_frame_time_ = std::chrono::system_clock::now();
-	std::string settings_key_ = "driver_wheelchair";
+	std::shared_ptr<WheelchairController> m_wheelchairController;
+	std::vector<vr::VREvent_t> m_openvrEvents;
+	std::chrono::milliseconds m_frameTiming = std::chrono::milliseconds(16);
+	std::chrono::system_clock::time_point m_lastFrameTime = std::chrono::system_clock::now();
+	std::string m_settingsKey = "driver_wheelchair";
 
 };

@@ -1,19 +1,24 @@
 #include "WheelchairOverlayWidget.h"
 #include "ui_WheelchairOverlayWidget.h"
 
-OverlayWidget::OverlayWidget(QWidget *parent) :
-    QWidget(parent),
-    ui(new Ui::WheelchairOverlayWidget)
+WheelchairOverlayWidget::WheelchairOverlayWidget(QWidget *parent) :
+		QWidget(parent),
+		m_ui(new Ui::WheelchairOverlayWidget)
 {
-    ui->setupUi(this);
+    m_ui->setupUi(this);
 }
 
-OverlayWidget::~OverlayWidget()
+WheelchairOverlayWidget::~WheelchairOverlayWidget()
 {
-    delete ui;
+    delete m_ui;
 }
 
-void OverlayWidget::on_pushButton_clicked()
+void WheelchairOverlayWidget::on_quitOverlayPushButton_clicked()
 {
     QApplication::quit();
+}
+
+void WheelchairOverlayWidget::on_testPushButton_clicked()
+{
+	emit Test();
 }

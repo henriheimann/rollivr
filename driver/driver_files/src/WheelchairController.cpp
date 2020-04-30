@@ -9,27 +9,27 @@
 using namespace WheelchairDriverFactory;
 
 WheelchairController::WheelchairController(std::string serial) :
-		serial_(serial)
+		m_serial(serial)
 {
 }
 
 std::string WheelchairController::GetSerial()
 {
-	return this->serial_;
+	return this->m_serial;
 }
 
 void WheelchairController::Update()
 {
 	GetDriver()->Log("Controller update");
 
-	if (this->device_index_ == vr::k_unTrackedDeviceIndexInvalid)
+	if (this->m_deviceIndex == vr::k_unTrackedDeviceIndexInvalid)
 		return;
 
 	// Check if this device was asked to be identified
 	auto events = GetDriver()->GetOpenVREvents();
 	for (auto event : events) {
-		// Note here, event.trackedDeviceIndex does not necissarily equal this->device_index_, not sure why, but the component handle will match so we can just use that instead
-		//if (event.trackedDeviceIndex == this->device_index_) {
+		// Note here, event.trackedDeviceIndex does not necissarily equal this->m_deviceIndex, not sure why, but the component handle will match so we can just use that instead
+		//if (event.trackedDeviceIndex == this->m_deviceIndex) {
 		//if (event.eventType == vr::EVREventType::VREvent_Input_HapticVibration) {
 		//	if (event.data.hapticVibration.componentHandle == this->haptic_component_) {
 		//		this->did_vibrate_ = true;
@@ -48,31 +48,31 @@ void WheelchairController::Update()
 	bool pressed = (localTime.wSecond % 2) == 0;
 
 	if (localTime.wSecond % 2 == 0) {
-		GetDriver()->GetInput()->UpdateBooleanComponent(this->a_button_click_component_, true, 0);
+		GetDriver()->GetInput()->UpdateBooleanComponent(this->m_aButtonClickComponent, true, 0);
 	} else {
-		GetDriver()->GetInput()->UpdateBooleanComponent(this->a_button_click_component_, false, 0);
+		GetDriver()->GetInput()->UpdateBooleanComponent(this->m_aButtonClickComponent, false, 0);
 	}
 
 	// Post pose
-	GetDriver()->GetDriverHost()->TrackedDevicePoseUpdated(this->device_index_, pose, sizeof(vr::DriverPose_t));
-	this->last_pose_ = pose;
+	GetDriver()->GetDriverHost()->TrackedDevicePoseUpdated(this->m_deviceIndex, pose, sizeof(vr::DriverPose_t));
+	this->m_lastPose = pose;
 }
 
 vr::TrackedDeviceIndex_t WheelchairController::GetDeviceIndex()
 {
-	return this->device_index_;
+	return this->m_deviceIndex;
 }
 
 vr::EVRInitError WheelchairController::Activate(uint32_t unObjectId)
 {
-	this->device_index_ = unObjectId;
+	this->m_deviceIndex = unObjectId;
 
-	GetDriver()->Log("Activating controller " + this->serial_);
+	GetDriver()->Log("Activating controller " + this->m_serial);
 
 	// Get the properties handle
-	auto props = GetDriver()->GetProperties()->TrackedDeviceToPropertyContainer(this->device_index_);
+	auto props = GetDriver()->GetProperties()->TrackedDeviceToPropertyContainer(this->m_deviceIndex);
 
-	GetDriver()->GetInput()->CreateBooleanComponent(props, "/input/a/click", &this->a_button_click_component_);
+	GetDriver()->GetInput()->CreateBooleanComponent(props, "/input/a/click", &this->m_aButtonClickComponent);
 
 	// Set some universe ID (Must be 2 or higher)
 	GetDriver()->GetProperties()->SetUint64Property(props, vr::Prop_CurrentUniverseId_Uint64, 2);
@@ -131,7 +131,7 @@ vr::EVRInitError WheelchairController::Activate(uint32_t unObjectId)
 
 void WheelchairController::Deactivate()
 {
-	this->device_index_ = vr::k_unTrackedDeviceIndexInvalid;
+	this->m_deviceIndex = vr::k_unTrackedDeviceIndexInvalid;
 }
 
 void WheelchairController::EnterStandby()
@@ -153,5 +153,5 @@ void WheelchairController::DebugRequest(
 
 vr::DriverPose_t WheelchairController::GetPose()
 {
-	return last_pose_;
+	return m_lastPose;
 }

@@ -5,11 +5,11 @@
 
 int main(int argc, char *argv[])
 {
-    QApplication a(argc, argv);
-    OverlayWidget *pOverlayWidget = new OverlayWidget;
+    QApplication application(argc, argv);
+    WheelchairOverlayWidget *overlayWidget = new WheelchairOverlayWidget;
 
     WheelchairOverlayController::SharedInstance()->Init();
-    WheelchairOverlayController::SharedInstance()->SetWidget(pOverlayWidget );
+    WheelchairOverlayController::SharedInstance()->SetWidget(overlayWidget);
 
-    return a.exec();
+    return application.exec();
 }
