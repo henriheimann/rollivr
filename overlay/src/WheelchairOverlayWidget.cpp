@@ -18,7 +18,17 @@ void WheelchairOverlayWidget::on_quitOverlayPushButton_clicked()
     QApplication::quit();
 }
 
-void WheelchairOverlayWidget::on_testPushButton_clicked()
+void WheelchairOverlayWidget::on_leftPushButton_clicked()
 {
-	emit Test();
+	emit Left();
+}
+
+void WheelchairOverlayWidget::on_rightPushButton_clicked()
+{
+	emit Right();
+}
+
+void WheelchairOverlayWidget::on_resetPushButton_clicked()
+{
+	emit Reset();
 }

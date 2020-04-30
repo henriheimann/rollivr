@@ -15,11 +15,15 @@ public:
     ~WheelchairOverlayWidget() override;
 
 signals:
-	void Test();
+	void Left();
+	void Right();
+	void Reset();
 
 private slots:
     void on_quitOverlayPushButton_clicked();
-	void on_testPushButton_clicked();
+	void on_leftPushButton_clicked();
+	void on_rightPushButton_clicked();
+	void on_resetPushButton_clicked();
 
 private:
     Ui::WheelchairOverlayWidget *m_ui;

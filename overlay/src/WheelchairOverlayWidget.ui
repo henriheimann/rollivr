@@ -28,9 +28,27 @@
     </spacer>
    </item>
    <item>
-    <widget class="QPushButton" name="testPushButton">
+    <layout class="QHBoxLayout" name="horizontalLayout_3">
+     <item>
+      <widget class="QPushButton" name="leftPushButton">
+       <property name="text">
+        <string>&lt;</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="rightPushButton">
+       <property name="text">
+        <string>&gt;</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QPushButton" name="resetPushButton">
      <property name="text">
-      <string>Test</string>
+      <string>Reset</string>
      </property>
     </widget>
    </item>

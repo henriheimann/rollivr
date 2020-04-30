@@ -14,6 +14,8 @@
 #include <QtWidgets/QGraphicsEllipseItem>
 #include <QCursor>
 
+#include <iostream>
+
 using namespace vr;
 
 WheelchairOverlayController *sharedWheelchairOverlayController = nullptr;
@@ -258,7 +260,9 @@ void WheelchairOverlayController::OnTimeoutPumpEvents()
 void WheelchairOverlayController::SetWidget(WheelchairOverlayWidget *widget)
 {
 	if (m_widget != nullptr) {
-		disconnect(m_widget, &WheelchairOverlayWidget::Test, this, &WheelchairOverlayController::OnTest);
+		disconnect(m_widget, &WheelchairOverlayWidget::Left, this, &WheelchairOverlayController::OnLeft);
+		disconnect(m_widget, &WheelchairOverlayWidget::Right, this, &WheelchairOverlayController::OnRight);
+		disconnect(m_widget, &WheelchairOverlayWidget::Reset, this, &WheelchairOverlayController::OnReset);
 	}
 
 	if (m_scene) {
@@ -267,7 +271,9 @@ void WheelchairOverlayController::SetWidget(WheelchairOverlayWidget *widget)
 	}
 	m_widget = widget;
 
-	connect(widget, &WheelchairOverlayWidget::Test, this, &WheelchairOverlayController::OnTest);
+	connect(widget, &WheelchairOverlayWidget::Left, this, &WheelchairOverlayController::OnLeft);
+	connect(widget, &WheelchairOverlayWidget::Right, this, &WheelchairOverlayController::OnRight);
+	connect(widget, &WheelchairOverlayWidget::Reset, this, &WheelchairOverlayController::OnReset);
 
 	m_fbo = new QOpenGLFramebufferObject(widget->width(), widget->height(), GL_TEXTURE_2D);
 
@@ -323,9 +329,37 @@ vr::HmdError WheelchairOverlayController::GetLastHmdError()
 	return m_lastHmdError;
 }
 
-void WheelchairOverlayController::OnTest()
+void WheelchairOverlayController::OnLeft()
 {
+	vr::HmdMatrix34_t standingZeroPose;
 
+	vr::VRChaperoneSetup()->GetWorkingStandingZeroPoseToRawTrackingPose(&standingZeroPose);
+	standingZeroPose.m[0][3] += 0.1f;
+	vr::VRChaperoneSetup()->SetWorkingStandingZeroPoseToRawTrackingPose(&standingZeroPose);
+	vr::VRChaperoneSetup()->CommitWorkingCopy(EChaperoneConfigFile_Live);
+}
+
+void WheelchairOverlayController::OnRight()
+{
+	vr::HmdMatrix34_t standingZeroPose;
+
+	vr::VRChaperoneSetup()->GetWorkingStandingZeroPoseToRawTrackingPose(&standingZeroPose);
+	standingZeroPose.m[0][3] -= 0.1f;
+	vr::VRChaperoneSetup()->SetWorkingStandingZeroPoseToRawTrackingPose(&standingZeroPose);
+	vr::VRChaperoneSetup()->CommitWorkingCopy(EChaperoneConfigFile_Live);
+}
+
+void WheelchairOverlayController::OnReset()
+{
+	vr::HmdMatrix34_t standingZeroPose;
+
+	vr::VRChaperoneSetup()->GetWorkingStandingZeroPoseToRawTrackingPose(&standingZeroPose);
+
+	std::cout << standingZeroPose.m[0][0] << ", " << standingZeroPose.m[0][1] << ", " << standingZeroPose.m[0][2] << ", " << standingZeroPose.m[0][3] << std::endl;
+	std::cout << standingZeroPose.m[1][0] << ", " << standingZeroPose.m[1][1] << ", " << standingZeroPose.m[1][2] << ", " << standingZeroPose.m[1][3] << std::endl;
+	std::cout << standingZeroPose.m[2][0] << ", " << standingZeroPose.m[2][1] << ", " << standingZeroPose.m[1][2] << ", " << standingZeroPose.m[2][3] << std::endl;
+
+	vr::VRChaperoneSetup()->ReloadFromDisk(EChaperoneConfigFile_Live);
 }
 
 void WheelchairOverlayController::EnableRestart()

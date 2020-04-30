@@ -48,7 +48,9 @@ public slots:
 	void OnSceneChanged(const QList<QRectF>&);
 	void OnTimeoutPumpEvents();
 
-	void OnTest();
+	void OnLeft();
+	void OnRight();
+	void OnReset();
 
 protected:
 
