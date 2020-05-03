@@ -9,7 +9,7 @@ class WheelchairController : public vr::ITrackedDeviceServerDriver
 {
 public:
 
-	WheelchairController(std::string serial);
+	explicit WheelchairController(std::string serial);
 
 	~WheelchairController() = default;
 
@@ -19,42 +19,24 @@ public:
 
 	vr::TrackedDeviceIndex_t GetDeviceIndex();
 
-	vr::EVRInitError Activate(uint32_t unObjectId);
+	vr::EVRInitError Activate(uint32_t unObjectId) override;
 
-	void Deactivate();
+	void Deactivate() override;
 
-	void EnterStandby();
+	void EnterStandby() override;
 
-	void *GetComponent(const char *pchComponentNameAndVersion);
+	void *GetComponent(const char *pchComponentNameAndVersion) override;
 
-	void DebugRequest(const char *pchRequest, char *pchResponseBuffer, uint32_t unResponseBufferSize);
+	void DebugRequest(const char *pchRequest, char *pchResponseBuffer, uint32_t unResponseBufferSize) override;
 
-	vr::DriverPose_t GetPose();
-
-	/// <summary>
-	/// Makes a default device pose
-	/// </summary>
-	/// <returns>Default initialised pose</returns>
-	static inline vr::DriverPose_t MakeDefaultPose(bool connected = true, bool tracking = true)
-	{
-		vr::DriverPose_t out_pose = {0};
-
-		out_pose.deviceIsConnected = connected;
-		out_pose.poseIsValid = tracking;
-		out_pose.result = tracking ? vr::ETrackingResult::TrackingResult_Running_OK
-		                           : vr::ETrackingResult::TrackingResult_Running_OutOfRange;
-		out_pose.willDriftInYaw = false;
-		out_pose.shouldApplyHeadModel = false;
-		out_pose.qDriverFromHeadRotation.w = out_pose.qWorldFromDriverRotation.w = out_pose.qRotation.w = 1.0;
-
-		return out_pose;
-	}
+	vr::DriverPose_t GetPose() override;
 
 private:
 	vr::TrackedDeviceIndex_t m_deviceIndex = vr::k_unTrackedDeviceIndexInvalid;
 	std::string m_serial;
 
-	vr::DriverPose_t m_lastPose;
+	bool m_arduinoConnected;
 
-	vr::VRInputComponentHandle_t m_aButtonClickComponent = 0;
+	vr::VRInputComponentHandle_t m_xComponent = 0;
+	vr::VRInputComponentHandle_t m_yComponent = 0;
 };

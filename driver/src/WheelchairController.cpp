@@ -9,7 +9,8 @@
 using namespace WheelchairDriverFactory;
 
 WheelchairController::WheelchairController(std::string serial) :
-		m_serial(serial)
+		m_serial(serial),
+		m_arduinoConnected(false)
 {
 }
 
@@ -20,42 +21,35 @@ std::string WheelchairController::GetSerial()
 
 void WheelchairController::Update()
 {
-	GetDriver()->Log("Controller update");
+	//GetDriver()->Log("Controller update");
 
 	if (this->m_deviceIndex == vr::k_unTrackedDeviceIndexInvalid)
 		return;
 
 	// Check if this device was asked to be identified
-	auto events = GetDriver()->GetOpenVREvents();
+	/*auto events = GetDriver()->GetOpenVREvents();
 	for (auto event : events) {
 		// Note here, event.trackedDeviceIndex does not necissarily equal this->m_deviceIndex, not sure why, but the component handle will match so we can just use that instead
-		//if (event.trackedDeviceIndex == this->m_deviceIndex) {
-		//if (event.eventType == vr::EVREventType::VREvent_Input_HapticVibration) {
-		//	if (event.data.hapticVibration.componentHandle == this->haptic_component_) {
-		//		this->did_vibrate_ = true;
-		//	}
-		//}
-		//}
-	}
+		if (event.trackedDeviceIndex == this->m_deviceIndex) {
 
+		}
 
-
-	// Setup pose for this frame
-	auto pose = WheelchairController::MakeDefaultPose();
+		std::ostringstream ss;
+		ss << "Event for " << event.trackedDeviceIndex << " type: " << event.eventType;
+		GetDriver()->Log(ss.str());
+	}*/
 
 	SYSTEMTIME localTime;
 	GetLocalTime(&localTime);
-	bool pressed = (localTime.wSecond % 2) == 0;
-
 	if (localTime.wSecond % 2 == 0) {
-		GetDriver()->GetInput()->UpdateBooleanComponent(this->m_aButtonClickComponent, true, 0);
+		GetDriver()->GetInput()->UpdateScalarComponent(this->m_xComponent, 0, 0);
+		GetDriver()->GetInput()->UpdateScalarComponent(this->m_yComponent, 0.5f, 0);
 	} else {
-		GetDriver()->GetInput()->UpdateBooleanComponent(this->m_aButtonClickComponent, false, 0);
+		GetDriver()->GetInput()->UpdateScalarComponent(this->m_xComponent, 0, 0);
+		GetDriver()->GetInput()->UpdateScalarComponent(this->m_yComponent, -0.5f, 0);
 	}
 
-	// Post pose
-	GetDriver()->GetDriverHost()->TrackedDevicePoseUpdated(this->m_deviceIndex, pose, sizeof(vr::DriverPose_t));
-	this->m_lastPose = pose;
+	GetDriver()->GetDriverHost()->TrackedDevicePoseUpdated(this->m_deviceIndex, GetPose(), sizeof(vr::DriverPose_t));
 }
 
 vr::TrackedDeviceIndex_t WheelchairController::GetDeviceIndex()
@@ -67,12 +61,15 @@ vr::EVRInitError WheelchairController::Activate(uint32_t unObjectId)
 {
 	this->m_deviceIndex = unObjectId;
 
-	GetDriver()->Log("Activating controller " + this->m_serial);
+	std::ostringstream ss;
+	ss << "Activating controller " << this->m_serial << " deviceIndex: " << this->m_deviceIndex ;
+	GetDriver()->Log(ss.str());
 
 	// Get the properties handle
 	auto props = GetDriver()->GetProperties()->TrackedDeviceToPropertyContainer(this->m_deviceIndex);
 
-	GetDriver()->GetInput()->CreateBooleanComponent(props, "/input/a/click", &this->m_aButtonClickComponent);
+	GetDriver()->GetInput()->CreateScalarComponent(props, "/input/joystick/x", &this->m_xComponent, vr::VRScalarType_Absolute, vr::VRScalarUnits_NormalizedTwoSided);
+	GetDriver()->GetInput()->CreateScalarComponent(props, "/input/joystick/y", &this->m_yComponent, vr::VRScalarType_Absolute, vr::VRScalarUnits_NormalizedTwoSided);
 
 	// Set some universe ID (Must be 2 or higher)
 	GetDriver()->GetProperties()->SetUint64Property(props, vr::Prop_CurrentUniverseId_Uint64, 2);
@@ -80,25 +77,20 @@ vr::EVRInitError WheelchairController::Activate(uint32_t unObjectId)
 	// Set up a model "number" (not needed but good to have)
 	GetDriver()->GetProperties()->SetStringProperty(props, vr::Prop_ModelNumber_String, "wheelchair_controller");
 
-	// Set up a render model path
-	GetDriver()->GetProperties()->SetStringProperty(props, vr::Prop_RenderModelName_String,
-	                                                "{wheelchair}wheelchair_controller");
-
 	// Give SteamVR a hint at what hand this controller is for
 	GetDriver()->GetProperties()->SetInt32Property(props, vr::Prop_ControllerRoleHint_Int32,
 		                                               vr::ETrackedControllerRole::TrackedControllerRole_Treadmill);
+	GetDriver()->GetProperties()->SetBoolProperty(props, vr::Prop_NeverTracked_Bool, true);
 
 	// Set controller profile
 	GetDriver()->GetProperties()->SetStringProperty(props, vr::Prop_InputProfilePath_String,
 	                                                "{wheelchair}/input/wheelchair_controller_bindings.json");
 
-	// Change the icon depending on which handedness this controller is using (ANY uses right)
 	std::string controller_ready_file = "{wheelchair}/icons/controller_ready.png";
 	std::string controller_not_ready_file = "{wheelchair}/icons/controller_not_ready_.png";
 
 	GetDriver()->GetProperties()->SetStringProperty(props, vr::Prop_NamedIconPathDeviceReady_String,
 	                                                controller_ready_file.c_str());
-
 	GetDriver()->GetProperties()->SetStringProperty(props, vr::Prop_NamedIconPathDeviceOff_String,
 	                                                controller_not_ready_file.c_str());
 	GetDriver()->GetProperties()->SetStringProperty(props, vr::Prop_NamedIconPathDeviceSearching_String,
@@ -121,9 +113,13 @@ vr::EVRInitError WheelchairController::Activate(uint32_t unObjectId)
 	while(iter != devices_found.end()) {
 		serial::PortInfo device = *iter++;
 
-		std::ostringstream ss;
-		ss << device.port.c_str() << device.description.c_str() << device.hardware_id.c_str();
-		GetDriver()->Log(ss.str());
+		if (device.hardware_id.find("FTDIBUS\\COMPORT&VID_0403&PID_6001") != std::string::npos) {
+
+			std::ostringstream ss;
+			ss << "Found Arduino on " << device.port;
+			GetDriver()->Log(ss.str());
+			m_arduinoConnected = true;
+		}
 	}
 
 	return vr::EVRInitError::VRInitError_None;
@@ -153,5 +149,9 @@ void WheelchairController::DebugRequest(
 
 vr::DriverPose_t WheelchairController::GetPose()
 {
-	return m_lastPose;
+	vr::DriverPose_t pose = {0};
+	pose.deviceIsConnected = m_arduinoConnected;
+	pose.poseIsValid = true; // Must be true? Otherwise the device is shown as 'Standby'
+	//pose.result = vr::ETrackingResult::TrackingResult_Running_OK;
+	return pose;
 }

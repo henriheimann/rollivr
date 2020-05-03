@@ -1,7 +1,7 @@
 [
   {
     "language_tag": "en_US",
-    "example_controller": "Wheelchair Controller",
-    "/input/a": "A Button"
+    "wheelchair_controller": "Wheelchair Controller",
+    "/input/joystick" : "Wheelchair Movement"
   }
 ]

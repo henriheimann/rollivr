@@ -23,7 +23,7 @@ add_subdirectory(libraries/serial)
 
 # Wheelchair Driver
 set(DRIVER_NAME "wheelchair")
-set(TARGET_NAME "${DRIVER_NAME}_driver")
+set(TARGET_NAME "driver_${DRIVER_NAME}")
 add_library("${TARGET_NAME}" SHARED
         "src/WheelchairController.cpp"
         "src/WheelchairController.h"

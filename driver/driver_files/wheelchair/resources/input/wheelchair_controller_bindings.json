@@ -6,15 +6,18 @@
   "driver_name": "wheelchair",
   "input_bindingui_mode": "single_device",
   "should_show_binding_errors": true,
-  "input_bindingui": {
+  "input_bindingui_left": {
+    "image": "{wheelchair}/icons/wheelchair_controller.svg"
+  },
+  "input_bindingui_right": {
     "image": "{wheelchair}/icons/wheelchair_controller.svg"
   },
   "input_source": {
-    "/input/a": {
-      "type": "button",
-      "click": true,
-      "touch" : false,
-      "binding_image_point": [0,0]
+    "/input/joystick" : {
+      "type" : "joystick",
+      "binding_image_point" : [ 0, 0 ],
+      "click" : false,
+      "touch" : false
     }
   }
 }
