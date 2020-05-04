@@ -40,7 +40,7 @@ void SerialPortInterface::Update(std::chrono::milliseconds elapsedTime)
 				TrySplitCurrentLine();
 				m_timeSinceLastMessage = std::chrono::milliseconds(0);
 			}
-		} catch (std::exception &e) {
+		} catch (std::exception &) {
 			DisconnectSerialPort();
 		}
 	}
@@ -56,15 +56,14 @@ bool SerialPortInterface::IsLineAvailable()
 	return !m_readLines.empty();
 }
 
-std::string SerialPortInterface::GetLine()
+std::string SerialPortInterface::GetMostRecentLine()
 {
-	if (!IsLineAvailable()) {
+	if (m_readLines.empty()) {
 		return "";
 	}
 
-	auto begin = m_readLines.begin();
-	auto line = *begin;
-	m_readLines.erase(begin);
+	auto line = m_readLines.back();
+	m_readLines.clear();
 	return line;
 }
 

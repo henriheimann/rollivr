@@ -22,8 +22,6 @@ std::string WheelchairController::GetSerial()
 
 void WheelchairController::Update(std::chrono::milliseconds frameTiming)
 {
-	//GetDriver()->Log("Controller update");
-
 	if (this->m_deviceIndex == vr::k_unTrackedDeviceIndexInvalid)
 		return;
 
@@ -42,20 +40,22 @@ void WheelchairController::Update(std::chrono::milliseconds frameTiming)
 
 	m_serialPortInterface.Update(frameTiming);
 
-	while (m_serialPortInterface.IsLineAvailable()) {
-		std::string line = m_serialPortInterface.GetLine();
-		//GetDriver()->Log(line);
+	if (m_serialPortInterface.IsLineAvailable()) {
+		std::string line = m_serialPortInterface.GetMostRecentLine();
+
+		size_t separatorIndex = line.find(',');
+		if (separatorIndex != std::string::npos) {
+			try {
+				m_inputY = std::stof(line.substr(0, separatorIndex));
+				m_inputX = std::stof(line.substr(separatorIndex + 1));
+			} catch (std::exception &) {
+
+			}
+		}
 	}
 
-	SYSTEMTIME localTime;
-	GetLocalTime(&localTime);
-	if (localTime.wSecond % 2 == 0) {
-		GetDriver()->GetInput()->UpdateScalarComponent(this->m_xComponent, 0, 0);
-		GetDriver()->GetInput()->UpdateScalarComponent(this->m_yComponent, 0.5f, 0);
-	} else {
-		GetDriver()->GetInput()->UpdateScalarComponent(this->m_xComponent, 0, 0);
-		GetDriver()->GetInput()->UpdateScalarComponent(this->m_yComponent, -0.5f, 0);
-	}
+	GetDriver()->GetInput()->UpdateScalarComponent(this->m_xComponent, m_inputX, 0);
+	GetDriver()->GetInput()->UpdateScalarComponent(this->m_yComponent, m_inputY, 0);
 
 	GetDriver()->GetDriverHost()->TrackedDevicePoseUpdated(this->m_deviceIndex, GetPose(), sizeof(vr::DriverPose_t));
 }

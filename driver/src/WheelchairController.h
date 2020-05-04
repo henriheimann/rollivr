@@ -40,6 +40,9 @@ private:
 
 	SerialPortInterface m_serialPortInterface;
 
+	float m_inputX = 0;
+	float m_inputY = 0;
+
 	vr::VRInputComponentHandle_t m_xComponent = 0;
 	vr::VRInputComponentHandle_t m_yComponent = 0;
 };

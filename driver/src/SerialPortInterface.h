@@ -20,7 +20,7 @@ public:
 
 	bool IsLineAvailable();
 
-	std::string GetLine();
+	std::string GetMostRecentLine();
 
 	void Cleanup();
 
