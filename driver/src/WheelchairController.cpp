@@ -3,14 +3,15 @@
 
 #include <Windows.h>
 #include <sstream>
+#include <utility>
 
 #include <serial/serial.h>
 
 using namespace WheelchairDriverFactory;
 
 WheelchairController::WheelchairController(std::string serial) :
-		m_serial(serial),
-		m_arduinoConnected(false)
+		m_serial(std::move(serial)),
+		m_serialPortInterface({"FTDIBUS\\COMPORT&VID_0403&PID_6001"})
 {
 }
 
@@ -19,7 +20,7 @@ std::string WheelchairController::GetSerial()
 	return this->m_serial;
 }
 
-void WheelchairController::Update()
+void WheelchairController::Update(std::chrono::milliseconds frameTiming)
 {
 	//GetDriver()->Log("Controller update");
 
@@ -39,6 +40,13 @@ void WheelchairController::Update()
 		GetDriver()->Log(ss.str());
 	}*/
 
+	m_serialPortInterface.Update(frameTiming);
+
+	while (m_serialPortInterface.IsLineAvailable()) {
+		std::string line = m_serialPortInterface.GetLine();
+		//GetDriver()->Log(line);
+	}
+
 	SYSTEMTIME localTime;
 	GetLocalTime(&localTime);
 	if (localTime.wSecond % 2 == 0) {
@@ -50,6 +58,11 @@ void WheelchairController::Update()
 	}
 
 	GetDriver()->GetDriverHost()->TrackedDevicePoseUpdated(this->m_deviceIndex, GetPose(), sizeof(vr::DriverPose_t));
+}
+
+void WheelchairController::Cleanup()
+{
+	m_serialPortInterface.Cleanup();
 }
 
 vr::TrackedDeviceIndex_t WheelchairController::GetDeviceIndex()
@@ -87,16 +100,16 @@ vr::EVRInitError WheelchairController::Activate(uint32_t unObjectId)
 	                                                "{wheelchair}/input/wheelchair_controller_bindings.json");
 
 	std::string controller_ready_file = "{wheelchair}/icons/controller_ready.png";
-	std::string controller_not_ready_file = "{wheelchair}/icons/controller_not_ready_.png";
+	std::string controller_not_ready_file = "{wheelchair}/icons/controller_not_ready.png";
 
-	GetDriver()->GetProperties()->SetStringProperty(props, vr::Prop_NamedIconPathDeviceReady_String,
-	                                                controller_ready_file.c_str());
 	GetDriver()->GetProperties()->SetStringProperty(props, vr::Prop_NamedIconPathDeviceOff_String,
 	                                                controller_not_ready_file.c_str());
 	GetDriver()->GetProperties()->SetStringProperty(props, vr::Prop_NamedIconPathDeviceSearching_String,
 	                                                controller_not_ready_file.c_str());
 	GetDriver()->GetProperties()->SetStringProperty(props, vr::Prop_NamedIconPathDeviceSearchingAlert_String,
 	                                                controller_not_ready_file.c_str());
+	GetDriver()->GetProperties()->SetStringProperty(props, vr::Prop_NamedIconPathDeviceReady_String,
+	                                                controller_ready_file.c_str());
 	GetDriver()->GetProperties()->SetStringProperty(props, vr::Prop_NamedIconPathDeviceReadyAlert_String,
 	                                                controller_not_ready_file.c_str());
 	GetDriver()->GetProperties()->SetStringProperty(props, vr::Prop_NamedIconPathDeviceNotReady_String,
@@ -105,29 +118,17 @@ vr::EVRInitError WheelchairController::Activate(uint32_t unObjectId)
 	                                                controller_not_ready_file.c_str());
 	GetDriver()->GetProperties()->SetStringProperty(props, vr::Prop_NamedIconPathDeviceAlertLow_String,
 	                                                controller_not_ready_file.c_str());
-
-	std::vector<serial::PortInfo> devices_found = serial::list_ports();
-	std::vector<serial::PortInfo>::iterator iter = devices_found.begin();
-
-	GetDriver()->Log("Serial Ports:");
-	while(iter != devices_found.end()) {
-		serial::PortInfo device = *iter++;
-
-		if (device.hardware_id.find("FTDIBUS\\COMPORT&VID_0403&PID_6001") != std::string::npos) {
-
-			std::ostringstream ss;
-			ss << "Found Arduino on " << device.port;
-			GetDriver()->Log(ss.str());
-			m_arduinoConnected = true;
-		}
-	}
+	GetDriver()->GetProperties()->SetStringProperty(props, vr::Prop_NamedIconPathDeviceStandbyAlert_String,
+	                                                controller_not_ready_file.c_str());
 
 	return vr::EVRInitError::VRInitError_None;
 }
 
 void WheelchairController::Deactivate()
 {
-	this->m_deviceIndex = vr::k_unTrackedDeviceIndexInvalid;
+	m_deviceIndex = vr::k_unTrackedDeviceIndexInvalid;
+
+	m_serialPortInterface.Cleanup();
 }
 
 void WheelchairController::EnterStandby()
@@ -150,7 +151,7 @@ void WheelchairController::DebugRequest(
 vr::DriverPose_t WheelchairController::GetPose()
 {
 	vr::DriverPose_t pose = {0};
-	pose.deviceIsConnected = m_arduinoConnected;
+	pose.deviceIsConnected = m_serialPortInterface.IsConnected();
 	pose.poseIsValid = true; // Must be true? Otherwise the device is shown as 'Standby'
 	//pose.result = vr::ETrackingResult::TrackingResult_Running_OK;
 	return pose;

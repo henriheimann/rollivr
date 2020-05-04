@@ -21,6 +21,9 @@ vr::EVRInitError WheelchairDriver::Init(vr::IVRDriverContext *pDriverContext)
 
 void WheelchairDriver::Cleanup()
 {
+	if (m_wheelchairController) {
+		m_wheelchairController->Cleanup();
+	}
 }
 
 void WheelchairDriver::RunFrame()
@@ -40,7 +43,7 @@ void WheelchairDriver::RunFrame()
 
 	// Update devices
 	if (m_wheelchairController != nullptr) {
-		m_wheelchairController->Update();
+		m_wheelchairController->Update(m_frameTiming);
 	}
 }
 

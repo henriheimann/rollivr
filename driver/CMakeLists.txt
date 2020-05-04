@@ -31,7 +31,7 @@ add_library("${TARGET_NAME}" SHARED
         "src/WheelchairDriver.h"
         "src/WheelchairDriverFactory.cpp"
         "src/WheelchairDriverFactory.h"
-)
+        src/SerialPortInterface.cpp src/SerialPortInterface.h)
 
 target_include_directories("${TARGET_NAME}" PUBLIC "${OPENVR_INCLUDE_DIR}")
 target_include_directories("${TARGET_NAME}" PUBLIC "src")
