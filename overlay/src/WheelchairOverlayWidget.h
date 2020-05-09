@@ -14,6 +14,8 @@ public:
     explicit WheelchairOverlayWidget(QWidget *parent = nullptr);
     ~WheelchairOverlayWidget() override;
 
+    void SetTestLabel(const std::string &text);
+
 signals:
 	void Left();
 	void Right();

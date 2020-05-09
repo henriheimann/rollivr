@@ -14,7 +14,7 @@
 	
 ### Embedded Software
 
-- Build and deploy via the Arduino IDE
+- Build and upload via the Arduino IDE
 	
 ## Installation
 
@@ -24,7 +24,9 @@
 {
 	"external_drivers" : 
 	[
-		"C:\\<Path to Repo>\\openvr-driver\\build\\driver\\wheelchair"
+		"<Path to Repo>\\build\\driver\\wheelchair"
 	]
 }
 ```
+
+- The overlay application is located unter `<Path to Repo>\build\overlay\overlay_wheelchair`

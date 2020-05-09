@@ -3,8 +3,8 @@ const int PIN_BUTTON_LEFT = A0;
 const int PIN_BUTTON_RIGHT = A5;
 const int PIN_LED = LED_BUILTIN;
 
-const float RADIUS = 0.5f;
-const float SPEED = 0.1f;
+const float RADIUS = 1.0f;
+const float SPEED = 0.8f;
 
 void setup()
 {

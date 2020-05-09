@@ -44,7 +44,7 @@ add_custom_command(
     PRE_BUILD 
     COMMAND ${CMAKE_COMMAND} -E copy_directory 
     ${CMAKE_CURRENT_SOURCE_DIR}/driver_files/
-    $<TARGET_FILE_DIR:${TARGET_NAME}>
+    $<TARGET_FILE_DIR:${TARGET_NAME}>/${DRIVER_NAME}
 )
 
 # Copy dll to output folder

@@ -32,3 +32,8 @@ void WheelchairOverlayWidget::on_resetPushButton_clicked()
 {
 	emit Reset();
 }
+
+void WheelchairOverlayWidget::SetTestLabel(const std::string &text)
+{
+	m_ui->testLabel->setText(QString::fromStdString(text));
+}

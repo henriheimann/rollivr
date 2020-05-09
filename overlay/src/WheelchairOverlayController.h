@@ -71,6 +71,9 @@ private:
 	vr::VROverlayHandle_t m_overlayHandle;
     vr::VROverlayHandle_t m_overlayThumbnailHandle;
 
+	vr::VRActionHandle_t m_actionMovementAndRotationInput = vr::k_ulInvalidActionHandle;
+	vr::VRActionSetHandle_t m_actionSetMain = vr::k_ulInvalidActionSetHandle;
+
 	QOpenGLContext *m_openGLContext;
 	QGraphicsScene *m_scene;
 	QOpenGLFramebufferObject *m_fbo;

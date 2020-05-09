@@ -28,7 +28,7 @@ set(QT5_WINDEPLOYQT_EXECUTABLE "${QT5_WINDEPLOYQT_EXECUTABLE}/windeployqt.exe")
 # ----------------------------------- Find OpenVR -----------------------------------
 find_package(GLM REQUIRED)
 
-set(TARGET_NAME wheelchair_overlay)
+set(TARGET_NAME overlay_wheelchair)
 
 add_executable(${TARGET_NAME}
   ${SHARED_SRC_FILES}
@@ -55,6 +55,15 @@ target_link_libraries(${TARGET_NAME}
 set_target_properties(${TARGET_NAME}
   PROPERTIES
   COMPILE_FLAGS "${QT_FLAGS}"
+)
+
+# Copy assets to output folder
+add_custom_command(
+        TARGET ${TARGET_NAME}
+        PRE_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory
+        ${CMAKE_CURRENT_SOURCE_DIR}/application_files/
+        $<TARGET_FILE_DIR:${TARGET_NAME}>
 )
 
 # Deploy with windeployqt to add all required .dll files to the output directory

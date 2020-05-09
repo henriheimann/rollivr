@@ -1,0 +1,28 @@
+{
+  "default_bindings": [
+    {
+      "controller_type" : "wheelchair_controller",
+      "binding_url" : "wheelchairoverlay_bindings_wheelchaircontroller.json"
+    }
+  ],
+  "actions": [
+    {
+      "name": "/actions/main/in/movementAndRotation",
+      "type": "vector2"
+    }
+  ],
+  "action_sets": [
+    {
+      "name": "/actions/main",
+      "usage": "single"
+    }
+  ],
+  "localization": [
+    {
+      "language_tag": "en_US",
+      "/actions/": "Actions",
+      "/actions/main/": "Main Actions",
+      "/actions/main/in/movementAndRotation": "Movement and Rotation"
+    }
+  ]
+}

@@ -14,6 +14,7 @@
 #include <QtWidgets/QGraphicsEllipseItem>
 #include <QCursor>
 
+#include <sstream>
 #include <iostream>
 
 using namespace vr;
@@ -155,6 +156,18 @@ void WheelchairOverlayController::OnTimeoutPumpEvents()
 {
 	if (!vr::VRSystem()) {
 		return;
+	}
+
+	vr::VRActiveActionSet_t actionSet = { 0 };
+	actionSet.ulActionSet = m_actionSetMain;
+	vr::VRInput()->UpdateActionState(&actionSet, sizeof(actionSet), 1);
+
+	vr::InputAnalogActionData_t analogData;
+	if (vr::VRInput()->GetAnalogActionData(m_actionMovementAndRotationInput, &analogData, sizeof(analogData), vr::k_ulInvalidInputValueHandle) == vr::VRInputError_None && analogData.bActive) {
+		std::ostringstream ss;
+		ss << "x: " << analogData.x << " y: " << analogData.y << " update time: " << analogData.fUpdateTime;
+		m_widget->SetTestLabel(ss.str());
+		std::cout << ss.str() << std::endl;
 	}
 
 	vr::VREvent_t vrEvent;
@@ -300,6 +313,11 @@ bool WheelchairOverlayController::ConnectToVRRuntime()
 
 	m_vrDriver = GetTrackedDeviceString(vrSystem, vr::k_unTrackedDeviceIndex_Hmd, vr::Prop_TrackingSystemName_String);
 	m_vrDisplay = GetTrackedDeviceString(vrSystem, vr::k_unTrackedDeviceIndex_Hmd, vr::Prop_SerialNumber_String);
+
+	std::string actionManifestPath = (QCoreApplication::applicationDirPath() + "/wheelchairoverlay_vractions.json").toStdString();
+	vr::VRInput()->SetActionManifestPath(actionManifestPath.c_str());
+	vr::VRInput()->GetActionHandle("/actions/main/in/movementAndRotation", &m_actionMovementAndRotationInput);
+	vr::VRInput()->GetActionSetHandle("/actions/main", &m_actionSetMain);
 
 	return true;
 }

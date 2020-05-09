@@ -1,0 +1,20 @@
+{
+  "bindings": {
+    "/actions/main/": {
+      "sources": [
+        {
+          "inputs": {
+            "position": {
+              "output": "/actions/main/in/movementAndRotation"
+            }
+          },
+          "mode": "joystick",
+          "path": "/user/treadmill/input/joystick"
+        }
+      ]
+    }
+  },
+  "controller_type": "wheelchair_controller",
+  "description": "Bindings for the Wheelchair Overlay Application for the Wheelchair Controller",
+  "name": "Wheelchair Overlay bindings for the Wheelchair Controller"
+}

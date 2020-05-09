@@ -95,6 +95,8 @@ vr::EVRInitError WheelchairController::Activate(uint32_t unObjectId)
 		                                               vr::ETrackedControllerRole::TrackedControllerRole_Treadmill);
 	GetDriver()->GetProperties()->SetBoolProperty(props, vr::Prop_NeverTracked_Bool, true);
 
+	GetDriver()->GetProperties()->SetBoolProperty(props, vr::Prop_Identifiable_Bool, false);
+
 	// Set controller profile
 	GetDriver()->GetProperties()->SetStringProperty(props, vr::Prop_InputProfilePath_String,
 	                                                "{wheelchair}/input/wheelchair_controller_bindings.json");
