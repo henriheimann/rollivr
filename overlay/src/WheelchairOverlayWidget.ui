@@ -6,12 +6,35 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>320</width>
-    <height>270</height>
+    <width>400</width>
+    <height>300</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Hello World Overlay</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">QWidget#WheelchairOverlayWidget {
+	background: qlineargradient(x1:0 y1:0, x2:0 y2:1, stop:0 #31353d, stop:1 #292c33);	
+	color: #dee2e5;
+}
+
+QWidget {
+	color: #dee2e5;
+	font: 8pt &quot;Segoe UI&quot;;
+}
+
+QPushButton {
+	border: none;
+	border-radius: 10px;
+	padding: 6px;
+	background-color: #3d4450;
+	font: 63 8pt &quot;Segoe UI Semibold&quot;;
+}
+
+QLabel {
+	color: #dee2e5;
+}</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
@@ -48,7 +71,7 @@
    <item>
     <widget class="QPushButton" name="resetPushButton">
      <property name="text">
-      <string>Reset</string>
+      <string>RESET</string>
      </property>
     </widget>
    </item>
@@ -92,22 +115,9 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <spacer name="horizontalSpacer">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item>
       <widget class="QPushButton" name="quitOverlayPushButton">
        <property name="text">
-        <string>Quit Overlay</string>
+        <string>QUIT OVERLAY</string>
        </property>
       </widget>
      </item>
