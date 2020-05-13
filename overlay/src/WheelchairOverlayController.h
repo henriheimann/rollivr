@@ -3,6 +3,11 @@
 
 #pragma once
 
+#include <chrono>
+
+#define GLM_FORCE_SWIZZLE
+#include <glm/glm.hpp>
+
 #include "openvr.h"
 
 #include <QtCore/QtCore>
@@ -48,8 +53,6 @@ public slots:
 	void OnSceneChanged(const QList<QRectF>&);
 	void OnTimeoutPumpEvents();
 
-	void OnLeft();
-	void OnRight();
 	void OnReset();
 
 protected:
@@ -58,7 +61,13 @@ private:
 	bool ConnectToVRRuntime();
 	void DisconnectFromVRRuntime();
 
-	vr::TrackedDevicePose_t m_trackedDevicePose[vr::k_unMaxTrackedDeviceCount];
+	void ProcessUIEvents();
+	void ProcessBindings();
+
+	void ResetZeroPose();
+	void UpdateZeroPose();
+
+	vr::TrackedDevicePose_t m_trackedDevicePose[vr::k_unMaxTrackedDeviceCount]{};
 	QString m_vrDriver;
 	QString m_vrDisplay;
 	QString m_name;
@@ -69,7 +78,7 @@ private:
 	vr::HmdError m_compositorError;
 	vr::HmdError m_overlayError;
 	vr::VROverlayHandle_t m_overlayHandle;
-    vr::VROverlayHandle_t m_overlayThumbnailHandle;
+    vr::VROverlayHandle_t m_overlayThumbnailHandle{};
 
 	vr::VRActionHandle_t m_actionMovementAndRotationInput = vr::k_ulInvalidActionHandle;
 	vr::VRActionSetHandle_t m_actionSetMain = vr::k_ulInvalidActionSetHandle;
@@ -80,9 +89,19 @@ private:
 	QOffscreenSurface *m_offscreenSurface;
 
 	QTimer *m_pumpEventsTimer;
+	std::chrono::milliseconds m_frameTiming;
+	std::chrono::system_clock::time_point m_lastFrameTime;
 
 	WheelchairOverlayWidget *m_widget;
 
 	QPointF m_lastMousePoint;
 	Qt::MouseButtons m_lastMouseButtons;
+
+	glm::mat4 initialZeroPose{};
+
+	glm::vec3 m_currentTranslation{};
+	float m_currentRotation{};
+
+	float m_lastInputX{};
+	float m_lastInputY{};
 };

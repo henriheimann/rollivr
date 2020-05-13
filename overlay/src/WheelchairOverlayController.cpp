@@ -14,6 +14,10 @@
 #include <QtWidgets/QGraphicsEllipseItem>
 #include <QCursor>
 
+#include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/gtx/string_cast.hpp>
+
 #include <sstream>
 #include <iostream>
 
@@ -33,7 +37,8 @@ WheelchairOverlayController::WheelchairOverlayController()
 		: BaseClass(), m_vrDriver("No Driver"), m_vrDisplay("No Display"), m_lastHmdError(vr::VRInitError_None),
 		  m_compositorError(vr::VRInitError_None), m_overlayError(vr::VRInitError_None),
 		  m_overlayHandle(vr::k_ulOverlayHandleInvalid), m_openGLContext(nullptr), m_scene(nullptr), m_fbo(nullptr),
-		  m_offscreenSurface(nullptr), m_pumpEventsTimer(nullptr), m_widget(nullptr), m_lastMouseButtons(0)
+		  m_offscreenSurface(nullptr), m_pumpEventsTimer(nullptr), m_widget(nullptr), m_lastMouseButtons(0),
+		  m_frameTiming(), m_lastFrameTime()
 {
 }
 
@@ -53,14 +58,7 @@ bool WheelchairOverlayController::Init()
 {
 	bool success;
 
-	m_name = "systemoverlay";
-
-	QStringList arguments = qApp->arguments();
-
-	int nNameArg = arguments.indexOf("-name");
-	if (nNameArg != -1 && nNameArg + 2 <= arguments.size()) {
-		m_name = arguments.at(nNameArg + 1);
-	}
+	m_name = "Wheelchair Controller Overlay";
 
 	QSurfaceFormat format;
 	format.setMajorVersion(4);
@@ -81,7 +79,7 @@ bool WheelchairOverlayController::Init()
 	m_openGLContext->makeCurrent(m_offscreenSurface);
 
 	m_scene = new QGraphicsScene();
-	connect(m_scene, SIGNAL(changed(const QList<QRectF>&)), this, SLOT(OnSceneChanged(const QList<QRectF>&)));
+	connect(m_scene, &QGraphicsScene::changed, this, &WheelchairOverlayController::OnSceneChanged);
 
 	// Loading the OpenVR Runtime
 	success = ConnectToVRRuntime();
@@ -89,8 +87,8 @@ bool WheelchairOverlayController::Init()
 	success = success && vr::VRCompositor() != nullptr;
 
 	if (vr::VROverlay()) {
-		std::string sKey = std::string("sample.") + m_name.toStdString();
-		vr::VROverlayError overlayError = vr::VROverlay()->CreateDashboardOverlay(sKey.c_str(),
+		std::string key = std::string("wheelchair.") + m_name.toStdString();
+		vr::VROverlayError overlayError = vr::VROverlay()->CreateDashboardOverlay(key.c_str(),
 		                                                                          m_name.toStdString().c_str(),
 		                                                                          &m_overlayHandle,
 		                                                                          &m_overlayThumbnailHandle);
@@ -101,11 +99,13 @@ bool WheelchairOverlayController::Init()
 		vr::VROverlay()->SetOverlayWidthInMeters(m_overlayHandle, 1.5f);
 		vr::VROverlay()->SetOverlayInputMethod(m_overlayHandle, vr::VROverlayInputMethod_Mouse);
 
-		m_pumpEventsTimer = new QTimer(this);
-		connect(m_pumpEventsTimer, SIGNAL(timeout()), this, SLOT(OnTimeoutPumpEvents()));
-		m_pumpEventsTimer->setInterval(20);
-		m_pumpEventsTimer->start();
+		std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
+		this->m_lastFrameTime = now;
 
+		m_pumpEventsTimer = new QTimer(this);
+		connect(m_pumpEventsTimer, &QTimer::timeout, this, &WheelchairOverlayController::OnTimeoutPumpEvents);
+		m_pumpEventsTimer->setInterval(10);
+		m_pumpEventsTimer->start();
 	}
 
 	return true;
@@ -128,7 +128,7 @@ void WheelchairOverlayController::Shutdown()
 
 void WheelchairOverlayController::OnSceneChanged(const QList<QRectF> &)
 {
-	// skip rendering if the overlay isn't visible
+	// Skip rendering if the overlay isn't visible
 	if ((m_overlayHandle == k_ulOverlayHandleInvalid) || !vr::VROverlay() ||
 	    (!vr::VROverlay()->IsOverlayVisible(m_overlayHandle) &&
 	     !vr::VROverlay()->IsOverlayVisible(m_overlayThumbnailHandle))) {
@@ -142,7 +142,6 @@ void WheelchairOverlayController::OnSceneChanged(const QList<QRectF> &)
 	QPainter painter(&device);
 
 	m_scene->render(&painter);
-
 	m_fbo->release();
 
 	GLuint unTexture = m_fbo->texture();
@@ -158,29 +157,29 @@ void WheelchairOverlayController::OnTimeoutPumpEvents()
 		return;
 	}
 
-	vr::VRActiveActionSet_t actionSet = { 0 };
-	actionSet.ulActionSet = m_actionSetMain;
-	vr::VRInput()->UpdateActionState(&actionSet, sizeof(actionSet), 1);
+	// Update frame timing
+	std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
+	this->m_frameTiming = std::chrono::duration_cast<std::chrono::milliseconds>(now - this->m_lastFrameTime);
+	this->m_lastFrameTime = now;
 
-	vr::InputAnalogActionData_t analogData;
-	if (vr::VRInput()->GetAnalogActionData(m_actionMovementAndRotationInput, &analogData, sizeof(analogData), vr::k_ulInvalidInputValueHandle) == vr::VRInputError_None && analogData.bActive) {
-		std::ostringstream ss;
-		ss << "x: " << analogData.x << " y: " << analogData.y << " update time: " << analogData.fUpdateTime;
-		m_widget->SetTestLabel(ss.str());
-		std::cout << ss.str() << std::endl;
-	}
+	//std::cout << "OnTimeoutPumpEvents: " << m_frameTiming.count() << " FPS: " << (1000.0f / m_frameTiming.count()) << std::endl;
+	ProcessUIEvents();
+	ProcessBindings();
+}
 
-	vr::VREvent_t vrEvent;
+void WheelchairOverlayController::ProcessUIEvents()
+{
+	vr::VREvent_t vrEvent{};
 	while (vr::VROverlay()->PollNextOverlayEvent(m_overlayHandle, &vrEvent, sizeof(vrEvent))) {
 		switch (vrEvent.eventType) {
 			case vr::VREvent_MouseMove: {
-				QPointF ptNewMouse(vrEvent.data.mouse.x, vrEvent.data.mouse.y);
-				QPoint ptGlobal = ptNewMouse.toPoint();
+				QPointF newMousePoint(vrEvent.data.mouse.x, vrEvent.data.mouse.y);
+				QPoint globalPoint = newMousePoint.toPoint();
 				QGraphicsSceneMouseEvent mouseEvent(QEvent::GraphicsSceneMouseMove);
 				mouseEvent.setWidget(nullptr);
-				mouseEvent.setPos(ptNewMouse);
-				mouseEvent.setScenePos(ptGlobal);
-				mouseEvent.setScreenPos(ptGlobal);
+				mouseEvent.setPos(newMousePoint);
+				mouseEvent.setScenePos(globalPoint);
+				mouseEvent.setScreenPos(globalPoint);
 				mouseEvent.setLastPos(m_lastMousePoint);
 				mouseEvent.setLastScenePos(m_widget->mapToGlobal(m_lastMousePoint.toPoint()));
 				mouseEvent.setLastScreenPos(m_widget->mapToGlobal(m_lastMousePoint.toPoint()));
@@ -189,12 +188,12 @@ void WheelchairOverlayController::OnTimeoutPumpEvents()
 				mouseEvent.setModifiers(0);
 				mouseEvent.setAccepted(false);
 
-				m_lastMousePoint = ptNewMouse;
+				m_lastMousePoint = newMousePoint;
 				QApplication::sendEvent(m_scene, &mouseEvent);
 
 				OnSceneChanged(QList<QRectF>());
-			}
 				break;
+			}
 
 			case vr::VREvent_MouseButtonDown: {
 				Qt::MouseButton button =
@@ -202,54 +201,54 @@ void WheelchairOverlayController::OnTimeoutPumpEvents()
 
 				m_lastMouseButtons |= button;
 
-				QPoint ptGlobal = m_lastMousePoint.toPoint();
+				QPoint globalPoint = m_lastMousePoint.toPoint();
 				QGraphicsSceneMouseEvent mouseEvent(QEvent::GraphicsSceneMousePress);
 				mouseEvent.setWidget(nullptr);
 				mouseEvent.setPos(m_lastMousePoint);
 				mouseEvent.setButtonDownPos(button, m_lastMousePoint);
-				mouseEvent.setButtonDownScenePos(button, ptGlobal);
-				mouseEvent.setButtonDownScreenPos(button, ptGlobal);
-				mouseEvent.setScenePos(ptGlobal);
-				mouseEvent.setScreenPos(ptGlobal);
+				mouseEvent.setButtonDownScenePos(button, globalPoint);
+				mouseEvent.setButtonDownScreenPos(button, globalPoint);
+				mouseEvent.setScenePos(globalPoint);
+				mouseEvent.setScreenPos(globalPoint);
 				mouseEvent.setLastPos(m_lastMousePoint);
-				mouseEvent.setLastScenePos(ptGlobal);
-				mouseEvent.setLastScreenPos(ptGlobal);
+				mouseEvent.setLastScenePos(globalPoint);
+				mouseEvent.setLastScreenPos(globalPoint);
 				mouseEvent.setButtons(m_lastMouseButtons);
 				mouseEvent.setButton(button);
 				mouseEvent.setModifiers(0);
 				mouseEvent.setAccepted(false);
 
 				QApplication::sendEvent(m_scene, &mouseEvent);
-			}
 				break;
+			}
 
 			case vr::VREvent_MouseButtonUp: {
 				Qt::MouseButton button =
 						vrEvent.data.mouse.button == vr::VRMouseButton_Right ? Qt::RightButton : Qt::LeftButton;
 				m_lastMouseButtons &= ~button;
 
-				QPoint ptGlobal = m_lastMousePoint.toPoint();
+				QPoint globalPoint = m_lastMousePoint.toPoint();
 				QGraphicsSceneMouseEvent mouseEvent(QEvent::GraphicsSceneMouseRelease);
 				mouseEvent.setWidget(nullptr);
 				mouseEvent.setPos(m_lastMousePoint);
-				mouseEvent.setScenePos(ptGlobal);
-				mouseEvent.setScreenPos(ptGlobal);
+				mouseEvent.setScenePos(globalPoint);
+				mouseEvent.setScreenPos(globalPoint);
 				mouseEvent.setLastPos(m_lastMousePoint);
-				mouseEvent.setLastScenePos(ptGlobal);
-				mouseEvent.setLastScreenPos(ptGlobal);
+				mouseEvent.setLastScenePos(globalPoint);
+				mouseEvent.setLastScreenPos(globalPoint);
 				mouseEvent.setButtons(m_lastMouseButtons);
 				mouseEvent.setButton(button);
 				mouseEvent.setModifiers(0);
 				mouseEvent.setAccepted(false);
 
 				QApplication::sendEvent(m_scene, &mouseEvent);
-			}
 				break;
+			}
 
 			case vr::VREvent_OverlayShown: {
 				m_widget->repaint();
-			}
 				break;
+			}
 
 			case vr::VREvent_Quit:
 				QApplication::exit();
@@ -262,19 +261,85 @@ void WheelchairOverlayController::OnTimeoutPumpEvents()
 			switch (vrEvent.eventType) {
 				case vr::VREvent_OverlayShown: {
 					m_widget->repaint();
-				}
 					break;
+				}
 			}
 		}
 	}
+}
 
+void WheelchairOverlayController::ProcessBindings()
+{
+	vr::VRActiveActionSet_t actionSet = {0};
+	actionSet.ulActionSet = m_actionSetMain;
+	vr::VRInput()->UpdateActionState(&actionSet, sizeof(actionSet), 1);
+
+	vr::InputAnalogActionData_t analogData{};
+	if (vr::VRInput()->GetAnalogActionData(m_actionMovementAndRotationInput, &analogData, sizeof(analogData),
+	                                       vr::k_ulInvalidInputValueHandle) == vr::VRInputError_None && analogData.bActive) {
+		m_lastInputX = analogData.x;
+		m_lastInputY = analogData.y;
+	} else {
+		m_lastInputX = 0.0f;
+		m_lastInputY = 0.0f;
+	}
+
+	UpdateZeroPose();
+}
+
+void WheelchairOverlayController::ResetZeroPose()
+{
+	// Reset Chaperone
+	vr::VRChaperoneSetup()->ReloadFromDisk(EChaperoneConfigFile_Live);
+
+	vr::HmdMatrix34_t vrZeroPose{};
+	vr::VRChaperoneSetup()->GetWorkingStandingZeroPoseToRawTrackingPose(&vrZeroPose);
+
+	// Copy from HmdMatrix34 and transpose to column major order
+	memcpy(glm::value_ptr(initialZeroPose), &vrZeroPose.m[0][0], sizeof(vrZeroPose.m));
+	initialZeroPose = glm::transpose(initialZeroPose);
+
+	UpdateZeroPose();
+}
+
+void WheelchairOverlayController::UpdateZeroPose()
+{
+	float heightOffset = (m_widget == nullptr) ? 0.0f : m_widget->GetHeightOffset();
+
+	float delta = (m_frameTiming.count() / 1000.0f);
+
+	// TODO: Delta gets very large at the beginning
+	if (delta > 1 || delta < -1) {
+		delta = 0.0;
+	}
+
+	m_currentRotation += m_lastInputX * delta;
+
+	glm::mat4 rotationMatrix = glm::rotate(glm::mat4(1.0f), m_currentRotation, glm::vec3(0, 1, 0));
+
+	// Move forward
+	glm::vec3 forward = (glm::vec4(1, 0, 0, 0) * rotationMatrix).xyz();
+
+	m_currentTranslation += forward * m_lastInputY * delta;
+	m_currentTranslation[1] = heightOffset;
+
+	glm::mat4 currentZeroPose = glm::rotate(initialZeroPose, m_currentRotation, glm::vec3(0, 1, 0));
+	currentZeroPose = glm::translate(currentZeroPose, m_currentTranslation);
+
+	// Transpose to row major order and store in HmdMatrix34
+	glm::mat4 transposedNewZeroPose = glm::transpose(currentZeroPose);
+
+	// Copy over to SteamVR zero pose
+	vr::HmdMatrix34_t vrNewZeroPose{};
+	memcpy(&vrNewZeroPose.m[0][0], glm::value_ptr(transposedNewZeroPose), sizeof(vrNewZeroPose.m));
+
+	vr::VRChaperoneSetup()->SetWorkingStandingZeroPoseToRawTrackingPose(&vrNewZeroPose);
+	vr::VRChaperoneSetup()->CommitWorkingCopy(EChaperoneConfigFile_Live);
 }
 
 void WheelchairOverlayController::SetWidget(WheelchairOverlayWidget *widget)
 {
 	if (m_widget != nullptr) {
-		disconnect(m_widget, &WheelchairOverlayWidget::Left, this, &WheelchairOverlayController::OnLeft);
-		disconnect(m_widget, &WheelchairOverlayWidget::Right, this, &WheelchairOverlayController::OnRight);
 		disconnect(m_widget, &WheelchairOverlayWidget::Reset, this, &WheelchairOverlayController::OnReset);
 	}
 
@@ -284,8 +349,6 @@ void WheelchairOverlayController::SetWidget(WheelchairOverlayWidget *widget)
 	}
 	m_widget = widget;
 
-	connect(widget, &WheelchairOverlayWidget::Left, this, &WheelchairOverlayController::OnLeft);
-	connect(widget, &WheelchairOverlayWidget::Right, this, &WheelchairOverlayController::OnRight);
 	connect(widget, &WheelchairOverlayWidget::Reset, this, &WheelchairOverlayController::OnReset);
 
 	m_fbo = new QOpenGLFramebufferObject(widget->width(), widget->height(), GL_TEXTURE_2D);
@@ -297,7 +360,6 @@ void WheelchairOverlayController::SetWidget(WheelchairOverlayWidget *widget)
 		};
 		vr::VROverlay()->SetOverlayMouseScale(m_overlayHandle, &vecWindowSize);
 	}
-
 }
 
 bool WheelchairOverlayController::ConnectToVRRuntime()
@@ -318,6 +380,8 @@ bool WheelchairOverlayController::ConnectToVRRuntime()
 	vr::VRInput()->SetActionManifestPath(actionManifestPath.c_str());
 	vr::VRInput()->GetActionHandle("/actions/main/in/movementAndRotation", &m_actionMovementAndRotationInput);
 	vr::VRInput()->GetActionSetHandle("/actions/main", &m_actionSetMain);
+
+	ResetZeroPose();
 
 	return true;
 }
@@ -347,37 +411,9 @@ vr::HmdError WheelchairOverlayController::GetLastHmdError()
 	return m_lastHmdError;
 }
 
-void WheelchairOverlayController::OnLeft()
-{
-	vr::HmdMatrix34_t standingZeroPose;
-
-	vr::VRChaperoneSetup()->GetWorkingStandingZeroPoseToRawTrackingPose(&standingZeroPose);
-	standingZeroPose.m[0][3] += 0.1f;
-	vr::VRChaperoneSetup()->SetWorkingStandingZeroPoseToRawTrackingPose(&standingZeroPose);
-	vr::VRChaperoneSetup()->CommitWorkingCopy(EChaperoneConfigFile_Live);
-}
-
-void WheelchairOverlayController::OnRight()
-{
-	vr::HmdMatrix34_t standingZeroPose;
-
-	vr::VRChaperoneSetup()->GetWorkingStandingZeroPoseToRawTrackingPose(&standingZeroPose);
-	standingZeroPose.m[0][3] -= 0.1f;
-	vr::VRChaperoneSetup()->SetWorkingStandingZeroPoseToRawTrackingPose(&standingZeroPose);
-	vr::VRChaperoneSetup()->CommitWorkingCopy(EChaperoneConfigFile_Live);
-}
-
 void WheelchairOverlayController::OnReset()
 {
-	vr::HmdMatrix34_t standingZeroPose;
-
-	vr::VRChaperoneSetup()->GetWorkingStandingZeroPoseToRawTrackingPose(&standingZeroPose);
-
-	std::cout << standingZeroPose.m[0][0] << ", " << standingZeroPose.m[0][1] << ", " << standingZeroPose.m[0][2] << ", " << standingZeroPose.m[0][3] << std::endl;
-	std::cout << standingZeroPose.m[1][0] << ", " << standingZeroPose.m[1][1] << ", " << standingZeroPose.m[1][2] << ", " << standingZeroPose.m[1][3] << std::endl;
-	std::cout << standingZeroPose.m[2][0] << ", " << standingZeroPose.m[2][1] << ", " << standingZeroPose.m[1][2] << ", " << standingZeroPose.m[2][3] << std::endl;
-
-	vr::VRChaperoneSetup()->ReloadFromDisk(EChaperoneConfigFile_Live);
+	ResetZeroPose();
 }
 
 void WheelchairOverlayController::EnableRestart()

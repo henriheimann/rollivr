@@ -14,17 +14,13 @@ public:
     explicit WheelchairOverlayWidget(QWidget *parent = nullptr);
     ~WheelchairOverlayWidget() override;
 
-    void SetTestLabel(const std::string &text);
+    float GetHeightOffset() const;
 
 signals:
-	void Left();
-	void Right();
 	void Reset();
 
 private slots:
     void on_quitOverlayPushButton_clicked();
-	void on_leftPushButton_clicked();
-	void on_rightPushButton_clicked();
 	void on_resetPushButton_clicked();
 
 private:

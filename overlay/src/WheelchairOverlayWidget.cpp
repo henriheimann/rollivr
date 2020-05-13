@@ -18,22 +18,12 @@ void WheelchairOverlayWidget::on_quitOverlayPushButton_clicked()
     QApplication::quit();
 }
 
-void WheelchairOverlayWidget::on_leftPushButton_clicked()
-{
-	emit Left();
-}
-
-void WheelchairOverlayWidget::on_rightPushButton_clicked()
-{
-	emit Right();
-}
-
 void WheelchairOverlayWidget::on_resetPushButton_clicked()
 {
 	emit Reset();
 }
 
-void WheelchairOverlayWidget::SetTestLabel(const std::string &text)
+float WheelchairOverlayWidget::GetHeightOffset() const
 {
-	m_ui->testLabel->setText(QString::fromStdString(text));
+	return (float)m_ui->heightAdjustmentSlider->value() / 100.0f;
 }

@@ -23,8 +23,6 @@ public:
 
 	std::chrono::milliseconds GetLastFrameTime();
 
-	SettingsValue GetSettingsValue(std::string key);
-
 	void Log(std::string message);
 
 	vr::IVRDriverInput *GetInput();

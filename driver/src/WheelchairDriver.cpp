@@ -89,34 +89,6 @@ std::chrono::milliseconds WheelchairDriver::GetLastFrameTime()
 	return this->m_frameTiming;
 }
 
-WheelchairDriver::SettingsValue WheelchairDriver::GetSettingsValue(std::string key)
-{
-	vr::EVRSettingsError err = vr::EVRSettingsError::VRSettingsError_None;
-	int int_value = vr::VRSettings()->GetInt32(m_settingsKey.c_str(), key.c_str(), &err);
-	if (err == vr::EVRSettingsError::VRSettingsError_None) {
-		return int_value;
-	}
-	err = vr::EVRSettingsError::VRSettingsError_None;
-	float float_value = vr::VRSettings()->GetFloat(m_settingsKey.c_str(), key.c_str(), &err);
-	if (err == vr::EVRSettingsError::VRSettingsError_None) {
-		return float_value;
-	}
-	err = vr::EVRSettingsError::VRSettingsError_None;
-	bool bool_value = vr::VRSettings()->GetBool(m_settingsKey.c_str(), key.c_str(), &err);
-	if (err == vr::EVRSettingsError::VRSettingsError_None) {
-		return bool_value;
-	}
-	std::string str_value;
-	str_value.reserve(1024);
-	vr::VRSettings()->GetString(m_settingsKey.c_str(), key.c_str(), str_value.data(), 1024, &err);
-	if (err == vr::EVRSettingsError::VRSettingsError_None) {
-		return str_value;
-	}
-	err = vr::EVRSettingsError::VRSettingsError_None;
-
-	return SettingsValue();
-}
-
 void WheelchairDriver::Log(std::string message)
 {
 	std::string message_endl = message + "\n";
