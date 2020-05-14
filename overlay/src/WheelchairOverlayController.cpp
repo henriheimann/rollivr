@@ -289,15 +289,8 @@ void WheelchairOverlayController::ProcessBindings()
 
 void WheelchairOverlayController::ResetZeroPose()
 {
-	// Reset Chaperone
-	vr::VRChaperoneSetup()->ReloadFromDisk(EChaperoneConfigFile_Live);
-
-	vr::HmdMatrix34_t vrZeroPose{};
-	vr::VRChaperoneSetup()->GetWorkingStandingZeroPoseToRawTrackingPose(&vrZeroPose);
-
-	// Copy from HmdMatrix34 and transpose to column major order
-	memcpy(glm::value_ptr(initialZeroPose), &vrZeroPose.m[0][0], sizeof(vrZeroPose.m));
-	initialZeroPose = glm::transpose(initialZeroPose);
+	m_currentTranslation = glm::vec3{};
+	m_currentRotation = 0;
 
 	UpdateZeroPose();
 }
@@ -305,26 +298,29 @@ void WheelchairOverlayController::ResetZeroPose()
 void WheelchairOverlayController::UpdateZeroPose()
 {
 	float heightOffset = (m_widget == nullptr) ? 0.0f : m_widget->GetHeightOffset();
+	float xOffset = (m_widget == nullptr) ? 0.0f : m_widget->GetXOffset();
+	float yOffset = (m_widget == nullptr) ? 0.0f : m_widget->GetYOffset();
+	float rotationOffset = (m_widget == nullptr) ? 0.0f : m_widget->GetRotationOffset();
+	float turnSpeed = (m_widget == nullptr) ? 1.0f : m_widget->GetTurnSpeed();
+	float movementSpeed = (m_widget == nullptr) ? 1.0f : m_widget->GetMovementSpeed();
 
 	float delta = (m_frameTiming.count() / 1000.0f);
 
-	// TODO: Delta gets very large at the beginning
-	if (delta > 1 || delta < -1) {
+	// Don't process input if we are at <10 FPS.
+	if (delta > 0.1f || delta < -0.1f) {
 		delta = 0.0;
 	}
 
-	m_currentRotation += m_lastInputX * delta;
-
-	glm::mat4 rotationMatrix = glm::rotate(glm::mat4(1.0f), m_currentRotation, glm::vec3(0, 1, 0));
+	m_currentRotation += m_lastInputX * delta * turnSpeed;
 
 	// Move forward
-	glm::vec3 forward = (glm::vec4(1, 0, 0, 0) * rotationMatrix).xyz();
-
-	m_currentTranslation += forward * m_lastInputY * delta;
-	m_currentTranslation[1] = heightOffset;
+	glm::vec3 forward = glm::vec4(0, 0, 1, 0) * glm::rotate(glm::mat4(1.0f), m_currentRotation, glm::vec3(0, 1, 0));
+	m_currentTranslation += forward * m_lastInputY * delta * movementSpeed;
 
 	glm::mat4 currentZeroPose = glm::rotate(initialZeroPose, m_currentRotation, glm::vec3(0, 1, 0));
 	currentZeroPose = glm::translate(currentZeroPose, m_currentTranslation);
+	currentZeroPose = glm::rotate(currentZeroPose, rotationOffset, glm::vec3(0, 1, 0));
+	currentZeroPose = glm::translate(currentZeroPose, glm::vec3(xOffset, heightOffset, yOffset));
 
 	// Transpose to row major order and store in HmdMatrix34
 	glm::mat4 transposedNewZeroPose = glm::transpose(currentZeroPose);
@@ -341,6 +337,7 @@ void WheelchairOverlayController::SetWidget(WheelchairOverlayWidget *widget)
 {
 	if (m_widget != nullptr) {
 		disconnect(m_widget, &WheelchairOverlayWidget::Reset, this, &WheelchairOverlayController::OnReset);
+		disconnect(m_widget, &WheelchairOverlayWidget::ConfigurationChanged, this, &WheelchairOverlayController::OnConfigurationChanged);
 	}
 
 	if (m_scene) {
@@ -350,6 +347,7 @@ void WheelchairOverlayController::SetWidget(WheelchairOverlayWidget *widget)
 	m_widget = widget;
 
 	connect(widget, &WheelchairOverlayWidget::Reset, this, &WheelchairOverlayController::OnReset);
+	connect(widget, &WheelchairOverlayWidget::ConfigurationChanged, this, &WheelchairOverlayController::OnConfigurationChanged);
 
 	m_fbo = new QOpenGLFramebufferObject(widget->width(), widget->height(), GL_TEXTURE_2D);
 
@@ -380,6 +378,20 @@ bool WheelchairOverlayController::ConnectToVRRuntime()
 	vr::VRInput()->SetActionManifestPath(actionManifestPath.c_str());
 	vr::VRInput()->GetActionHandle("/actions/main/in/movementAndRotation", &m_actionMovementAndRotationInput);
 	vr::VRInput()->GetActionSetHandle("/actions/main", &m_actionSetMain);
+
+	vr::VRSettings()->SetBool(vr::k_pch_CollisionBounds_Section, vr::k_pch_CollisionBounds_CenterMarkerOn_Bool, true);
+
+	// Reset Chaperone
+	vr::VRChaperoneSetup()->ReloadFromDisk(EChaperoneConfigFile_Live);
+
+	vr::HmdMatrix34_t vrZeroPose{};
+	vr::VRChaperoneSetup()->GetWorkingStandingZeroPoseToRawTrackingPose(&vrZeroPose);
+
+	// Copy from HmdMatrix34 and transpose to column major order
+	memcpy(glm::value_ptr(initialZeroPose), &vrZeroPose.m[0][0], sizeof(vrZeroPose.m));
+	initialZeroPose = glm::transpose(initialZeroPose);
+
+	std::cout << glm::to_string(initialZeroPose) << std::endl;
 
 	ResetZeroPose();
 
@@ -416,9 +428,14 @@ void WheelchairOverlayController::OnReset()
 	ResetZeroPose();
 }
 
+void WheelchairOverlayController::OnConfigurationChanged()
+{
+	UpdateZeroPose();
+}
+
+
 void WheelchairOverlayController::EnableRestart()
 {
 
 }
-
 

@@ -54,6 +54,7 @@ public slots:
 	void OnTimeoutPumpEvents();
 
 	void OnReset();
+	void OnConfigurationChanged();
 
 protected:
 
