@@ -7,26 +7,7 @@ WheelchairOverlayWidget::WheelchairOverlayWidget(QWidget *parent) :
 		m_ui(new Ui::WheelchairOverlayWidget)
 {
     m_ui->setupUi(this);
-	on_resetFormPushButton_clicked();
-}
 
-WheelchairOverlayWidget::~WheelchairOverlayWidget()
-{
-    delete m_ui;
-}
-
-void WheelchairOverlayWidget::on_quitOverlayPushButton_clicked()
-{
-    QApplication::quit();
-}
-
-void WheelchairOverlayWidget::on_resetPushButton_clicked()
-{
-	emit Reset();
-}
-
-void WheelchairOverlayWidget::on_resetFormPushButton_clicked()
-{
 	m_currentHeightOffset = 0;
 	m_currentXOffset = 0;
 	m_currentYOffset = 0;
@@ -40,6 +21,36 @@ void WheelchairOverlayWidget::on_resetFormPushButton_clicked()
 	updateTurnSpeedLabel();
 	updateMovementSpeedLabel();
 	emit ConfigurationChanged();
+}
+
+WheelchairOverlayWidget::~WheelchairOverlayWidget()
+{
+    delete m_ui;
+}
+
+void WheelchairOverlayWidget::on_quitOverlayPushButton_clicked()
+{
+    QApplication::quit();
+}
+
+/*void WheelchairOverlayWidget::on_resetPushButton_clicked()
+{
+	emit Reset();
+}*/
+
+void WheelchairOverlayWidget::on_useHeadsetOffsetsPushButton_clicked()
+{
+	emit UseHeadsetOffsets();
+}
+
+void WheelchairOverlayWidget::MoveOffsets(float x, float y, float rotation)
+{
+	m_currentXOffset = x;
+	m_currentYOffset = y;
+	m_currentRotationOffset = qRadiansToDegrees(rotation);
+	updateXOffsetLabel();
+	updateYOffsetLabel();
+	updateRotationOffsetLabel();
 }
 
 void WheelchairOverlayWidget::updateHeightOffsetLabel()

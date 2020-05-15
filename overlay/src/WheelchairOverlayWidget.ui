@@ -84,7 +84,7 @@ QLabel {
       <item>
        <layout class="QVBoxLayout" name="verticalLayout_3">
         <property name="spacing">
-         <number>0</number>
+         <number>20</number>
         </property>
         <property name="leftMargin">
          <number>0</number>
@@ -103,7 +103,119 @@ QLabel {
           <property name="verticalSpacing">
            <number>16</number>
           </property>
-          <item row="0" column="0">
+          <item row="1" column="0">
+           <widget class="QLabel" name="formXOffsetLabel">
+            <property name="text">
+             <string>X Offset</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <layout class="QHBoxLayout" name="horizontalLayout_6">
+            <item>
+             <widget class="QPushButton" name="decrementXOffsetPushButton">
+              <property name="text">
+               <string>&lt;</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="xOffsetLabel">
+              <property name="text">
+               <string>0.00m</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="incrementXOffsetPushButton">
+              <property name="text">
+               <string>&gt;</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="formYOffsetLabel">
+            <property name="text">
+             <string>Y Offset</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <layout class="QHBoxLayout" name="horizontalLayout_7">
+            <item>
+             <widget class="QPushButton" name="decrementYOffsetPushButton">
+              <property name="text">
+               <string>&lt;</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="yOffsetLabel">
+              <property name="text">
+               <string>0.00m</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="incrementYOffsetPushButton">
+              <property name="text">
+               <string>&gt;</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item row="3" column="0">
+           <widget class="QLabel" name="formRotationOffsetLabel">
+            <property name="text">
+             <string>Rotation Offset</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1">
+           <layout class="QHBoxLayout" name="horizontalLayout_5">
+            <item>
+             <widget class="QPushButton" name="decrementRotationOffsetPushButton">
+              <property name="text">
+               <string>&lt;</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="rotationOffsetLabel">
+              <property name="text">
+               <string>0°</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="incrementRotationOffsetPushButton">
+              <property name="text">
+               <string>&gt;</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item row="4" column="1">
+           <widget class="QPushButton" name="useHeadsetOffsetsPushButton">
+            <property name="text">
+             <string>USE CURRENT HEADSET OFFSETS</string>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="0">
            <widget class="QLabel" name="formHeightOffsetLabel">
             <property name="sizePolicy">
              <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -112,11 +224,11 @@ QLabel {
              </sizepolicy>
             </property>
             <property name="text">
-             <string>Height Offset</string>
+             <string>Height Adjustment</string>
             </property>
            </widget>
           </item>
-          <item row="0" column="1">
+          <item row="6" column="1">
            <layout class="QHBoxLayout" name="horizontalLayout_2">
             <item>
              <widget class="QPushButton" name="decrementHeightOffsetPushButton">
@@ -150,7 +262,14 @@ QLabel {
             </item>
            </layout>
           </item>
-          <item row="4" column="1">
+          <item row="7" column="0">
+           <widget class="QLabel" name="fromSpeedLabeforml">
+            <property name="text">
+             <string>Turn Speed</string>
+            </property>
+           </widget>
+          </item>
+          <item row="7" column="1">
            <layout class="QHBoxLayout" name="horizontalLayout_3">
             <item>
              <widget class="QPushButton" name="decrementTurnSpeedPushButton">
@@ -178,126 +297,14 @@ QLabel {
             </item>
            </layout>
           </item>
-          <item row="3" column="0">
-           <widget class="QLabel" name="formRotationOffsetLabel">
-            <property name="text">
-             <string>Rotation Offset</string>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="0">
-           <widget class="QLabel" name="fromSpeedLabeforml">
-            <property name="text">
-             <string>Turn Speed</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="1">
-           <layout class="QHBoxLayout" name="horizontalLayout_5">
-            <item>
-             <widget class="QPushButton" name="decrementRotationOffsetPushButton">
-              <property name="text">
-               <string>&lt;</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="rotationOffsetLabel">
-              <property name="text">
-               <string>0°</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QPushButton" name="incrementRotationOffsetPushButton">
-              <property name="text">
-               <string>&gt;</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="formXOffsetLabel">
-            <property name="text">
-             <string>X Offset</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0">
-           <widget class="QLabel" name="formYOffsetLabel">
-            <property name="text">
-             <string>Y Offset</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <layout class="QHBoxLayout" name="horizontalLayout_6">
-            <item>
-             <widget class="QPushButton" name="decrementXOffsetPushButton">
-              <property name="text">
-               <string>&lt;</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="xOffsetLabel">
-              <property name="text">
-               <string>0.00m</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QPushButton" name="incrementXOffsetPushButton">
-              <property name="text">
-               <string>&gt;</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item row="2" column="1">
-           <layout class="QHBoxLayout" name="horizontalLayout_7">
-            <item>
-             <widget class="QPushButton" name="decrementYOffsetPushButton">
-              <property name="text">
-               <string>&lt;</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QLabel" name="yOffsetLabel">
-              <property name="text">
-               <string>0.00m</string>
-              </property>
-              <property name="alignment">
-               <set>Qt::AlignCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QPushButton" name="incrementYOffsetPushButton">
-              <property name="text">
-               <string>&gt;</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item row="5" column="0">
+          <item row="8" column="0">
            <widget class="QLabel" name="formmovementSpeedLabel">
             <property name="text">
              <string>Movement Speed</string>
             </property>
            </widget>
           </item>
-          <item row="5" column="1">
+          <item row="8" column="1">
            <layout class="QHBoxLayout" name="horizontalLayout_4">
             <item>
              <widget class="QPushButton" name="decrementMovementSpeedPushButton">
@@ -325,32 +332,21 @@ QLabel {
             </item>
            </layout>
           </item>
-          <item row="6" column="1">
-           <widget class="QPushButton" name="resetFormPushButton">
-            <property name="text">
-             <string>RESET</string>
+          <item row="5" column="1">
+           <spacer name="verticalSpacer_2">
+            <property name="orientation">
+             <enum>Qt::Vertical</enum>
             </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_8">
-          <item>
-           <widget class="QPushButton" name="resetPushButton">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
+            <property name="sizeType">
+             <enum>QSizePolicy::Fixed</enum>
             </property>
-            <property name="text">
-             <string>RESET ACCUMULATED TRANSLATION</string>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>20</width>
+              <height>20</height>
+             </size>
             </property>
-            <property name="checkable">
-             <bool>false</bool>
-            </property>
-           </widget>
+           </spacer>
           </item>
          </layout>
         </item>

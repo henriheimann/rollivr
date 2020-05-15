@@ -317,10 +317,10 @@ void WheelchairOverlayController::UpdateZeroPose()
 	glm::vec3 forward = glm::vec4(0, 0, 1, 0) * glm::rotate(glm::mat4(1.0f), m_currentRotation, glm::vec3(0, 1, 0));
 	m_currentTranslation += forward * m_lastInputY * delta * movementSpeed;
 
-	glm::mat4 currentZeroPose = glm::rotate(initialZeroPose, m_currentRotation, glm::vec3(0, 1, 0));
+	glm::mat4 currentZeroPose = glm::translate(glm::mat4(1.0f), glm::vec3(-xOffset, -heightOffset, -yOffset));
+	currentZeroPose = glm::rotate(currentZeroPose, -rotationOffset, glm::vec3(0, 1, 0));
+	currentZeroPose = glm::rotate(currentZeroPose, m_currentRotation, glm::vec3(0, 1, 0));
 	currentZeroPose = glm::translate(currentZeroPose, m_currentTranslation);
-	currentZeroPose = glm::rotate(currentZeroPose, rotationOffset, glm::vec3(0, 1, 0));
-	currentZeroPose = glm::translate(currentZeroPose, glm::vec3(xOffset, heightOffset, yOffset));
 
 	// Transpose to row major order and store in HmdMatrix34
 	glm::mat4 transposedNewZeroPose = glm::transpose(currentZeroPose);
@@ -338,6 +338,7 @@ void WheelchairOverlayController::SetWidget(WheelchairOverlayWidget *widget)
 	if (m_widget != nullptr) {
 		disconnect(m_widget, &WheelchairOverlayWidget::Reset, this, &WheelchairOverlayController::OnReset);
 		disconnect(m_widget, &WheelchairOverlayWidget::ConfigurationChanged, this, &WheelchairOverlayController::OnConfigurationChanged);
+		disconnect(m_widget, &WheelchairOverlayWidget::UseHeadsetOffsets, this, &WheelchairOverlayController::OnUseHeadsetOffsets);
 	}
 
 	if (m_scene) {
@@ -348,6 +349,7 @@ void WheelchairOverlayController::SetWidget(WheelchairOverlayWidget *widget)
 
 	connect(widget, &WheelchairOverlayWidget::Reset, this, &WheelchairOverlayController::OnReset);
 	connect(widget, &WheelchairOverlayWidget::ConfigurationChanged, this, &WheelchairOverlayController::OnConfigurationChanged);
+	connect(widget, &WheelchairOverlayWidget::UseHeadsetOffsets, this, &WheelchairOverlayController::OnUseHeadsetOffsets);
 
 	m_fbo = new QOpenGLFramebufferObject(widget->width(), widget->height(), GL_TEXTURE_2D);
 
@@ -391,8 +393,6 @@ bool WheelchairOverlayController::ConnectToVRRuntime()
 	memcpy(glm::value_ptr(initialZeroPose), &vrZeroPose.m[0][0], sizeof(vrZeroPose.m));
 	initialZeroPose = glm::transpose(initialZeroPose);
 
-	std::cout << glm::to_string(initialZeroPose) << std::endl;
-
 	ResetZeroPose();
 
 	return true;
@@ -423,6 +423,11 @@ vr::HmdError WheelchairOverlayController::GetLastHmdError()
 	return m_lastHmdError;
 }
 
+void WheelchairOverlayController::EnableRestart()
+{
+
+}
+
 void WheelchairOverlayController::OnReset()
 {
 	ResetZeroPose();
@@ -433,9 +438,33 @@ void WheelchairOverlayController::OnConfigurationChanged()
 	UpdateZeroPose();
 }
 
-
-void WheelchairOverlayController::EnableRestart()
+void WheelchairOverlayController::OnUseHeadsetOffsets()
 {
+	ResetZeroPose();
 
+	TrackedDevicePose_t hmdPose{0};
+	vr::VRSystem()->GetDeviceToAbsoluteTrackingPose(TrackingUniverseStanding, 0.0f, &hmdPose, 1);
+
+	glm::mat4 headsetMatrix(1.0f);
+	memcpy(glm::value_ptr(headsetMatrix), &hmdPose.mDeviceToAbsoluteTracking.m[0][0], sizeof(hmdPose.mDeviceToAbsoluteTracking.m));
+	headsetMatrix = glm::transpose(headsetMatrix);
+
+	float heightOffset = m_widget->GetHeightOffset();
+	float xOffset = m_widget->GetXOffset();
+	float yOffset = m_widget->GetYOffset();
+	float rotationOffset = m_widget->GetRotationOffset();
+
+	glm::mat4 currentZeroPose =  glm::translate(glm::mat4(1.0f), glm::vec3(-xOffset, -heightOffset, -yOffset));
+	currentZeroPose = glm::rotate(currentZeroPose, -rotationOffset, glm::vec3(0, 1, 0));
+
+	glm::vec2 forward = glm::normalize((currentZeroPose * (headsetMatrix * glm::vec4(0, 0, 1, 0))).xz());
+	glm::vec2 offset = (currentZeroPose * -(headsetMatrix * glm::vec4(0, 0, 0, 1))).xz();
+
+	float rotation = std::atan2((float)forward.y, (float)forward.x) - M_PI / 2.0f;
+    float x = offset.x;
+	float y = offset.y;
+
+	m_widget->MoveOffsets(x, y, rotation);
+	UpdateZeroPose();
 }
 

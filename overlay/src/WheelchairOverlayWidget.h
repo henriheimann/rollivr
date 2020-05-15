@@ -21,14 +21,16 @@ public:
     float GetTurnSpeed() const;
     float GetMovementSpeed() const;
 
+    void MoveOffsets(float x, float y, float rotation);
+
 signals:
 	void Reset();
 	void ConfigurationChanged();
+	void UseHeadsetOffsets();
 
 private slots:
     void on_quitOverlayPushButton_clicked();
-	void on_resetFormPushButton_clicked();
-	void on_resetPushButton_clicked();
+	void on_useHeadsetOffsetsPushButton_clicked();
 
 	void on_decrementHeightOffsetPushButton_clicked();
 	void on_incrementHeightOffsetPushButton_clicked();

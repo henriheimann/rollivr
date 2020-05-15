@@ -55,6 +55,7 @@ public slots:
 
 	void OnReset();
 	void OnConfigurationChanged();
+	void OnUseHeadsetOffsets();
 
 protected:
 
