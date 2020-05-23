@@ -99,6 +99,9 @@ bool WheelchairOverlayController::Init()
 		vr::VROverlay()->SetOverlayWidthInMeters(m_overlayHandle, 1.5f);
 		vr::VROverlay()->SetOverlayInputMethod(m_overlayHandle, vr::VROverlayInputMethod_Mouse);
 
+		std::string thumbIconPath = (QCoreApplication::applicationDirPath() + "/thumbicon.png").toStdString();
+		vr::VROverlay()->SetOverlayFromFile(m_overlayThumbnailHandle, thumbIconPath.c_str());
+
 		std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
 		this->m_lastFrameTime = now;
 
