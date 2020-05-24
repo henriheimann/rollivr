@@ -53,11 +53,9 @@ public slots:
 	void OnSceneChanged(const QList<QRectF>&);
 	void OnTimeoutPumpEvents();
 
-	void OnReset();
+	void OnStart();
+	void OnStop();
 	void OnConfigurationChanged();
-	void OnUseHeadsetOffsets();
-
-protected:
 
 private:
 	bool ConnectToVRRuntime();

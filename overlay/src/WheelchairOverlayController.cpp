@@ -339,9 +339,9 @@ void WheelchairOverlayController::UpdateZeroPose()
 void WheelchairOverlayController::SetWidget(WheelchairOverlayWidget *widget)
 {
 	if (m_widget != nullptr) {
-		disconnect(m_widget, &WheelchairOverlayWidget::Reset, this, &WheelchairOverlayController::OnReset);
+		disconnect(m_widget, &WheelchairOverlayWidget::Start, this, &WheelchairOverlayController::OnStart);
+		disconnect(m_widget, &WheelchairOverlayWidget::Stop, this, &WheelchairOverlayController::OnStop);
 		disconnect(m_widget, &WheelchairOverlayWidget::ConfigurationChanged, this, &WheelchairOverlayController::OnConfigurationChanged);
-		disconnect(m_widget, &WheelchairOverlayWidget::UseHeadsetOffsets, this, &WheelchairOverlayController::OnUseHeadsetOffsets);
 	}
 
 	if (m_scene) {
@@ -350,9 +350,9 @@ void WheelchairOverlayController::SetWidget(WheelchairOverlayWidget *widget)
 	}
 	m_widget = widget;
 
-	connect(widget, &WheelchairOverlayWidget::Reset, this, &WheelchairOverlayController::OnReset);
+	connect(widget, &WheelchairOverlayWidget::Start, this, &WheelchairOverlayController::OnStart);
+	connect(widget, &WheelchairOverlayWidget::Stop, this, &WheelchairOverlayController::OnStop);
 	connect(widget, &WheelchairOverlayWidget::ConfigurationChanged, this, &WheelchairOverlayController::OnConfigurationChanged);
-	connect(widget, &WheelchairOverlayWidget::UseHeadsetOffsets, this, &WheelchairOverlayController::OnUseHeadsetOffsets);
 
 	m_fbo = new QOpenGLFramebufferObject(widget->width(), widget->height(), GL_TEXTURE_2D);
 
@@ -426,22 +426,7 @@ vr::HmdError WheelchairOverlayController::GetLastHmdError()
 	return m_lastHmdError;
 }
 
-void WheelchairOverlayController::EnableRestart()
-{
-
-}
-
-void WheelchairOverlayController::OnReset()
-{
-	ResetZeroPose();
-}
-
-void WheelchairOverlayController::OnConfigurationChanged()
-{
-	UpdateZeroPose();
-}
-
-void WheelchairOverlayController::OnUseHeadsetOffsets()
+void WheelchairOverlayController::OnStart()
 {
 	ResetZeroPose();
 
@@ -464,10 +449,19 @@ void WheelchairOverlayController::OnUseHeadsetOffsets()
 	glm::vec2 offset = (currentZeroPose * -(headsetMatrix * glm::vec4(0, 0, 0, 1))).xz();
 
 	float rotation = std::atan2((float)forward.y, (float)forward.x) - M_PI / 2.0f;
-    float x = offset.x;
+	float x = offset.x;
 	float y = offset.y;
 
 	m_widget->MoveOffsets(x, y, rotation);
 	UpdateZeroPose();
 }
 
+void WheelchairOverlayController::OnStop()
+{
+	ResetZeroPose();
+}
+
+void WheelchairOverlayController::OnConfigurationChanged()
+{
+	UpdateZeroPose();
+}

@@ -7,6 +7,7 @@ WheelchairOverlayWidget::WheelchairOverlayWidget(QWidget *parent) :
 		m_ui(new Ui::WheelchairOverlayWidget)
 {
     m_ui->setupUi(this);
+	m_ui->advancedConfigurationGroupBox->setVisible(false);
 
 	m_currentHeightOffset = 0;
 	m_currentXOffset = 0;
@@ -14,6 +15,8 @@ WheelchairOverlayWidget::WheelchairOverlayWidget(QWidget *parent) :
 	m_currentRotationOffset = 0;
 	m_currentTurnSpeed = 1;
 	m_currentMovementSpeed = 1;
+	m_started = false;
+
 	updateHeightOffsetLabel();
 	updateXOffsetLabel();
 	updateYOffsetLabel();
@@ -28,19 +31,31 @@ WheelchairOverlayWidget::~WheelchairOverlayWidget()
     delete m_ui;
 }
 
-void WheelchairOverlayWidget::on_quitOverlayPushButton_clicked()
+/*void WheelchairOverlayWidget::on_quitOverlayPushButton_clicked()
 {
     QApplication::quit();
-}
+}*/
 
 /*void WheelchairOverlayWidget::on_resetPushButton_clicked()
 {
 	emit Reset();
 }*/
 
-void WheelchairOverlayWidget::on_useHeadsetOffsetsPushButton_clicked()
+void WheelchairOverlayWidget::on_startStopPushButton_clicked()
 {
-	emit UseHeadsetOffsets();
+	if (m_started) {
+		emit Stop();
+		m_ui->startInfoLabel->setVisible(true);
+		m_ui->startStopPushButton->setText("START FORCED MOVEMENT");
+		m_ui->advancedConfigurationGroupBox->setVisible(false);
+	} else {
+		emit Start();
+		m_ui->startInfoLabel->setVisible(false);
+		m_ui->startStopPushButton->setText("STOP FORCED MOVEMENT");
+		m_ui->advancedConfigurationGroupBox->setVisible(true);
+	}
+
+	m_started = !m_started;
 }
 
 void WheelchairOverlayWidget::MoveOffsets(float x, float y, float rotation)

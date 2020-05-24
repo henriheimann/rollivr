@@ -24,13 +24,12 @@ public:
     void MoveOffsets(float x, float y, float rotation);
 
 signals:
-	void Reset();
 	void ConfigurationChanged();
-	void UseHeadsetOffsets();
+	void Start();
+	void Stop();
 
 private slots:
-    void on_quitOverlayPushButton_clicked();
-	void on_useHeadsetOffsetsPushButton_clicked();
+	void on_startStopPushButton_clicked();
 
 	void on_decrementHeightOffsetPushButton_clicked();
 	void on_incrementHeightOffsetPushButton_clicked();
@@ -55,6 +54,7 @@ private slots:
 private:
     Ui::WheelchairOverlayWidget *m_ui;
 
+    bool m_started;
     float m_currentHeightOffset;
     float m_currentXOffset;
     float m_currentYOffset;
