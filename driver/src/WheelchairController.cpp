@@ -9,9 +9,9 @@
 
 using namespace WheelchairDriverFactory;
 
-WheelchairController::WheelchairController(std::string serial) :
+WheelchairController::WheelchairController(std::string serial, std::vector<std::string> acceptedHardwareId) :
 		m_serial(std::move(serial)),
-		m_serialPortInterface({"FTDIBUS\\COMPORT&VID_0403&PID_6001"})
+		m_serialPortInterface(std::move(acceptedHardwareId))
 {
 }
 

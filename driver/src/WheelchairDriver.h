@@ -12,16 +12,7 @@
 class WheelchairDriver : protected vr::IServerTrackedDeviceProvider
 {
 public:
-
-	typedef std::variant<std::monostate, std::string, int, float, bool> SettingsValue;
-
 	bool AddWheelchairController(std::shared_ptr<WheelchairController> wheelchairController);
-
-	std::shared_ptr<WheelchairController> GetWheelchairController();
-
-	std::vector<vr::VREvent_t> GetOpenVREvents();
-
-	std::chrono::milliseconds GetLastFrameTime();
 
 	void Log(std::string message);
 
@@ -50,11 +41,12 @@ public:
 		return vr::k_InterfaceVersions;
 	};
 
+	std::string GetResourcePath(const std::string &name) const;
+
 private:
 	std::shared_ptr<WheelchairController> m_wheelchairController;
 	std::vector<vr::VREvent_t> m_openvrEvents;
 	std::chrono::milliseconds m_frameTiming = std::chrono::milliseconds(16);
 	std::chrono::system_clock::time_point m_lastFrameTime = std::chrono::system_clock::now();
-	std::string m_settingsKey = "driver_wheelchair";
 
 };

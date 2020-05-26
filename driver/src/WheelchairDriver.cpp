@@ -1,5 +1,8 @@
 #include "WheelchairDriver.h"
 
+#include <Windows.h>
+#include <fstream>
+
 using namespace WheelchairDriverFactory;
 
 vr::EVRInitError WheelchairDriver::Init(vr::IVRDriverContext *pDriverContext)
@@ -9,10 +12,21 @@ vr::EVRInitError WheelchairDriver::Init(vr::IVRDriverContext *pDriverContext)
 		return init_error;
 	}
 
-	Log("Activating Wheelchair Driver");
+	std::vector<std::string> acceptedHardwareIds;
+	std::string comportsConfigPath = GetResourcePath("\\resources\\config\\comports.txt");
 
-	// Add a couple controllers
-	this->AddWheelchairController(std::make_shared<WheelchairController>("Wheelchair_WheelchairController"));
+	std::ifstream in(comportsConfigPath);
+	if (in) {
+		std::string line;
+		while (std::getline(in, line)) {
+			if (line.size() > 0) {
+				Log(line);
+				acceptedHardwareIds.push_back(line);
+			}
+		}
+	}
+
+	AddWheelchairController(std::make_shared<WheelchairController>("Wheelchair_WheelchairController", acceptedHardwareIds));
 
 	Log("Wheelchair Driver Loaded Successfully");
 
@@ -74,25 +88,10 @@ bool WheelchairDriver::AddWheelchairController(std::shared_ptr<WheelchairControl
 	return result;
 }
 
-std::shared_ptr<WheelchairController> WheelchairDriver::GetWheelchairController()
-{
-	return this->m_wheelchairController;
-}
-
-std::vector<vr::VREvent_t> WheelchairDriver::GetOpenVREvents()
-{
-	return this->m_openvrEvents;
-}
-
-std::chrono::milliseconds WheelchairDriver::GetLastFrameTime()
-{
-	return this->m_frameTiming;
-}
-
 void WheelchairDriver::Log(std::string message)
 {
-	std::string message_endl = message + "\n";
-	vr::VRDriverLog()->Log(message_endl.c_str());
+	std::string messageEndl = message + "\n";
+	vr::VRDriverLog()->Log(messageEndl.c_str());
 }
 
 vr::IVRDriverInput *WheelchairDriver::GetInput()
@@ -108,4 +107,21 @@ vr::CVRPropertyHelpers *WheelchairDriver::GetProperties()
 vr::IVRServerDriverHost *WheelchairDriver::GetDriverHost()
 {
 	return vr::VRServerDriverHost();
+}
+
+EXTERN_C IMAGE_DOS_HEADER __ImageBase;
+
+std::string WheelchairDriver::GetResourcePath(const std::string &name) const
+{
+	char dll_path[MAX_PATH] = {0};
+	GetModuleFileNameA((HINSTANCE)&__ImageBase, dll_path, MAX_PATH);
+
+	std::string file_path(dll_path);
+
+	file_path = file_path.substr(0, file_path.find_last_of("\\/"));
+	file_path = file_path.substr(0, file_path.find_last_of("\\/"));
+	file_path = file_path.substr(0, file_path.find_last_of("\\/"));
+	file_path += name;
+
+	return file_path;
 }

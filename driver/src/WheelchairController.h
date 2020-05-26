@@ -10,7 +10,7 @@ class WheelchairController : public vr::ITrackedDeviceServerDriver
 {
 public:
 
-	explicit WheelchairController(std::string serial);
+	WheelchairController(std::string serial, std::vector<std::string> acceptedHardwareId);
 
 	~WheelchairController() = default;
 
