@@ -47,19 +47,14 @@ jobs:
       working-directory: ${{runner.workspace}}\build
       run: cmake --build . --config Release
 
-    - name: Package .zip Files
-      shell: bash
-      working-directory: ${{runner.workspace}}\build
-      run: 7z a driver.zip driver/rollivr && 7z a overlay.zip overlay/rollivr
-
     - name: Archive driver
       uses: actions/upload-artifact@v1
       with:
         name: driver
-        path: driver.zip
+        path: driver/rollivr
 
     - name: Archive overlay
       uses: actions/upload-artifact@v1
       with:
         name: overlay
-        path: overlay.zip
+        path: overlay/rollivr
