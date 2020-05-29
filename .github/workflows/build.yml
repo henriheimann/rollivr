@@ -23,6 +23,13 @@ jobs:
       uses: jurplel/install-qt-action@v2
       with:
         cached: ${{ steps.cache-qt.outputs.cache-hit }}
+
+    - name: Cache Vcpkg Packages
+      id: cache-vcpkg-packages
+      uses: actions/cache@v1
+      with:
+        path: $VCPKG_INSTALLATION_ROOT/installed
+        key: ${{ runner.os }}-VcpkgChache
       
     - name: Install OpenVR and GLM
       run: vcpkg install openvr glm --triplet x64-windows
@@ -43,7 +50,7 @@ jobs:
     - name: Package .zip Files
       shell: bash
       working-directory: ${{runner.workspace}}\build
-      run: 7z a driver.zip driver\rollivr && 7z a overlay.zip overlay\rollivr
+      run: 7z a driver.zip driver/rollivr && 7z a overlay.zip overlay/rollivr
 
     - name: Archive driver
       uses: actions/upload-artifact@v1
