@@ -40,8 +40,3 @@ jobs:
       shell: bash
       working-directory: ${{runner.workspace}}\build
       run: cmake --build . --config Release
-    
-    - name: Package
-      shell: bash
-      working-directory: ${{runner.workspace}}\build
-      run: cmake --build . --config Release --target package
