@@ -57,14 +57,13 @@ set_target_properties(${TARGET_NAME}
   COMPILE_FLAGS "${QT_FLAGS}"
 )
 
-# Copy assets to output folder
+set(OVERLAY_OUT_DIR $<TARGET_FILE_DIR:${TARGET_NAME}>/overlay)
+
+# Copy assets and executable and add required files with windeployqt
 add_custom_command(
         TARGET ${TARGET_NAME}
-        PRE_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_directory
-        ${CMAKE_CURRENT_SOURCE_DIR}/application_files/
-        $<TARGET_FILE_DIR:${TARGET_NAME}>
+        POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/application_files/ ${OVERLAY_OUT_DIR}
+        COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${TARGET_NAME}> ${OVERLAY_OUT_DIR}/$<TARGET_FILE_NAME:${TARGET_NAME}>
+        COMMAND ${QT5_WINDEPLOYQT_EXECUTABLE} ${OVERLAY_OUT_DIR}/$<TARGET_FILE_NAME:${TARGET_NAME}>
 )
-
-# Deploy with windeployqt to add all required .dll files to the output directory
-add_custom_command(TARGET ${TARGET_NAME} POST_BUILD COMMAND ${QT5_WINDEPLOYQT_EXECUTABLE} $<TARGET_FILE:${TARGET_NAME}>)
