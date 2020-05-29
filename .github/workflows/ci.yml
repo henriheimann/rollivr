@@ -32,13 +32,16 @@ jobs:
       run: cmake -E make_directory ${{runner.workspace}}/build
       
     - name: Configure
+      shell: bash
       working-directory: ${{runner.workspace}}/build
       run: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=Release -G"Visual Studio 16 2019"
     
     - name: Compile
+      shell: bash
       working-directory: ${{runner.workspace}}/build
       run: cmake --build . --config Release
     
     - name: Package
+      shell: bash
       working-directory: ${{runner.workspace}}/build
       run: cmake --build . --config Release --target package
