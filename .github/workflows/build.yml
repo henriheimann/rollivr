@@ -51,10 +51,10 @@ jobs:
       uses: actions/upload-artifact@v1
       with:
         name: driver
-        path: driver/rollivr
+        path: ${{runner.workspace}}/build/driver/rollivr
 
     - name: Archive overlay
       uses: actions/upload-artifact@v1
       with:
         name: overlay
-        path: overlay/rollivr
+        path: ${{runner.workspace}}/build/overlay/rollivr
