@@ -1,19 +1,19 @@
 {
   "jsonid": "input_profile",
-  "controller_type": "wheelchair_controller",
+  "controller_type": "rollivr_controller",
   "device_class": "TrackedDeviceClass_Controller",
-  "resource_root": "wheelchair",
-  "driver_name": "wheelchair",
+  "resource_root": "rollivr",
+  "driver_name": "rollivr",
   "input_bindingui_mode": "single_device",
   "should_show_binding_errors": true,
   "input_bindingui": {
-    "image": "{wheelchair}/icons/wheelchair_controller.svg"
+    "image": "{rollivr}/icons/rollivr_controller.svg"
   },
   "input_bindingui_left": {
-    "image": "{wheelchair}/icons/wheelchair_controller.svg"
+    "image": "{rollivr}/icons/rollivr_controller.svg"
   },
   "input_bindingui_right": {
-    "image": "{wheelchair}/icons/wheelchair_controller.svg"
+    "image": "{rollivr}/icons/rollivr_controller.svg"
   },
   "input_source": {
     "/input/joystick" : {

@@ -22,19 +22,19 @@
 #include <QtWidgets/QGraphicsScene>
 #include <QtGui/QOffscreenSurface>
 
-class WheelchairOverlayWidget;
+class RolliVROverlayWidget;
 
-class WheelchairOverlayController : public QObject
+class RolliVROverlayController : public QObject
 {
 	Q_OBJECT
 	typedef QObject BaseClass;
 
 public:
-    static WheelchairOverlayController *SharedInstance();
+    static RolliVROverlayController *SharedInstance();
 
 public:
-    WheelchairOverlayController();
-    ~WheelchairOverlayController() override = default;
+    RolliVROverlayController();
+    ~RolliVROverlayController() override = default;
 
 	bool Init();
 	void Shutdown();
@@ -47,7 +47,7 @@ public:
 	QString GetVRDisplayString();
 	QString GetName() { return m_name; }
 
-	void SetWidget(WheelchairOverlayWidget *widget);
+	void SetWidget(RolliVROverlayWidget *widget);
 
 public slots:
 	void OnSceneChanged(const QList<QRectF>&);
@@ -92,7 +92,7 @@ private:
 	std::chrono::milliseconds m_frameTiming;
 	std::chrono::system_clock::time_point m_lastFrameTime;
 
-	WheelchairOverlayWidget *m_widget;
+	RolliVROverlayWidget *m_widget;
 
 	QPointF m_lastMousePoint;
 	Qt::MouseButtons m_lastMouseButtons;

@@ -1,5 +1,5 @@
-#include "WheelchairOverlayWidget.h"
-#include "WheelchairOverlayController.h"
+#include "RolliVROverlayWidget.h"
+#include "RolliVROverlayController.h"
 
 #include <QtWidgets/QApplication>
 
@@ -7,10 +7,10 @@ int main(int argc, char *argv[])
 {
     QApplication application(argc, argv);
 
-    WheelchairOverlayWidget *overlayWidget = new WheelchairOverlayWidget;
+    RolliVROverlayWidget *overlayWidget = new RolliVROverlayWidget;
 
-    WheelchairOverlayController::SharedInstance()->Init();
-    WheelchairOverlayController::SharedInstance()->SetWidget(overlayWidget);
+    RolliVROverlayController::SharedInstance()->Init();
+    RolliVROverlayController::SharedInstance()->SetWidget(overlayWidget);
 
     return application.exec();
 }

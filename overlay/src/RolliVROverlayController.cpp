@@ -1,8 +1,8 @@
 // Adapted code from: https://github.com/ValveSoftware/openvr/tree/master/samples/helloworldoverlay
 // Copyright Valve Corporation, All rights reserved.
 
-#include "WheelchairOverlayController.h"
-#include "WheelchairOverlayWidget.h"
+#include "RolliVROverlayController.h"
+#include "RolliVROverlayWidget.h"
 
 #include <QOpenGLFramebufferObjectFormat>
 #include <QOpenGLPaintDevice>
@@ -23,17 +23,17 @@
 
 using namespace vr;
 
-WheelchairOverlayController *sharedWheelchairOverlayController = nullptr;
+RolliVROverlayController *sharedRolliVROverlayController = nullptr;
 
-WheelchairOverlayController *WheelchairOverlayController::SharedInstance()
+RolliVROverlayController *RolliVROverlayController::SharedInstance()
 {
-	if (!sharedWheelchairOverlayController) {
-		sharedWheelchairOverlayController = new WheelchairOverlayController();
+	if (!sharedRolliVROverlayController) {
+		sharedRolliVROverlayController = new RolliVROverlayController();
 	}
-	return sharedWheelchairOverlayController;
+	return sharedRolliVROverlayController;
 }
 
-WheelchairOverlayController::WheelchairOverlayController()
+RolliVROverlayController::RolliVROverlayController()
 		: BaseClass(), m_vrDriver("No Driver"), m_vrDisplay("No Display"), m_lastHmdError(vr::VRInitError_None),
 		  m_compositorError(vr::VRInitError_None), m_overlayError(vr::VRInitError_None),
 		  m_overlayHandle(vr::k_ulOverlayHandleInvalid), m_openGLContext(nullptr), m_scene(nullptr), m_fbo(nullptr),
@@ -54,11 +54,11 @@ QString GetTrackedDeviceString(vr::IVRSystem *pHmd, vr::TrackedDeviceIndex_t unD
 	}
 }
 
-bool WheelchairOverlayController::Init()
+bool RolliVROverlayController::Init()
 {
 	bool success;
 
-	m_name = "Wheelchair Controller Overlay";
+	m_name = "RolliVR Controller Overlay";
 
 	QSurfaceFormat format;
 	format.setMajorVersion(4);
@@ -79,7 +79,7 @@ bool WheelchairOverlayController::Init()
 	m_openGLContext->makeCurrent(m_offscreenSurface);
 
 	m_scene = new QGraphicsScene();
-	connect(m_scene, &QGraphicsScene::changed, this, &WheelchairOverlayController::OnSceneChanged);
+	connect(m_scene, &QGraphicsScene::changed, this, &RolliVROverlayController::OnSceneChanged);
 
 	// Loading the OpenVR Runtime
 	success = ConnectToVRRuntime();
@@ -87,7 +87,7 @@ bool WheelchairOverlayController::Init()
 	success = success && vr::VRCompositor() != nullptr;
 
 	if (vr::VROverlay()) {
-		std::string key = std::string("wheelchair.") + m_name.toStdString();
+		std::string key = std::string("rollivr.") + m_name.toStdString();
 		vr::VROverlayError overlayError = vr::VROverlay()->CreateDashboardOverlay(key.c_str(),
 		                                                                          m_name.toStdString().c_str(),
 		                                                                          &m_overlayHandle,
@@ -106,7 +106,7 @@ bool WheelchairOverlayController::Init()
 		this->m_lastFrameTime = now;
 
 		m_pumpEventsTimer = new QTimer(this);
-		connect(m_pumpEventsTimer, &QTimer::timeout, this, &WheelchairOverlayController::OnTimeoutPumpEvents);
+		connect(m_pumpEventsTimer, &QTimer::timeout, this, &RolliVROverlayController::OnTimeoutPumpEvents);
 		m_pumpEventsTimer->setInterval(10);
 		m_pumpEventsTimer->start();
 	}
@@ -114,7 +114,7 @@ bool WheelchairOverlayController::Init()
 	return true;
 }
 
-void WheelchairOverlayController::Shutdown()
+void RolliVROverlayController::Shutdown()
 {
 	DisconnectFromVRRuntime();
 
@@ -129,7 +129,7 @@ void WheelchairOverlayController::Shutdown()
 	}
 }
 
-void WheelchairOverlayController::OnSceneChanged(const QList<QRectF> &)
+void RolliVROverlayController::OnSceneChanged(const QList<QRectF> &)
 {
 	// Skip rendering if the overlay isn't visible
 	if ((m_overlayHandle == k_ulOverlayHandleInvalid) || !vr::VROverlay() ||
@@ -154,7 +154,7 @@ void WheelchairOverlayController::OnSceneChanged(const QList<QRectF> &)
 	}
 }
 
-void WheelchairOverlayController::OnTimeoutPumpEvents()
+void RolliVROverlayController::OnTimeoutPumpEvents()
 {
 	if (!vr::VRSystem()) {
 		return;
@@ -170,7 +170,7 @@ void WheelchairOverlayController::OnTimeoutPumpEvents()
 	ProcessBindings();
 }
 
-void WheelchairOverlayController::ProcessUIEvents()
+void RolliVROverlayController::ProcessUIEvents()
 {
 	vr::VREvent_t vrEvent{};
 	while (vr::VROverlay()->PollNextOverlayEvent(m_overlayHandle, &vrEvent, sizeof(vrEvent))) {
@@ -271,7 +271,7 @@ void WheelchairOverlayController::ProcessUIEvents()
 	}
 }
 
-void WheelchairOverlayController::ProcessBindings()
+void RolliVROverlayController::ProcessBindings()
 {
 	vr::VRActiveActionSet_t actionSet = {0};
 	actionSet.ulActionSet = m_actionSetMain;
@@ -290,7 +290,7 @@ void WheelchairOverlayController::ProcessBindings()
 	UpdateZeroPose();
 }
 
-void WheelchairOverlayController::ResetZeroPose()
+void RolliVROverlayController::ResetZeroPose()
 {
 	m_currentTranslation = glm::vec3{};
 	m_currentRotation = 0;
@@ -298,7 +298,7 @@ void WheelchairOverlayController::ResetZeroPose()
 	UpdateZeroPose();
 }
 
-void WheelchairOverlayController::UpdateZeroPose()
+void RolliVROverlayController::UpdateZeroPose()
 {
 	float heightOffset = (m_widget == nullptr) ? 0.0f : m_widget->GetHeightOffset();
 	float xOffset = (m_widget == nullptr) ? 0.0f : m_widget->GetXOffset();
@@ -336,12 +336,12 @@ void WheelchairOverlayController::UpdateZeroPose()
 	vr::VRChaperoneSetup()->CommitWorkingCopy(EChaperoneConfigFile_Live);
 }
 
-void WheelchairOverlayController::SetWidget(WheelchairOverlayWidget *widget)
+void RolliVROverlayController::SetWidget(RolliVROverlayWidget *widget)
 {
 	if (m_widget != nullptr) {
-		disconnect(m_widget, &WheelchairOverlayWidget::Start, this, &WheelchairOverlayController::OnStart);
-		disconnect(m_widget, &WheelchairOverlayWidget::Stop, this, &WheelchairOverlayController::OnStop);
-		disconnect(m_widget, &WheelchairOverlayWidget::ConfigurationChanged, this, &WheelchairOverlayController::OnConfigurationChanged);
+		disconnect(m_widget, &RolliVROverlayWidget::Start, this, &RolliVROverlayController::OnStart);
+		disconnect(m_widget, &RolliVROverlayWidget::Stop, this, &RolliVROverlayController::OnStop);
+		disconnect(m_widget, &RolliVROverlayWidget::ConfigurationChanged, this, &RolliVROverlayController::OnConfigurationChanged);
 	}
 
 	if (m_scene) {
@@ -350,9 +350,9 @@ void WheelchairOverlayController::SetWidget(WheelchairOverlayWidget *widget)
 	}
 	m_widget = widget;
 
-	connect(widget, &WheelchairOverlayWidget::Start, this, &WheelchairOverlayController::OnStart);
-	connect(widget, &WheelchairOverlayWidget::Stop, this, &WheelchairOverlayController::OnStop);
-	connect(widget, &WheelchairOverlayWidget::ConfigurationChanged, this, &WheelchairOverlayController::OnConfigurationChanged);
+	connect(widget, &RolliVROverlayWidget::Start, this, &RolliVROverlayController::OnStart);
+	connect(widget, &RolliVROverlayWidget::Stop, this, &RolliVROverlayController::OnStop);
+	connect(widget, &RolliVROverlayWidget::ConfigurationChanged, this, &RolliVROverlayController::OnConfigurationChanged);
 
 	m_fbo = new QOpenGLFramebufferObject(widget->width(), widget->height(), GL_TEXTURE_2D);
 
@@ -365,7 +365,7 @@ void WheelchairOverlayController::SetWidget(WheelchairOverlayWidget *widget)
 	}
 }
 
-bool WheelchairOverlayController::ConnectToVRRuntime()
+bool RolliVROverlayController::ConnectToVRRuntime()
 {
 	m_lastHmdError = vr::VRInitError_None;
 	vr::IVRSystem *vrSystem = vr::VR_Init(&m_lastHmdError, vr::VRApplication_Overlay);
@@ -379,7 +379,7 @@ bool WheelchairOverlayController::ConnectToVRRuntime()
 	m_vrDriver = GetTrackedDeviceString(vrSystem, vr::k_unTrackedDeviceIndex_Hmd, vr::Prop_TrackingSystemName_String);
 	m_vrDisplay = GetTrackedDeviceString(vrSystem, vr::k_unTrackedDeviceIndex_Hmd, vr::Prop_SerialNumber_String);
 
-	std::string actionManifestPath = (QCoreApplication::applicationDirPath() + "/wheelchairoverlay_vractions.json").toStdString();
+	std::string actionManifestPath = (QCoreApplication::applicationDirPath() + "/rollivr_overlay_vractions.json").toStdString();
 	vr::VRInput()->SetActionManifestPath(actionManifestPath.c_str());
 	vr::VRInput()->GetActionHandle("/actions/main/in/movementAndRotation", &m_actionMovementAndRotationInput);
 	vr::VRInput()->GetActionSetHandle("/actions/main", &m_actionSetMain);
@@ -401,32 +401,32 @@ bool WheelchairOverlayController::ConnectToVRRuntime()
 	return true;
 }
 
-void WheelchairOverlayController::DisconnectFromVRRuntime()
+void RolliVROverlayController::DisconnectFromVRRuntime()
 {
 	vr::VR_Shutdown();
 }
 
-QString WheelchairOverlayController::GetVRDriverString()
+QString RolliVROverlayController::GetVRDriverString()
 {
 	return m_vrDriver;
 }
 
-QString WheelchairOverlayController::GetVRDisplayString()
+QString RolliVROverlayController::GetVRDisplayString()
 {
 	return m_vrDisplay;
 }
 
-bool WheelchairOverlayController::BHMDAvailable()
+bool RolliVROverlayController::BHMDAvailable()
 {
 	return vr::VRSystem() != nullptr;
 }
 
-vr::HmdError WheelchairOverlayController::GetLastHmdError()
+vr::HmdError RolliVROverlayController::GetLastHmdError()
 {
 	return m_lastHmdError;
 }
 
-void WheelchairOverlayController::OnStart()
+void RolliVROverlayController::OnStart()
 {
 	ResetZeroPose();
 
@@ -456,12 +456,12 @@ void WheelchairOverlayController::OnStart()
 	UpdateZeroPose();
 }
 
-void WheelchairOverlayController::OnStop()
+void RolliVROverlayController::OnStop()
 {
 	ResetZeroPose();
 }
 
-void WheelchairOverlayController::OnConfigurationChanged()
+void RolliVROverlayController::OnConfigurationChanged()
 {
 	UpdateZeroPose();
 }

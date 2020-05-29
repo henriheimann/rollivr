@@ -2,8 +2,8 @@
 
 #include <chrono>
 #include <string>
-#include <optional>
 #include <vector>
+#include <memory>
 
 #include <serial/serial.h>
 

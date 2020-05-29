@@ -3,16 +3,16 @@
 #include <QtWidgets/QWidget>
 
 namespace Ui {
-class WheelchairOverlayWidget;
+class RolliVROverlayWidget;
 }
 
-class WheelchairOverlayWidget : public QWidget
+class RolliVROverlayWidget : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit WheelchairOverlayWidget(QWidget *parent = nullptr);
-    ~WheelchairOverlayWidget() override;
+    explicit RolliVROverlayWidget(QWidget *parent = nullptr);
+    ~RolliVROverlayWidget() override;
 
     float GetHeightOffset() const;
     float GetXOffset() const;
@@ -52,7 +52,7 @@ private slots:
 	void updateMovementSpeedLabel();
 
 private:
-    Ui::WheelchairOverlayWidget *m_ui;
+    Ui::RolliVROverlayWidget *m_ui;
 
     bool m_started;
     float m_currentHeightOffset;

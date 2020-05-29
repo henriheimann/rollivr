@@ -1,7 +1,7 @@
 [
   {
     "language_tag": "en_US",
-    "wheelchair_controller": "Wheelchair Controller",
-    "/input/joystick" : "Wheelchair Movement"
+    "rollivr_controller": "RolliVR Controller",
+    "/input/joystick" : "RolliVR Movement"
   }
 ]

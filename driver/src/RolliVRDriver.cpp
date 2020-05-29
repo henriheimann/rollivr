@@ -1,11 +1,11 @@
-#include "WheelchairDriver.h"
+#include "RolliVRDriver.h"
 
 #include <Windows.h>
 #include <fstream>
 
-using namespace WheelchairDriverFactory;
+using namespace RolliVRDriverFactory;
 
-vr::EVRInitError WheelchairDriver::Init(vr::IVRDriverContext *pDriverContext)
+vr::EVRInitError RolliVRDriver::Init(vr::IVRDriverContext *pDriverContext)
 {
 	// Perform driver context initialisation
 	if (vr::EVRInitError init_error = vr::InitServerDriverContext(pDriverContext); init_error != vr::EVRInitError::VRInitError_None) {
@@ -26,21 +26,21 @@ vr::EVRInitError WheelchairDriver::Init(vr::IVRDriverContext *pDriverContext)
 		}
 	}
 
-	AddWheelchairController(std::make_shared<WheelchairController>("Wheelchair_WheelchairController", acceptedHardwareIds));
+	AddRolliVRController(std::make_shared<RolliVRController>("RolliVR_RolliVRController", acceptedHardwareIds));
 
-	Log("Wheelchair Driver Loaded Successfully");
+	Log("RolliVR Driver Loaded Successfully");
 
 	return vr::VRInitError_None;
 }
 
-void WheelchairDriver::Cleanup()
+void RolliVRDriver::Cleanup()
 {
-	if (m_wheelchairController) {
-		m_wheelchairController->Cleanup();
+	if (m_rolliVRController) {
+		m_rolliVRController->Cleanup();
 	}
 }
 
-void WheelchairDriver::RunFrame()
+void RolliVRDriver::RunFrame()
 {
 	// Collect events
 	vr::VREvent_t event;
@@ -56,62 +56,62 @@ void WheelchairDriver::RunFrame()
 	this->m_lastFrameTime = now;
 
 	// Update devices
-	if (m_wheelchairController != nullptr) {
-		m_wheelchairController->Update(m_frameTiming);
+	if (m_rolliVRController != nullptr) {
+		m_rolliVRController->Update(m_frameTiming);
 	}
 }
 
-bool WheelchairDriver::ShouldBlockStandbyMode()
+bool RolliVRDriver::ShouldBlockStandbyMode()
 {
 	return false;
 }
 
-void WheelchairDriver::EnterStandby()
+void RolliVRDriver::EnterStandby()
 {
 }
 
-void WheelchairDriver::LeaveStandby()
+void RolliVRDriver::LeaveStandby()
 {
 }
 
-bool WheelchairDriver::AddWheelchairController(std::shared_ptr<WheelchairController> wheelchairController)
+bool RolliVRDriver::AddRolliVRController(std::shared_ptr<RolliVRController> rolliVRController)
 {
 	vr::ETrackedDeviceClass openvr_device_class = vr::ETrackedDeviceClass::TrackedDeviceClass_Controller;
 
-	bool result = vr::VRServerDriverHost()->TrackedDeviceAdded(wheelchairController->GetSerial().c_str(), openvr_device_class,
-	                                                           wheelchairController.get());
+	bool result = vr::VRServerDriverHost()->TrackedDeviceAdded(rolliVRController->GetSerial().c_str(), openvr_device_class,
+	                                                           rolliVRController.get());
 
 	if (result) {
-		this->m_wheelchairController = wheelchairController;
+		this->m_rolliVRController = rolliVRController;
 	}
 
 	return result;
 }
 
-void WheelchairDriver::Log(std::string message)
+void RolliVRDriver::Log(std::string message)
 {
 	std::string messageEndl = message + "\n";
 	vr::VRDriverLog()->Log(messageEndl.c_str());
 }
 
-vr::IVRDriverInput *WheelchairDriver::GetInput()
+vr::IVRDriverInput *RolliVRDriver::GetInput()
 {
 	return vr::VRDriverInput();
 }
 
-vr::CVRPropertyHelpers *WheelchairDriver::GetProperties()
+vr::CVRPropertyHelpers *RolliVRDriver::GetProperties()
 {
 	return vr::VRProperties();
 }
 
-vr::IVRServerDriverHost *WheelchairDriver::GetDriverHost()
+vr::IVRServerDriverHost *RolliVRDriver::GetDriverHost()
 {
 	return vr::VRServerDriverHost();
 }
 
 EXTERN_C IMAGE_DOS_HEADER __ImageBase;
 
-std::string WheelchairDriver::GetResourcePath(const std::string &name) const
+std::string RolliVRDriver::GetResourcePath(const std::string &name) const
 {
 	char dll_path[MAX_PATH] = {0};
 	GetModuleFileNameA((HINSTANCE)&__ImageBase, dll_path, MAX_PATH);

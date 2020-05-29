@@ -1,8 +1,8 @@
 {
   "default_bindings": [
     {
-      "controller_type" : "wheelchair_controller",
-      "binding_url" : "wheelchairoverlay_bindings_wheelchaircontroller.json"
+      "controller_type" : "rollivr_controller",
+      "binding_url" : "rollivr_overlay_bindings_rollivr_controller.json"
     }
   ],
   "actions": [

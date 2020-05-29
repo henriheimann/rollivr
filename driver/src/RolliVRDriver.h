@@ -7,12 +7,12 @@
 
 #include <openvr_driver.h>
 
-#include "WheelchairController.h"
+#include "RolliVRController.h"
 
-class WheelchairDriver : protected vr::IServerTrackedDeviceProvider
+class RolliVRDriver : protected vr::IServerTrackedDeviceProvider
 {
 public:
-	bool AddWheelchairController(std::shared_ptr<WheelchairController> wheelchairController);
+	bool AddRolliVRController(std::shared_ptr<RolliVRController> rolliVRController);
 
 	void Log(std::string message);
 
@@ -34,7 +34,7 @@ public:
 
 	void LeaveStandby() override;
 
-	~WheelchairDriver() = default;
+	~RolliVRDriver() = default;
 
 	inline const char *const *GetInterfaceVersions() override
 	{
@@ -44,7 +44,7 @@ public:
 	std::string GetResourcePath(const std::string &name) const;
 
 private:
-	std::shared_ptr<WheelchairController> m_wheelchairController;
+	std::shared_ptr<RolliVRController> m_rolliVRController;
 	std::vector<vr::VREvent_t> m_openvrEvents;
 	std::chrono::milliseconds m_frameTiming = std::chrono::milliseconds(16);
 	std::chrono::system_clock::time_point m_lastFrameTime = std::chrono::system_clock::now();

@@ -14,7 +14,7 @@
       ]
     }
   },
-  "controller_type": "wheelchair_controller",
-  "description": "Bindings for the Wheelchair Overlay Application for the Wheelchair Controller",
-  "name": "Wheelchair Overlay bindings for the Wheelchair Controller"
+  "controller_type": "rollivr_controller",
+  "description": "Bindings for the RolliVR Overlay Application for the RolliVR Controller",
+  "name": "RolliVR Overlay bindings for the RolliVR Controller"
 }

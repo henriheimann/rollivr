@@ -1,6 +1,6 @@
 {
 	"alwaysActivate": true,
-	"name" : "wheelchair",
+	"name" : "rollivr",
 	"directory" : "",
 	"resourceOnly" : false,
 	"prefersUpperDeviceIndices" :  true,

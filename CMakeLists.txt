@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION "3.7.1")
 
-project("ovr-wheelchair-controller")
+project("rollivr")
 
 # Add custom CMake modules
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")

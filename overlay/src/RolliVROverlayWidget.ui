@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>WheelchairOverlayWidget</class>
- <widget class="QWidget" name="WheelchairOverlayWidget">
+ <class>RolliVROverlayWidget</class>
+ <widget class="QWidget" name="RolliVROverlayWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -20,7 +20,7 @@
    <string>Hello World Overlay</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">QWidget#WheelchairOverlayWidget {
+   <string notr="true">QWidget#RolliVROverlayWidget {
 	background: qlineargradient(x1:0 y1:0, x2:0 y2:1, stop:0 #31353d, stop:1 #292c33);	
 	color: #dee2e5;
 	font: 10pt &quot;MS Shell Dlg 2&quot;;

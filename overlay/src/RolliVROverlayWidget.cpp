@@ -1,10 +1,10 @@
 #include <QtCore/qmath.h>
-#include "WheelchairOverlayWidget.h"
-#include "ui_WheelchairOverlayWidget.h"
+#include "RolliVROverlayWidget.h"
+#include "ui_RolliVROverlayWidget.h"
 
-WheelchairOverlayWidget::WheelchairOverlayWidget(QWidget *parent) :
+RolliVROverlayWidget::RolliVROverlayWidget(QWidget *parent) :
 		QWidget(parent),
-		m_ui(new Ui::WheelchairOverlayWidget)
+		m_ui(new Ui::RolliVROverlayWidget)
 {
     m_ui->setupUi(this);
 	m_ui->advancedConfigurationGroupBox->setVisible(false);
@@ -26,22 +26,22 @@ WheelchairOverlayWidget::WheelchairOverlayWidget(QWidget *parent) :
 	emit ConfigurationChanged();
 }
 
-WheelchairOverlayWidget::~WheelchairOverlayWidget()
+RolliVROverlayWidget::~RolliVROverlayWidget()
 {
     delete m_ui;
 }
 
-/*void WheelchairOverlayWidget::on_quitOverlayPushButton_clicked()
+/*void RolliVROverlayWidget::on_quitOverlayPushButton_clicked()
 {
     QApplication::quit();
 }*/
 
-/*void WheelchairOverlayWidget::on_resetPushButton_clicked()
+/*void RolliVROverlayWidget::on_resetPushButton_clicked()
 {
 	emit Reset();
 }*/
 
-void WheelchairOverlayWidget::on_startStopPushButton_clicked()
+void RolliVROverlayWidget::on_startStopPushButton_clicked()
 {
 	if (m_started) {
 		emit Stop();
@@ -58,7 +58,7 @@ void WheelchairOverlayWidget::on_startStopPushButton_clicked()
 	m_started = !m_started;
 }
 
-void WheelchairOverlayWidget::MoveOffsets(float x, float y, float rotation)
+void RolliVROverlayWidget::MoveOffsets(float x, float y, float rotation)
 {
 	m_currentXOffset = x;
 	m_currentYOffset = y;
@@ -68,79 +68,79 @@ void WheelchairOverlayWidget::MoveOffsets(float x, float y, float rotation)
 	updateRotationOffsetLabel();
 }
 
-void WheelchairOverlayWidget::updateHeightOffsetLabel()
+void RolliVROverlayWidget::updateHeightOffsetLabel()
 {
 	m_ui->heightOffsetLabel->setText(QString().setNum(m_currentHeightOffset, 'f', 2) + QString("m"));
 }
 
-void WheelchairOverlayWidget::updateXOffsetLabel()
+void RolliVROverlayWidget::updateXOffsetLabel()
 {
 	m_ui->xOffsetLabel->setText(QString().setNum(m_currentXOffset, 'f', 2) + QString("m"));
 }
 
-void WheelchairOverlayWidget::updateYOffsetLabel()
+void RolliVROverlayWidget::updateYOffsetLabel()
 {
 	m_ui->yOffsetLabel->setText(QString().setNum(m_currentYOffset, 'f', 2) + QString("m"));
 }
 
-void WheelchairOverlayWidget::updateRotationOffsetLabel()
+void RolliVROverlayWidget::updateRotationOffsetLabel()
 {
 	m_ui->rotationOffsetLabel->setText(QString().setNum((int)m_currentRotationOffset) + QString("°"));
 }
 
-void WheelchairOverlayWidget::updateTurnSpeedLabel()
+void RolliVROverlayWidget::updateTurnSpeedLabel()
 {
 	m_ui->turnSpeedLabel->setText(QString().setNum((int)(m_currentTurnSpeed * 100)) + QString("%"));
 }
 
-void WheelchairOverlayWidget::updateMovementSpeedLabel()
+void RolliVROverlayWidget::updateMovementSpeedLabel()
 {
 	m_ui->movementSpeedLabel->setText(QString().setNum((int)(m_currentMovementSpeed * 100)) + QString("%"));
 }
 
-void WheelchairOverlayWidget::on_decrementHeightOffsetPushButton_clicked()
+void RolliVROverlayWidget::on_decrementHeightOffsetPushButton_clicked()
 {
 	m_currentHeightOffset = qMax(m_currentHeightOffset - 0.1f, -1.0f);
 	updateHeightOffsetLabel();
 	emit ConfigurationChanged();
 }
 
-void WheelchairOverlayWidget::on_incrementHeightOffsetPushButton_clicked()
+void RolliVROverlayWidget::on_incrementHeightOffsetPushButton_clicked()
 {
 	m_currentHeightOffset = qMin(m_currentHeightOffset + 0.1f, 2.0f);
 	updateHeightOffsetLabel();
 	emit ConfigurationChanged();
 }
 
-void WheelchairOverlayWidget::on_decrementXOffsetPushButton_clicked()
+void RolliVROverlayWidget::on_decrementXOffsetPushButton_clicked()
 {
 	m_currentXOffset -= 0.1f;
 	updateXOffsetLabel();
 	emit ConfigurationChanged();
 }
 
-void WheelchairOverlayWidget::on_incrementXOffsetPushButton_clicked()
+void RolliVROverlayWidget::on_incrementXOffsetPushButton_clicked()
 {
 	m_currentXOffset += 0.1f;
 	updateXOffsetLabel();
 	emit ConfigurationChanged();
 }
 
-void WheelchairOverlayWidget::on_decrementYOffsetPushButton_clicked()
+void RolliVROverlayWidget::on_decrementYOffsetPushButton_clicked()
 {
 	m_currentYOffset -= 0.1f;
 	updateYOffsetLabel();
 	emit ConfigurationChanged();
 }
 
-void WheelchairOverlayWidget::on_incrementYOffsetPushButton_clicked()
+void RolliVROverlayWidget::on_incrementYOffsetPushButton_clicked()
 {
 	m_currentYOffset += 0.1f;
 	updateYOffsetLabel();
 	emit ConfigurationChanged();
 }
 
-void WheelchairOverlayWidget::on_decrementRotationOffsetPushButton_clicked()
+void RolliVROverlayWidget::on_decrementRotationOffsetPushButton_clicked()
 {
 	m_currentRotationOffset -= 5.0f;
 	if (m_currentRotationOffset < 0.0f) {
@@ -150,7 +150,7 @@ void WheelchairOverlayWidget::on_decrementRotationOffsetPushButton_clicked()
 	emit ConfigurationChanged();
 }
 
-void WheelchairOverlayWidget::on_incrementRotationOffsetPushButton_clicked()
+void RolliVROverlayWidget::on_incrementRotationOffsetPushButton_clicked()
 {
 	m_currentRotationOffset += 5.0f;
 	if (m_currentRotationOffset >= 360.0f) {
@@ -160,60 +160,60 @@ void WheelchairOverlayWidget::on_incrementRotationOffsetPushButton_clicked()
 	emit ConfigurationChanged();
 }
 
-void WheelchairOverlayWidget::on_decrementTurnSpeedPushButton_clicked()
+void RolliVROverlayWidget::on_decrementTurnSpeedPushButton_clicked()
 {
 	m_currentTurnSpeed = qMax(m_currentTurnSpeed - 0.1f, 0.0f);
 	updateTurnSpeedLabel();
 	emit ConfigurationChanged();
 }
 
-void WheelchairOverlayWidget::on_incrementTurnSpeedPushButton_clicked()
+void RolliVROverlayWidget::on_incrementTurnSpeedPushButton_clicked()
 {
 	m_currentTurnSpeed = qMin(m_currentTurnSpeed + 0.1f, 2.0f);
 	updateTurnSpeedLabel();
 	emit ConfigurationChanged();
 }
 
-void WheelchairOverlayWidget::on_decrementMovementSpeedPushButton_clicked()
+void RolliVROverlayWidget::on_decrementMovementSpeedPushButton_clicked()
 {
 	m_currentMovementSpeed = qMax(m_currentMovementSpeed - 0.1f, 0.0f);
 	updateMovementSpeedLabel();
 	emit ConfigurationChanged();
 }
 
-void WheelchairOverlayWidget::on_incrementMovementSpeedPushButton_clicked()
+void RolliVROverlayWidget::on_incrementMovementSpeedPushButton_clicked()
 {
 	m_currentMovementSpeed = qMin(m_currentMovementSpeed + 0.1f, 2.0f);
 	updateMovementSpeedLabel();
 	emit ConfigurationChanged();
 }
 
-float WheelchairOverlayWidget::GetHeightOffset() const
+float RolliVROverlayWidget::GetHeightOffset() const
 {
 	return m_currentHeightOffset;
 }
 
-float WheelchairOverlayWidget::GetXOffset() const
+float RolliVROverlayWidget::GetXOffset() const
 {
 	return m_currentXOffset;
 }
 
-float WheelchairOverlayWidget::GetYOffset() const
+float RolliVROverlayWidget::GetYOffset() const
 {
 	return m_currentYOffset;
 }
 
-float WheelchairOverlayWidget::GetRotationOffset() const
+float RolliVROverlayWidget::GetRotationOffset() const
 {
 	return qDegreesToRadians(m_currentRotationOffset);
 }
 
-float WheelchairOverlayWidget::GetTurnSpeed() const
+float RolliVROverlayWidget::GetTurnSpeed() const
 {
 	return m_currentTurnSpeed;
 }
 
-float WheelchairOverlayWidget::GetMovementSpeed() const
+float RolliVROverlayWidget::GetMovementSpeed() const
 {
 	return m_currentMovementSpeed;
 }

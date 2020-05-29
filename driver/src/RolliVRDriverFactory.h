@@ -7,9 +7,9 @@
 
 extern "C" __declspec(dllexport) void *HmdDriverFactory(const char *interface_name, int *return_code);
 
-class WheelchairDriver;
+class RolliVRDriver;
 
-namespace WheelchairDriverFactory
+namespace RolliVRDriverFactory
 {
-	std::shared_ptr<WheelchairDriver> GetDriver();
+	std::shared_ptr<RolliVRDriver> GetDriver();
 }

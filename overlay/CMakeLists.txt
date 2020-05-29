@@ -1,4 +1,4 @@
-project("ovr-wheelchair-controller-overlay")
+project("overlay_rollivr")
 
 # ----------------------------------- Find Qt ---------------------------------------
 # Set CMake to run moc automatically has needed.
@@ -25,18 +25,19 @@ get_target_property(QT5_QMAKE_EXECUTABLE Qt5::qmake IMPORTED_LOCATION)
 get_filename_component(QT5_WINDEPLOYQT_EXECUTABLE ${QT5_QMAKE_EXECUTABLE} PATH)
 set(QT5_WINDEPLOYQT_EXECUTABLE "${QT5_WINDEPLOYQT_EXECUTABLE}/windeployqt.exe")
 
-# ----------------------------------- Find OpenVR -----------------------------------
+# ----------------------------------- Find GLM --------------------------------------
 find_package(GLM REQUIRED)
 
-set(TARGET_NAME overlay_wheelchair)
+# ----------------------------------- Build Process ---------------------------------
+set(TARGET_NAME overlay_rollivr)
 
 add_executable(${TARGET_NAME}
   ${SHARED_SRC_FILES}
         src/main.cpp
-        src/WheelchairOverlayController.cpp
-        src/WheelchairOverlayController.h
-        src/WheelchairOverlayWidget.cpp
-        src/WheelchairOverlayWidget.h
+        src/RolliVROverlayController.cpp
+        src/RolliVROverlayController.h
+        src/RolliVROverlayWidget.cpp
+        src/RolliVROverlayWidget.h
 )
 
 add_definitions(${QT_DEFINITIONS})
@@ -52,18 +53,14 @@ target_link_libraries(${TARGET_NAME}
   ${EXTRA_LIBS}
 )
 
-set_target_properties(${TARGET_NAME}
-  PROPERTIES
-  COMPILE_FLAGS "${QT_FLAGS}"
-)
+set_target_properties(${TARGET_NAME} PROPERTIES COMPILE_FLAGS "${QT_FLAGS}")
 
-set(OVERLAY_OUT_DIR $<TARGET_FILE_DIR:${TARGET_NAME}>/overlay)
+set_target_properties(${TARGET_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}>/rollivr)
 
-# Copy assets and executable and add required files with windeployqt
+# Perform windeployqt
 add_custom_command(
         TARGET ${TARGET_NAME}
         POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/application_files/ ${OVERLAY_OUT_DIR}
-        COMMAND ${CMAKE_COMMAND} -E copy $<TARGET_FILE:${TARGET_NAME}> ${OVERLAY_OUT_DIR}/$<TARGET_FILE_NAME:${TARGET_NAME}>
-        COMMAND ${QT5_WINDEPLOYQT_EXECUTABLE} ${OVERLAY_OUT_DIR}/$<TARGET_FILE_NAME:${TARGET_NAME}>
+        COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/application_files/ ${CMAKE_CURRENT_BINARY_DIR}/rollivr
+        COMMAND ${QT5_WINDEPLOYQT_EXECUTABLE} $<TARGET_FILE:${TARGET_NAME}>
 )

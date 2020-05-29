@@ -1,5 +1,5 @@
-#include "WheelchairController.h"
-#include "WheelchairDriver.h"
+#include "RolliVRController.h"
+#include "RolliVRDriver.h"
 
 #include <Windows.h>
 #include <sstream>
@@ -7,20 +7,20 @@
 
 #include <serial/serial.h>
 
-using namespace WheelchairDriverFactory;
+using namespace RolliVRDriverFactory;
 
-WheelchairController::WheelchairController(std::string serial, std::vector<std::string> acceptedHardwareId) :
+RolliVRController::RolliVRController(std::string serial, std::vector<std::string> acceptedHardwareId) :
 		m_serial(std::move(serial)),
 		m_serialPortInterface(std::move(acceptedHardwareId))
 {
 }
 
-std::string WheelchairController::GetSerial()
+std::string RolliVRController::GetSerial()
 {
 	return this->m_serial;
 }
 
-void WheelchairController::Update(std::chrono::milliseconds frameTiming)
+void RolliVRController::Update(std::chrono::milliseconds frameTiming)
 {
 	if (this->m_deviceIndex == vr::k_unTrackedDeviceIndexInvalid)
 		return;
@@ -60,17 +60,17 @@ void WheelchairController::Update(std::chrono::milliseconds frameTiming)
 	GetDriver()->GetDriverHost()->TrackedDevicePoseUpdated(this->m_deviceIndex, GetPose(), sizeof(vr::DriverPose_t));
 }
 
-void WheelchairController::Cleanup()
+void RolliVRController::Cleanup()
 {
 	m_serialPortInterface.Cleanup();
 }
 
-vr::TrackedDeviceIndex_t WheelchairController::GetDeviceIndex()
+vr::TrackedDeviceIndex_t RolliVRController::GetDeviceIndex()
 {
 	return this->m_deviceIndex;
 }
 
-vr::EVRInitError WheelchairController::Activate(uint32_t unObjectId)
+vr::EVRInitError RolliVRController::Activate(uint32_t unObjectId)
 {
 	this->m_deviceIndex = unObjectId;
 
@@ -88,7 +88,7 @@ vr::EVRInitError WheelchairController::Activate(uint32_t unObjectId)
 	GetDriver()->GetProperties()->SetUint64Property(props, vr::Prop_CurrentUniverseId_Uint64, 2);
 
 	// Set up a model "number" (not needed but good to have)
-	GetDriver()->GetProperties()->SetStringProperty(props, vr::Prop_ModelNumber_String, "wheelchair_controller");
+	GetDriver()->GetProperties()->SetStringProperty(props, vr::Prop_ModelNumber_String, "rollivr_controller");
 
 	// Give SteamVR a hint at what hand this controller is for
 	GetDriver()->GetProperties()->SetInt32Property(props, vr::Prop_ControllerRoleHint_Int32,
@@ -99,10 +99,10 @@ vr::EVRInitError WheelchairController::Activate(uint32_t unObjectId)
 
 	// Set controller profile
 	GetDriver()->GetProperties()->SetStringProperty(props, vr::Prop_InputProfilePath_String,
-	                                                "{wheelchair}/input/wheelchair_controller_bindings.json");
+	                                                "{rollivr}/input/rollivr_controller_bindings.json");
 
-	std::string controller_ready_file = "{wheelchair}/icons/controller_ready.png";
-	std::string controller_not_ready_file = "{wheelchair}/icons/controller_not_ready.png";
+	std::string controller_ready_file = "{rollivr}/icons/controller_ready.png";
+	std::string controller_not_ready_file = "{rollivr}/icons/controller_not_ready.png";
 
 	GetDriver()->GetProperties()->SetStringProperty(props, vr::Prop_NamedIconPathDeviceOff_String,
 	                                                controller_not_ready_file.c_str());
@@ -126,23 +126,23 @@ vr::EVRInitError WheelchairController::Activate(uint32_t unObjectId)
 	return vr::EVRInitError::VRInitError_None;
 }
 
-void WheelchairController::Deactivate()
+void RolliVRController::Deactivate()
 {
 	m_deviceIndex = vr::k_unTrackedDeviceIndexInvalid;
 
 	m_serialPortInterface.Cleanup();
 }
 
-void WheelchairController::EnterStandby()
+void RolliVRController::EnterStandby()
 {
 }
 
-void *WheelchairController::GetComponent(const char *pchComponentNameAndVersion)
+void *RolliVRController::GetComponent(const char *pchComponentNameAndVersion)
 {
 	return nullptr;
 }
 
-void WheelchairController::DebugRequest(
+void RolliVRController::DebugRequest(
 		const char *pchRequest, char *pchResponseBuffer, uint32_t unResponseBufferSize)
 {
 	if (unResponseBufferSize >= 1) {
@@ -150,7 +150,7 @@ void WheelchairController::DebugRequest(
 	}
 }
 
-vr::DriverPose_t WheelchairController::GetPose()
+vr::DriverPose_t RolliVRController::GetPose()
 {
 	vr::DriverPose_t pose = {0};
 	pose.deviceIsConnected = m_serialPortInterface.IsConnected();

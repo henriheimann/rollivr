@@ -3,16 +3,16 @@
 #include <chrono>
 #include <cmath>
 
-#include <WheelchairDriverFactory.h>
+#include <RolliVRDriverFactory.h>
 #include "SerialPortInterface.h"
 
-class WheelchairController : public vr::ITrackedDeviceServerDriver
+class RolliVRController : public vr::ITrackedDeviceServerDriver
 {
 public:
 
-	WheelchairController(std::string serial, std::vector<std::string> acceptedHardwareId);
+	RolliVRController(std::string serial, std::vector<std::string> acceptedHardwareId);
 
-	~WheelchairController() = default;
+	~RolliVRController() = default;
 
 	std::string GetSerial();
 
