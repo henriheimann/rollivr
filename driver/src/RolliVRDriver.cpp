@@ -12,37 +12,22 @@ vr::EVRInitError RolliVRDriver::Init(vr::IVRDriverContext *driverContext)
 		return initError;
 	}
 
-	SerialPortInterface::AcceptedHardwareIds acceptedHardwareIds;
-	std::string comportsConfigPath = GetResourcePath("\\resources\\config\\comports.txt");
+	SerialPortInterface::AcceptedHardwareIds acceptedHardwareIds = loadAcceptedHardwareIds();
 
-	std::ifstream in(comportsConfigPath);
-	if (in) {
-		std::string line;
-		while (std::getline(in, line)) {
-			if (!line.empty()) {
-				size_t separatorIndex = line.find(';');
+	// Create the controller
+	std::shared_ptr<RolliVRController> rolliVRController = std::make_shared<RolliVRController>("RolliVR_RolliVRController",
+			acceptedHardwareIds);
 
-				if (separatorIndex != std::string::npos) {
-					Log("Unable to parse comport config line.");
-					continue;
-				}
+	// Try to add the controller as tracked device to OpenVR
+	bool result = vr::VRServerDriverHost()->TrackedDeviceAdded(rolliVRController->GetSerial().c_str(),
+			vr::ETrackedDeviceClass::TrackedDeviceClass_Controller, rolliVRController.get());
 
-				try {
-					std::string hardwareId = line.substr(0, separatorIndex);
-					uint32_t baudRate = std::stoul(line.substr(separatorIndex + 1));
-					acceptedHardwareIds.insert_or_assign(hardwareId, baudRate);
-
-				} catch (std::exception &) {
-					Log("Unable to parse comport config line.");
-				}
-			}
-		}
+	if (!result) {
+		return vr::VRInitError_Driver_Failed;
 	}
 
-	AddRolliVRController(std::make_shared<RolliVRController>("RolliVR_RolliVRController", acceptedHardwareIds));
-
+	this->m_rolliVRController = rolliVRController;
 	Log("RolliVR Driver Loaded Successfully");
-
 	return vr::VRInitError_None;
 }
 
@@ -87,24 +72,9 @@ void RolliVRDriver::LeaveStandby()
 {
 }
 
-bool RolliVRDriver::AddRolliVRController(std::shared_ptr<RolliVRController> rolliVRController)
+std::vector<vr::VREvent_t> RolliVRDriver::GetOpenVREvents()
 {
-	vr::ETrackedDeviceClass openvr_device_class = vr::ETrackedDeviceClass::TrackedDeviceClass_Controller;
-
-	bool result = vr::VRServerDriverHost()->TrackedDeviceAdded(rolliVRController->GetSerial().c_str(), openvr_device_class,
-	                                                           rolliVRController.get());
-
-	if (result) {
-		this->m_rolliVRController = rolliVRController;
-	}
-
-	return result;
-}
-
-void RolliVRDriver::Log(std::string message)
-{
-	std::string messageEndl = message + "\n";
-	vr::VRDriverLog()->Log(messageEndl.c_str());
+	return m_openvrEvents;
 }
 
 vr::IVRDriverInput *RolliVRDriver::GetInput()
@@ -122,9 +92,12 @@ vr::IVRServerDriverHost *RolliVRDriver::GetDriverHost()
 	return vr::VRServerDriverHost();
 }
 
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "bugprone-reserved-identifier"
+
 EXTERN_C IMAGE_DOS_HEADER __ImageBase;
 
-std::string RolliVRDriver::GetResourcePath(const std::string &name) const
+std::string RolliVRDriver::GetResourcePath(const std::string &name)
 {
 	char dll_path[MAX_PATH] = {0};
 	GetModuleFileNameA((HINSTANCE)&__ImageBase, dll_path, MAX_PATH);
@@ -137,4 +110,38 @@ std::string RolliVRDriver::GetResourcePath(const std::string &name) const
 	file_path += name;
 
 	return file_path;
+}
+
+#pragma clang diagnostic pop
+
+SerialPortInterface::AcceptedHardwareIds RolliVRDriver::loadAcceptedHardwareIds()
+{
+	SerialPortInterface::AcceptedHardwareIds acceptedHardwareIds;
+	std::string comportsConfigPath = GetResourcePath(R"(\resources\config\comports.txt)");
+
+	std::ifstream in(comportsConfigPath);
+	if (in) {
+		std::string line;
+		while (std::getline(in, line)) {
+			if (!line.empty()) {
+				size_t separatorIndex = line.find(';');
+
+				if (separatorIndex != std::string::npos) {
+					Log("Unable to parse comport config line: %s", line.c_str());
+					continue;
+				}
+
+				try {
+					std::string hardwareId = line.substr(0, separatorIndex);
+					uint32_t baudRate = std::stoul(line.substr(separatorIndex + 1));
+					acceptedHardwareIds.insert_or_assign(hardwareId, baudRate);
+
+				} catch (std::exception &) {
+					Log("Unable to parse comport config line: %s", line.c_str());
+				}
+			}
+		}
+	}
+
+	return acceptedHardwareIds;
 }

@@ -22,42 +22,31 @@ std::string RolliVRController::GetSerial()
 
 void RolliVRController::Update(std::chrono::milliseconds frameTiming)
 {
-	if (this->m_deviceIndex == vr::k_unTrackedDeviceIndexInvalid)
+	if (this->m_deviceIndex == vr::k_unTrackedDeviceIndexInvalid) {
 		return;
+	}
 
 	// Check if this device was asked to be identified
-	/*auto events = GetDriver()->GetOpenVREvents();
-	for (auto event : events) {
-		// Note here, event.trackedDeviceIndex does not necissarily equal this->m_deviceIndex, not sure why, but the component handle will match so we can just use that instead
-		if (event.trackedDeviceIndex == this->m_deviceIndex) {
-
-		}
-
-		std::ostringstream ss;
-		ss << "Event for " << event.trackedDeviceIndex << " type: " << event.eventType;
-		GetDriver()->Log(ss.str());
-	}*/
+	// auto events = GetDriver()->GetOpenVREvents();
+	// for (auto event : events) {
+	//     // Note here, event.trackedDeviceIndex does not necissarily equal this->m_deviceIndex, not sure why, but the component handle will match so we can just use that instead
+	// 	   if (event.trackedDeviceIndex == this->m_deviceIndex) {
+	//
+	// 	   }
+	//	   GetDriver()->Log("Event for %d, type: %d", event.trackedDeviceIndex, event.eventType);
+	//}
 
 	m_serialPortInterface.Update(frameTiming);
 
 	if (m_serialPortInterface.IsLineAvailable()) {
-		std::string line = m_serialPortInterface.GetMostRecentLine();
-
-		size_t separatorIndex = line.find(',');
-		if (separatorIndex != std::string::npos) {
-			try {
-				m_inputY = std::stof(line.substr(0, separatorIndex));
-				m_inputX = std::stof(line.substr(separatorIndex + 1));
-			} catch (std::exception &) {
-				m_inputX = 0;
-				m_inputY = 0;
-			}
-		}
+		ParseSerialPortLine(m_serialPortInterface.GetMostRecentLine());
 	}
 
+	// Update joystick components
 	GetDriver()->GetInput()->UpdateScalarComponent(this->m_xComponent, m_inputX, 0);
 	GetDriver()->GetInput()->UpdateScalarComponent(this->m_yComponent, m_inputY, 0);
 
+	// Pose must be updated, because the driver will be registered as inactive otherwise
 	GetDriver()->GetDriverHost()->TrackedDevicePoseUpdated(this->m_deviceIndex, GetPose(), sizeof(vr::DriverPose_t));
 }
 
@@ -66,24 +55,19 @@ void RolliVRController::Cleanup()
 	m_serialPortInterface.Cleanup();
 }
 
-vr::TrackedDeviceIndex_t RolliVRController::GetDeviceIndex()
-{
-	return this->m_deviceIndex;
-}
-
 vr::EVRInitError RolliVRController::Activate(uint32_t unObjectId)
 {
 	this->m_deviceIndex = unObjectId;
 
-	std::ostringstream ss;
-	ss << "Activating controller " << this->m_serial << " deviceIndex: " << this->m_deviceIndex ;
-	GetDriver()->Log(ss.str());
+	GetDriver()->Log("Activating controller %s and device index: %ul", this->m_serial.c_str(), this->m_deviceIndex);
 
 	// Get the properties handle
 	auto props = GetDriver()->GetProperties()->TrackedDeviceToPropertyContainer(this->m_deviceIndex);
 
-	GetDriver()->GetInput()->CreateScalarComponent(props, "/input/joystick/x", &this->m_xComponent, vr::VRScalarType_Absolute, vr::VRScalarUnits_NormalizedTwoSided);
-	GetDriver()->GetInput()->CreateScalarComponent(props, "/input/joystick/y", &this->m_yComponent, vr::VRScalarType_Absolute, vr::VRScalarUnits_NormalizedTwoSided);
+	GetDriver()->GetInput()->CreateScalarComponent(props, "/input/joystick/x", &this->m_xComponent, vr::VRScalarType_Absolute,
+			vr::VRScalarUnits_NormalizedTwoSided);
+	GetDriver()->GetInput()->CreateScalarComponent(props, "/input/joystick/y", &this->m_yComponent, vr::VRScalarType_Absolute,
+			vr::VRScalarUnits_NormalizedTwoSided);
 
 	// Set some universe ID (Must be 2 or higher)
 	GetDriver()->GetProperties()->SetUint64Property(props, vr::Prop_CurrentUniverseId_Uint64, 2);
@@ -156,4 +140,18 @@ vr::DriverPose_t RolliVRController::GetPose()
 	pose.poseIsValid = true; // Must be true? Otherwise the device is shown as 'Standby'
 	//pose.result = vr::ETrackingResult::TrackingResult_Running_OK;
 	return pose;
+}
+
+void RolliVRController::ParseSerialPortLine(const std::string &line)
+{
+	size_t separatorIndex = line.find(',');
+	if (separatorIndex != std::string::npos) {
+		try {
+			m_inputY = std::stof(line.substr(0, separatorIndex));
+			m_inputX = std::stof(line.substr(separatorIndex + 1));
+		} catch (std::exception &) {
+			m_inputX = 0;
+			m_inputY = 0;
+		}
+	}
 }
