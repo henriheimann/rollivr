@@ -22,7 +22,7 @@ public:
 
 	vr::IVRServerDriverHost *GetDriverHost();
 
-	vr::EVRInitError Init(vr::IVRDriverContext *pDriverContext) override;
+	vr::EVRInitError Init(vr::IVRDriverContext *driverContext) override;
 
 	void Cleanup() override;
 

@@ -9,7 +9,7 @@
 
 using namespace RolliVRDriverFactory;
 
-RolliVRController::RolliVRController(std::string serial, std::vector<std::string> acceptedHardwareId) :
+RolliVRController::RolliVRController(std::string serial, SerialPortInterface::AcceptedHardwareIds acceptedHardwareId) :
 		m_serial(std::move(serial)),
 		m_serialPortInterface(std::move(acceptedHardwareId))
 {
@@ -49,7 +49,8 @@ void RolliVRController::Update(std::chrono::milliseconds frameTiming)
 				m_inputY = std::stof(line.substr(0, separatorIndex));
 				m_inputX = std::stof(line.substr(separatorIndex + 1));
 			} catch (std::exception &) {
-
+				m_inputX = 0;
+				m_inputY = 0;
 			}
 		}
 	}
@@ -129,7 +130,6 @@ vr::EVRInitError RolliVRController::Activate(uint32_t unObjectId)
 void RolliVRController::Deactivate()
 {
 	m_deviceIndex = vr::k_unTrackedDeviceIndexInvalid;
-
 	m_serialPortInterface.Cleanup();
 }
 
@@ -142,8 +142,7 @@ void *RolliVRController::GetComponent(const char *pchComponentNameAndVersion)
 	return nullptr;
 }
 
-void RolliVRController::DebugRequest(
-		const char *pchRequest, char *pchResponseBuffer, uint32_t unResponseBufferSize)
+void RolliVRController::DebugRequest(const char *pchRequest, char *pchResponseBuffer, uint32_t unResponseBufferSize)
 {
 	if (unResponseBufferSize >= 1) {
 		pchResponseBuffer[0] = 0;

@@ -4,13 +4,16 @@
 #include <string>
 #include <vector>
 #include <memory>
+#include <map>
 
 #include <serial/serial.h>
 
 class SerialPortInterface
 {
 public:
-	explicit SerialPortInterface(std::vector<std::string> acceptedHardwareIds);
+	using AcceptedHardwareIds = std::map<std::string, uint32_t>;
+
+	explicit SerialPortInterface(AcceptedHardwareIds acceptedHardwareIds);
 
 	virtual ~SerialPortInterface();
 
@@ -32,7 +35,7 @@ private:
 
 	void TrySplitCurrentLine();
 
-	std::vector<std::string> m_acceptedHardwareIds;
+	AcceptedHardwareIds m_acceptedHardwareIds;
 
 	std::unique_ptr<serial::Serial> m_serialPort;
 	std::vector<std::string> m_readLines;

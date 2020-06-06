@@ -10,7 +10,7 @@ class RolliVRController : public vr::ITrackedDeviceServerDriver
 {
 public:
 
-	RolliVRController(std::string serial, std::vector<std::string> acceptedHardwareId);
+	RolliVRController(std::string serial, SerialPortInterface::AcceptedHardwareIds);
 
 	~RolliVRController() = default;
 

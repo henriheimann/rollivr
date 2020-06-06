@@ -5,23 +5,36 @@
 
 using namespace RolliVRDriverFactory;
 
-vr::EVRInitError RolliVRDriver::Init(vr::IVRDriverContext *pDriverContext)
+vr::EVRInitError RolliVRDriver::Init(vr::IVRDriverContext *driverContext)
 {
 	// Perform driver context initialisation
-	if (vr::EVRInitError init_error = vr::InitServerDriverContext(pDriverContext); init_error != vr::EVRInitError::VRInitError_None) {
-		return init_error;
+	if (vr::EVRInitError initError = vr::InitServerDriverContext(driverContext); initError != vr::EVRInitError::VRInitError_None) {
+		return initError;
 	}
 
-	std::vector<std::string> acceptedHardwareIds;
+	SerialPortInterface::AcceptedHardwareIds acceptedHardwareIds;
 	std::string comportsConfigPath = GetResourcePath("\\resources\\config\\comports.txt");
 
 	std::ifstream in(comportsConfigPath);
 	if (in) {
 		std::string line;
 		while (std::getline(in, line)) {
-			if (line.size() > 0) {
-				Log(line);
-				acceptedHardwareIds.push_back(line);
+			if (!line.empty()) {
+				size_t separatorIndex = line.find(';');
+
+				if (separatorIndex != std::string::npos) {
+					Log("Unable to parse comport config line.");
+					continue;
+				}
+
+				try {
+					std::string hardwareId = line.substr(0, separatorIndex);
+					uint32_t baudRate = std::stoul(line.substr(separatorIndex + 1));
+					acceptedHardwareIds.insert_or_assign(hardwareId, baudRate);
+
+				} catch (std::exception &) {
+					Log("Unable to parse comport config line.");
+				}
 			}
 		}
 	}
@@ -43,7 +56,7 @@ void RolliVRDriver::Cleanup()
 void RolliVRDriver::RunFrame()
 {
 	// Collect events
-	vr::VREvent_t event;
+	vr::VREvent_t event{};
 	std::vector<vr::VREvent_t> events;
 	while (vr::VRServerDriverHost()->PollNextEvent(&event, sizeof(event))) {
 		events.push_back(event);

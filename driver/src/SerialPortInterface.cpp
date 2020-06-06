@@ -2,7 +2,7 @@
 
 #include <utility>
 
-SerialPortInterface::SerialPortInterface(std::vector<std::string> acceptedHardwareIds) :
+SerialPortInterface::SerialPortInterface(AcceptedHardwareIds acceptedHardwareIds) :
 		m_acceptedHardwareIds(std::move(acceptedHardwareIds)),
 		m_timeSinceLastMessage(0),
 		m_timeSinceLastFind(m_findInterval)
@@ -77,24 +77,26 @@ void SerialPortInterface::FindAndConnectSerialPort()
 	DisconnectSerialPort();
 
 	std::vector<serial::PortInfo> devicesFound = serial::list_ports();
-	std::vector<serial::PortInfo> matchingDevicesFound;
+
+	bool matchingDeviceFound = false;
+	serial::PortInfo matchingDevicePortInfo;
+	uint32_t matchingDeviceBaud;
 
 	for (auto &device : devicesFound) {
 		for (const auto &acceptedHardwareId : m_acceptedHardwareIds) {
-			if (device.hardware_id.find(acceptedHardwareId) != std::string::npos) {
-				matchingDevicesFound.push_back(device);
+			if (device.hardware_id.find(acceptedHardwareId.first) != std::string::npos) {
+				matchingDeviceFound = true;
+				matchingDevicePortInfo = device;
+				matchingDeviceBaud = acceptedHardwareId.second;
 			}
 		}
 	}
 
-	if (matchingDevicesFound.empty()) {
+	if (!matchingDeviceFound) {
 		return;
 	}
 
-	// TODO: Handle multiple available ports
-
-	serial::PortInfo port = matchingDevicesFound.at(0);
-	m_serialPort = std::make_unique<serial::Serial>(port.port, 115200, serial::Timeout::simpleTimeout(0));
+	m_serialPort = std::make_unique<serial::Serial>(matchingDevicePortInfo.port, matchingDeviceBaud, serial::Timeout::simpleTimeout(0));
 }
 
 void SerialPortInterface::DisconnectSerialPort()
