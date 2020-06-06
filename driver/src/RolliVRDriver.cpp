@@ -126,8 +126,8 @@ SerialPortInterface::AcceptedHardwareIds RolliVRDriver::loadAcceptedHardwareIds(
 			if (!line.empty()) {
 				size_t separatorIndex = line.find(';');
 
-				if (separatorIndex != std::string::npos) {
-					Log("Unable to parse comport config line: %s", line.c_str());
+				if (separatorIndex == std::string::npos) {
+					Log("Unable to parse comport config line, separator not found: %s", line.c_str());
 					continue;
 				}
 
@@ -136,8 +136,8 @@ SerialPortInterface::AcceptedHardwareIds RolliVRDriver::loadAcceptedHardwareIds(
 					uint32_t baudRate = std::stoul(line.substr(separatorIndex + 1));
 					acceptedHardwareIds.insert_or_assign(hardwareId, baudRate);
 
-				} catch (std::exception &) {
-					Log("Unable to parse comport config line: %s", line.c_str());
+				} catch (std::exception &e) {
+					Log("Unable to parse comport config line, exception %s during parsing: %s", e.what(), line.c_str());
 				}
 			}
 		}

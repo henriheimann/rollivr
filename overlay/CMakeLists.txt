@@ -31,7 +31,7 @@ find_package(GLM REQUIRED)
 # ----------------------------------- Build Process ---------------------------------
 set(TARGET_NAME overlay_rollivr)
 
-add_executable(${TARGET_NAME}
+add_executable(${TARGET_NAME} WIN32
   ${SHARED_SRC_FILES}
         src/main.cpp
         src/RolliVROverlayController.cpp
