@@ -50,4 +50,3 @@ jobs:
       with:
         name: installer
         path: ${{runner.workspace}}/build/RolliVR-Installer.exe
-        target: installer

@@ -18,7 +18,7 @@ OpenVR driver and overlay and embedded software for the HRW RolliVR project.
 	- Driver folder structure and files will available as `<Path to Repo>\build\driver\rollivr`.
 	- Overlay folder structure and files will be copied to the output folder as `<Path to Repo>\build\overlay\rollivr`.
 	
-Alternatively you can access the most recent prebuild installer at [here](https://github.com/henriheimann/rollivr/master/artifacts/installer).
+Alternatively, you can access the most recent prebuild installer in the latest completed action.
 	
 ## How to Install and Run
 
