@@ -48,5 +48,6 @@ jobs:
     - name: Archive installer
       uses: actions/upload-artifact@v1
       with:
-        name: driver
+        name: installer
         path: ${{runner.workspace}}/build/RolliVR-Installer.exe
+        target: installer
