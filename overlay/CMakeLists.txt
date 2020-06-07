@@ -55,15 +55,22 @@ target_link_libraries(${TARGET_NAME}
 
 set_target_properties(${TARGET_NAME} PROPERTIES COMPILE_FLAGS "${QT_FLAGS}")
 
-# Prevent Debug and Release subdirectories when building with Visual Studio
-set_target_properties(${TARGET_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}>/rollivr)
-set_target_properties(${TARGET_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_CURRENT_BINARY_DIR}>/rollivr)
-set_target_properties(${TARGET_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_CURRENT_BINARY_DIR}>/rollivr)
+# ----------------------------------- Installation ----------------------------------
 
-# Perform windeployqt
-add_custom_command(
-        TARGET ${TARGET_NAME}
-        POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/application_files/ ${CMAKE_CURRENT_BINARY_DIR}/rollivr
-        COMMAND ${QT5_WINDEPLOYQT_EXECUTABLE} $<TARGET_FILE:${TARGET_NAME}>
-)
+# Include runtime
+set(CMAKE_INSTALL_URCT_LIBRARIES TRUE)
+include(InstallRequiredSystemLibraries)
+
+# Add binary
+install(TARGETS ${TARGET_NAME} RUNTIME DESTINATION . LIBRARY DESTINATION .)
+
+# Add application files
+install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/application_files/ DESTINATION .)
+
+# Include Qt runtime via windeployqt
+include(Windeployqt)
+windeployqt(${TARGET_NAME} .)
+
+# Manually copy OpenVR dll
+# TODO: Find a way to automate this
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/openvr_api.dll DESTINATION .)

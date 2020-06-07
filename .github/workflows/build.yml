@@ -40,14 +40,13 @@ jobs:
       working-directory: ${{runner.workspace}}\build
       run: cmake --build . --config Release
 
-    - name: Archive driver
+    - name: Package
+      shell: bash
+      working-directory: ${{runner.workspace}}\build
+      run: cmake --build . --target package --config Release
+
+    - name: Archive installer
       uses: actions/upload-artifact@v1
       with:
         name: driver
-        path: ${{runner.workspace}}/build/driver/rollivr
-
-    - name: Archive overlay
-      uses: actions/upload-artifact@v1
-      with:
-        name: overlay
-        path: ${{runner.workspace}}/build/overlay/rollivr
+        path: ${{runner.workspace}}/build/RolliVR-Installer.exe

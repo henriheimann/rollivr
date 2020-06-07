@@ -97,53 +97,53 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
     DEBUG_POSTFIX "-d")  
 
 
-if(USE_CATKIN)
-    ## Install headers
-    install(FILES include/serial/serial.h include/serial/v8stdint.h
-        DESTINATION ${CATKIN_GLOBAL_INCLUDE_DESTINATION}/serial)
-    ## Install executable
-    install(TARGETS ${PROJECT_NAME}
-        ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-        LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-        RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION}
-    )
-else()
-    set(EXPORT_TARGET_NAME serialTargets)
-
-    install(EXPORT ${EXPORT_TARGET_NAME} DESTINATION cmake)
-    # Include module with fuction 'write_basic_package_version_file' and 'configure_package_config_file'
-    include(CMakePackageConfigHelpers)
-
-    set(OUTPUT_CMAKE_EXPORT_GENERATED_FILES ${CMAKE_BINARY_DIR}/CMakeExportConfig)
-    # Configure '<PROJECT-NAME>ConfigVersion.cmake'
-    write_basic_package_version_file(${OUTPUT_CMAKE_EXPORT_GENERATED_FILES}/${PROJECT_NAME}Config-version.cmake
-        # <AnyNewerVersion|SameMajorVersion|SameMinorVersion|ExactVersion> 
-        # Careful : SameMinorVersion and ExactVersion were introduced in CMake 3.11
-        COMPATIBILITY SameMajorVersion
-    )
-
-    # Configure '<PROJECT-NAME>Config.cmake'
-    configure_package_config_file(
-        "${CMAKE_CURRENT_SOURCE_DIR}/cmake/${PROJECT_NAME}Config.cmake.in"
-        "${OUTPUT_CMAKE_EXPORT_GENERATED_FILES}/${PROJECT_NAME}Config.cmake"
-        INSTALL_DESTINATION "${CMAKE_INSTALL_PREFIX}/cmake"
-    )
-
-    # Install config file generated
-    install(DIRECTORY ${OUTPUT_CMAKE_EXPORT_GENERATED_FILES}/ 
-        DESTINATION cmake)
-
-
-    ## Install headers
-    install(FILES include/serial/serial.h include/serial/v8stdint.h
-        DESTINATION ${CMAKE_INSTALL_PREFIX}/include/serial)
-
-   ## Install executable
-    install(TARGETS ${PROJECT_NAME} EXPORT ${EXPORT_TARGET_NAME}
-        INCLUDES DESTINATION $<INSTALL_INTERFACE:include/>
-        ARCHIVE DESTINATION "lib" COMPONENT ${PROJECT_NAME}
-    )
-endif()
+#if(USE_CATKIN)
+#    ## Install headers
+#    install(FILES include/serial/serial.h include/serial/v8stdint.h
+#        DESTINATION ${CATKIN_GLOBAL_INCLUDE_DESTINATION}/serial)
+#    ## Install executable
+#    install(TARGETS ${PROJECT_NAME}
+#        ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+#        LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+#        RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION}
+#    )
+#else()
+#    set(EXPORT_TARGET_NAME serialTargets)
+#
+#    install(EXPORT ${EXPORT_TARGET_NAME} DESTINATION cmake)
+#    # Include module with fuction 'write_basic_package_version_file' and 'configure_package_config_file'
+#    include(CMakePackageConfigHelpers)
+#
+#    set(OUTPUT_CMAKE_EXPORT_GENERATED_FILES ${CMAKE_BINARY_DIR}/CMakeExportConfig)
+#    # Configure '<PROJECT-NAME>ConfigVersion.cmake'
+#    write_basic_package_version_file(${OUTPUT_CMAKE_EXPORT_GENERATED_FILES}/${PROJECT_NAME}Config-version.cmake
+#        # <AnyNewerVersion|SameMajorVersion|SameMinorVersion|ExactVersion>
+#        # Careful : SameMinorVersion and ExactVersion were introduced in CMake 3.11
+#        COMPATIBILITY SameMajorVersion
+#    )
+#
+#    # Configure '<PROJECT-NAME>Config.cmake'
+#    configure_package_config_file(
+#        "${CMAKE_CURRENT_SOURCE_DIR}/cmake/${PROJECT_NAME}Config.cmake.in"
+#        "${OUTPUT_CMAKE_EXPORT_GENERATED_FILES}/${PROJECT_NAME}Config.cmake"
+#        INSTALL_DESTINATION "${CMAKE_INSTALL_PREFIX}/cmake"
+#    )
+#
+#    # Install config file generated
+#    install(DIRECTORY ${OUTPUT_CMAKE_EXPORT_GENERATED_FILES}/
+#        DESTINATION cmake)
+#
+#
+#    ## Install headers
+#    install(FILES include/serial/serial.h include/serial/v8stdint.h
+#        DESTINATION ${CMAKE_INSTALL_PREFIX}/include/serial)
+#
+#   ## Install executable
+#    install(TARGETS ${PROJECT_NAME} EXPORT ${EXPORT_TARGET_NAME}
+#        INCLUDES DESTINATION $<INSTALL_INTERFACE:include/>
+#        ARCHIVE DESTINATION "lib" COMPONENT ${PROJECT_NAME}
+#    )
+#endif()
 
 
 ## Tests
