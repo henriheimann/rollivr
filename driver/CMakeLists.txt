@@ -38,6 +38,11 @@ target_include_directories("${TARGET_NAME}" PUBLIC "src")
 target_link_libraries("${TARGET_NAME}" PUBLIC ${OPENVR_LIBRARY} serial)
 set_property(TARGET "${TARGET_NAME}" PROPERTY CXX_STANDARD 17)
 
+# Prevent Debug and Release subdirectories when building with Visual Studio
+set_target_properties(${TARGET_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}>/${DRIVER_NAME}/bin/${PLATFORM_NAME}${PROCESSOR_ARCH}/)
+set_target_properties(${TARGET_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_CURRENT_BINARY_DIR}>/${DRIVER_NAME}/bin/${PLATFORM_NAME}${PROCESSOR_ARCH}/)
+set_target_properties(${TARGET_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_CURRENT_BINARY_DIR}>/${DRIVER_NAME}/bin/${PLATFORM_NAME}${PROCESSOR_ARCH}/)
+
 # ----------------------------------- Installation ----------------------------------
 
 # Add binary

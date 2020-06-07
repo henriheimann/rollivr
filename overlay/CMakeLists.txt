@@ -55,6 +55,11 @@ target_link_libraries(${TARGET_NAME}
 
 set_target_properties(${TARGET_NAME} PROPERTIES COMPILE_FLAGS "${QT_FLAGS}")
 
+# Prevent Debug and Release subdirectories when building with Visual Studio
+set_target_properties(${TARGET_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}>/rollivr)
+set_target_properties(${TARGET_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_CURRENT_BINARY_DIR}>/rollivr)
+set_target_properties(${TARGET_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_CURRENT_BINARY_DIR}>/rollivr)
+
 # ----------------------------------- Installation ----------------------------------
 
 # Include runtime
@@ -73,8 +78,4 @@ windeployqt(${TARGET_NAME} .)
 
 # Manually copy OpenVR dll, depending on build it may reside in ${CMAKE_BUILD_TYPE} subdirectory or not
 # TODO: Find a way to automate this
-if(EXISTS "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}/openvr_api.dll")
-    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_BUILD_TYPE}/openvr_api.dll DESTINATION .)
-else()
-    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/openvr_api.dll DESTINATION .)
-endif()
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/rollivr/openvr_api.dll DESTINATION .)
