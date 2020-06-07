@@ -68,8 +68,8 @@ install(TARGETS ${TARGET_NAME} RUNTIME DESTINATION . LIBRARY DESTINATION .)
 install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/application_files/ DESTINATION .)
 
 # Include Qt runtime via windeployqt
-include(Windeployqt)
-windeployqt(${TARGET_NAME} .)
+#include(Windeployqt)
+#windeployqt(${TARGET_NAME} .)
 
 # Manually copy OpenVR dll
 # TODO: Find a way to automate this
