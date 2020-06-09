@@ -121,7 +121,7 @@ void RolliVRDriver::listAvailableHardwareIds()
 	std::vector<serial::PortInfo> devicesFound = serial::list_ports();
 
 	for (auto &device : devicesFound) {
-		Log("Available hardware id: ", device.hardware_id.c_str());
+		Log("Available hardware id: %s", device.hardware_id.c_str());
 	}
 }
 
