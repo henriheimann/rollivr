@@ -67,6 +67,8 @@ public:
 
 private:
 
+	void listAvailableHardwareIds();
+
 	/**
 	 * Loads a map of accepted hardware Ids mapped to their baud rate from a configuration file.
 	 * @return The map of accepted hardware ids and baud rates.

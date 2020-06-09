@@ -12,6 +12,8 @@ vr::EVRInitError RolliVRDriver::Init(vr::IVRDriverContext *driverContext)
 		return initError;
 	}
 
+	listAvailableHardwareIds();
+
 	SerialPortInterface::AcceptedHardwareIds acceptedHardwareIds = loadAcceptedHardwareIds();
 
 	// Create the controller
@@ -114,6 +116,15 @@ std::string RolliVRDriver::GetResourcePath(const std::string &name)
 
 #pragma clang diagnostic pop
 
+void RolliVRDriver::listAvailableHardwareIds()
+{
+	std::vector<serial::PortInfo> devicesFound = serial::list_ports();
+
+	for (auto &device : devicesFound) {
+		Log("Available hardware id: ", device.hardware_id.c_str());
+	}
+}
+
 SerialPortInterface::AcceptedHardwareIds RolliVRDriver::loadAcceptedHardwareIds()
 {
 	SerialPortInterface::AcceptedHardwareIds acceptedHardwareIds;
@@ -135,6 +146,8 @@ SerialPortInterface::AcceptedHardwareIds RolliVRDriver::loadAcceptedHardwareIds(
 					std::string hardwareId = line.substr(0, separatorIndex);
 					uint32_t baudRate = std::stoul(line.substr(separatorIndex + 1));
 					acceptedHardwareIds.insert_or_assign(hardwareId, baudRate);
+
+					Log("Loaded accepted hardware id %s with baud rate %lu", hardwareId.c_str(), baudRate);
 
 				} catch (std::exception &e) {
 					Log("Unable to parse comport config line, exception %s during parsing: %s", e.what(), line.c_str());
