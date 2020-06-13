@@ -22,22 +22,9 @@ Alternatively, you can access the most recent prebuild installer in the latest c
 	
 ## How to Install and Run
 
-### Driver
+### Driver & Overlay
 
 - Run `<Path to Repo>\build\RolliVR-Installer.exe`
-- Navigate to `C:\Users\<Username>\AppData\Local\openvr` and find the `openvrpaths.vrpath` file. Open this file with your text editor of choice, and under `"external_drivers"`, add another entry with the location of the `rollivr` folder. For example mine looks like this after adding the entry:
-
-```json
-{
-	"external_drivers" : 
-	[
-		"<Path to installation>\\driver\\rollivr"
-	]
-}
-```
-
-### Overlay
-
 - Launch application file at `<Path to installation>\rollivr.exe`
 
 ### Embedded Software
