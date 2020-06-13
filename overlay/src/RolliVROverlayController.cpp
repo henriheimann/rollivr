@@ -384,8 +384,6 @@ bool RolliVROverlayController::ConnectToVRRuntime()
 	vr::VRInput()->GetActionHandle("/actions/main/in/movementAndRotation", &m_actionMovementAndRotationInput);
 	vr::VRInput()->GetActionSetHandle("/actions/main", &m_actionSetMain);
 
-	vr::VRSettings()->SetBool(vr::k_pch_CollisionBounds_Section, vr::k_pch_CollisionBounds_CenterMarkerOn_Bool, true);
-
 	// Reset Chaperone
 	vr::VRChaperoneSetup()->ReloadFromDisk(EChaperoneConfigFile_Live);
 
