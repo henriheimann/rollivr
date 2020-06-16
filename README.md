@@ -24,8 +24,8 @@ Alternatively, you can access the most recent prebuild installer in the latest c
 
 ### Driver & Overlay
 
-- Run `<Path to Repo>\build\RolliVR-Installer.exe`
-- Launch application file at `<Path to installation>\rollivr.exe`
+- The driver and overlay application should automatically launch with SteamVR
+    - If the overlay doesn't start run install_manifest.bat and restart SteamVR
 
 ### Embedded Software
 
