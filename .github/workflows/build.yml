@@ -32,7 +32,7 @@ jobs:
 
     - name: Test log Qt dir
       shell: bash
-      run: ls -la $RUNNER_WORKSPACE/Qt/5.12.9
+      run: ls -la $RUNNER_WORKSPACE/Qt
 
     - name: Configure
       shell: bash
