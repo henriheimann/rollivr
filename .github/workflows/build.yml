@@ -33,7 +33,7 @@ jobs:
     - name: Configure
       shell: bash
       working-directory: ${{runner.workspace}}\build
-      run: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=Release -G"Visual Studio 16 2019" -DCMAKE_TOOLCHAIN_FILE=$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake
+      run: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=Release -G"Visual Studio 16 2019" -DCMAKE_TOOLCHAIN_FILE=$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake -DCMAKE_PREFIX_PATH=$RUNNER_WORKSPACE/qt5/5.12.9/msvc2017_64/lib/cmake
     
     - name: Compile
       shell: bash

@@ -33,12 +33,12 @@ set(TARGET_NAME overlay_rollivr)
 
 add_executable(${TARGET_NAME} WIN32
   ${SHARED_SRC_FILES}
-        src/RolliVROverlay.cpp
+        src/main.cpp
         src/RolliVROverlayController.cpp
         src/RolliVROverlayController.h
         src/RolliVROverlayWidget.cpp
         src/RolliVROverlayWidget.h
-        src/RolliVROverlay.h)
+        src/main.h)
 
 add_definitions(${QT_DEFINITIONS})
 if(NOT "${CMAKE_BUILD_TYPE}" EQUAL "Debug")
