@@ -29,7 +29,11 @@ jobs:
         
     - name: Create Build Directory
       run: cmake -E make_directory ${{runner.workspace}}\build
-      
+
+    - name: Test log Qt dir
+      shell: bash
+      run: ls -la $RUNNER_WORKSPACE/qt5/5.12.9
+
     - name: Configure
       shell: bash
       working-directory: ${{runner.workspace}}\build
