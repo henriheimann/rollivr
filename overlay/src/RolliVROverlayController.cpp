@@ -3,7 +3,7 @@
 
 #include "RolliVROverlayController.h"
 #include "RolliVROverlayWidget.h"
-#include "main.h"
+#include "RolliVROverlay.h"
 
 #include <QOpenGLFramebufferObjectFormat>
 #include <QOpenGLPaintDevice>

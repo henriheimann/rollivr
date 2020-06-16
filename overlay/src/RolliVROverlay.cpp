@@ -1,4 +1,4 @@
-#include "main.h"
+#include "RolliVROverlay.h"
 #include "RolliVROverlayWidget.h"
 #include "RolliVROverlayController.h"
 
