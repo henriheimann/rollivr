@@ -17,7 +17,7 @@ jobs:
       uses: actions/cache@v1
       with:
         path: ../Qt
-        key: ${{ runner.os }}-QtCache
+        key: ${{ runner.os }}-QtCache-5-12-9
       
     - name: Install Qt
       uses: jurplel/install-qt-action@v2
@@ -30,14 +30,10 @@ jobs:
     - name: Create Build Directory
       run: cmake -E make_directory ${{runner.workspace}}\build
 
-    - name: Test log Qt dir
-      shell: bash
-      run: ls -la $RUNNER_WORKSPACE/Qt/5.12.8
-
     - name: Configure
       shell: bash
       working-directory: ${{runner.workspace}}\build
-      run: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=Release -G"Visual Studio 16 2019" -DCMAKE_TOOLCHAIN_FILE=$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake -DCMAKE_PREFIX_PATH=$RUNNER_WORKSPACE/Qt/5.12.8/msvc2017_64/lib/cmake
+      run: cmake $GITHUB_WORKSPACE -DCMAKE_BUILD_TYPE=Release -G"Visual Studio 16 2019" -DCMAKE_TOOLCHAIN_FILE=$VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake
     
     - name: Compile
       shell: bash
