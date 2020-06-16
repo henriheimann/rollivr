@@ -3,6 +3,7 @@
 
 #include "RolliVROverlayController.h"
 #include "RolliVROverlayWidget.h"
+#include "main.h"
 
 #include <QOpenGLFramebufferObjectFormat>
 #include <QOpenGLPaintDevice>
@@ -87,8 +88,7 @@ bool RolliVROverlayController::Init()
 	success = success && vr::VRCompositor() != nullptr;
 
 	if (vr::VROverlay()) {
-		std::string key = std::string("rollivr.") + m_name.toStdString();
-		vr::VROverlayError overlayError = vr::VROverlay()->CreateDashboardOverlay(key.c_str(),
+		vr::VROverlayError overlayError = vr::VROverlay()->CreateDashboardOverlay(RolliVROverlay::applicationKey,
 		                                                                          m_name.toStdString().c_str(),
 		                                                                          &m_overlayHandle,
 		                                                                          &m_overlayThumbnailHandle);

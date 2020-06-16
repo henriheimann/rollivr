@@ -1,0 +1,16 @@
+{
+	"source" : "builtin",
+	"applications": [{
+		"app_key": "rollivr.overlay",
+		"launch_type": "binary",
+		"binary_path_windows": "overlay_rollivr.exe",
+		"is_dashboard_overlay": true,
+
+		"strings": {
+			"en_us": {
+				"name": "RolliVR",
+				"description": "RolliVR Overlay"
+			}
+		}
+	}]
+}

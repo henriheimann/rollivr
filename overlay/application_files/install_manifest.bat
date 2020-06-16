@@ -1,0 +1,2 @@
+start overlay_start -installmanifest
+exit

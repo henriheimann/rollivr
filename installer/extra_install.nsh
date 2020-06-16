@@ -1,3 +1,4 @@
+# ----------------------------------- Add driver to openvrpaths.vrpath -----------------------------
 Var /GLOBAL inst_dir_driver
 Var /GLOBAL inst_dir_driver_escaped
 
@@ -23,3 +24,13 @@ ${Next}
 
 done:
 nsJSON::Serialize /format /file "$PROFILE\\AppData\\Local\\openvr\\openvrpaths.vrpath"
+
+
+# ----------------------------------- Install manifest ---------------------------------------------
+# Installs manifest and sets the overlay to autostart
+nsExec::ExecToLog '"$INSTDIR\overlay_rollivr.exe" -installmanifest'
+
+# If SteamVR is already running, manually perform the first start
+FindWindow $0 "Qt5QWindowIcon" "SteamVR Status"
+StrCmp $0 0 +2
+    Exec '"$INSTDIR\overlay_rollivr.exe"'

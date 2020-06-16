@@ -1,3 +1,4 @@
+# ----------------------------------- Remove driver from openvrpaths.vrpath ------------------------
 Var /GLOBAL uninst_dir_driver
 
 StrCpy $uninst_dir_driver "$INSTDIR\driver\rollivr"
@@ -21,3 +22,7 @@ ${Next}
 
 done:
 nsJSON::Serialize /format /file "$PROFILE\\AppData\\Local\\openvr\\openvrpaths.vrpath"
+
+
+# ----------------------------------- Remove manifest ----------------------------------------------
+nsExec::ExecToLog '"$INSTDIR\overlay_rollivr.exe" -removemanifest'
