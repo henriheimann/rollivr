@@ -270,21 +270,23 @@ void RolliVROverlayController::ProcessUIEvents()
 
 void RolliVROverlayController::ProcessBindings()
 {
-	vr::VRActiveActionSet_t actionSet = {0};
-	actionSet.ulActionSet = m_actionSetMain;
-	vr::VRInput()->UpdateActionState(&actionSet, sizeof(actionSet), 1);
+	if (m_enabled) {
+		vr::VRActiveActionSet_t actionSet = {0};
+		actionSet.ulActionSet = m_actionSetMain;
+		vr::VRInput()->UpdateActionState(&actionSet, sizeof(actionSet), 1);
 
-	vr::InputAnalogActionData_t analogData{};
-	if (vr::VRInput()->GetAnalogActionData(m_actionMovementAndRotationInput, &analogData, sizeof(analogData),
-	                                       vr::k_ulInvalidInputValueHandle) == vr::VRInputError_None && analogData.bActive) {
-		m_lastInputX = analogData.x;
-		m_lastInputY = analogData.y;
-	} else {
-		m_lastInputX = 0.0f;
-		m_lastInputY = 0.0f;
+		vr::InputAnalogActionData_t analogData{};
+		if (vr::VRInput()->GetAnalogActionData(m_actionMovementAndRotationInput, &analogData, sizeof(analogData),
+		                                       vr::k_ulInvalidInputValueHandle) == vr::VRInputError_None && analogData.bActive) {
+			m_lastInputX = analogData.x;
+			m_lastInputY = analogData.y;
+		} else {
+			m_lastInputX = 0.0f;
+			m_lastInputY = 0.0f;
+		}
+
+		UpdateZeroPose();
 	}
-
-	UpdateZeroPose();
 }
 
 void RolliVROverlayController::ResetZeroPose()
@@ -443,11 +445,15 @@ void RolliVROverlayController::OnStart()
 	m_xOffset = offset.x;
 	m_yOffset = offset.y;
 
+	m_enabled = true;
+
 	UpdateZeroPose();
 }
 
 void RolliVROverlayController::OnStop()
 {
+	m_enabled = false;
+
 	ResetZeroPose();
 }
 
