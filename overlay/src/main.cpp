@@ -100,6 +100,7 @@ int main(int argc, char *argv[])
 	RolliVROverlay::checkForCommandLineArguments(argc, argv);
 
     QApplication application(argc, argv);
+
     auto *overlayWidget = new RolliVROverlayWidget;
     RolliVROverlayController::SharedInstance()->Init();
     RolliVROverlayController::SharedInstance()->SetWidget(overlayWidget);

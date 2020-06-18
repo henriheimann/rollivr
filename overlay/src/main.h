@@ -5,6 +5,8 @@
 namespace RolliVROverlay
 {
 	constexpr const char *applicationKey = "rollivr.overlay";
+	constexpr const char *qtSettingsApplication = "RolliVR";
+	constexpr const char *qtSettingsOrganization = "HRW";
 
 	/**
 	 * Installs the OpenVR manifest for this application.

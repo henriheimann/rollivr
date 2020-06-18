@@ -1,17 +1,19 @@
 #include <QtCore/qmath.h>
 #include "RolliVROverlayWidget.h"
 #include "ui_RolliVROverlayWidget.h"
+#include "main.h"
 
 RolliVROverlayWidget::RolliVROverlayWidget(QWidget *parent) :
 		QWidget(parent),
-		m_ui(new Ui::RolliVROverlayWidget)
+		m_ui(new Ui::RolliVROverlayWidget),
+		m_settings(RolliVROverlay::qtSettingsOrganization, RolliVROverlay::qtSettingsApplication)
 {
     m_ui->setupUi(this);
 	m_ui->hiddenWhileNotRunningWidget->setVisible(false);
 
-	m_currentHeightOffset = 0;
-	m_currentTurnSpeed = 100;
-	m_currentMovementSpeed = 100;
+	m_currentHeightOffset = m_settings.value("height_offset", 0).toInt();
+	m_currentTurnSpeed = m_settings.value("turn_speed", 100).toInt();
+	m_currentMovementSpeed = m_settings.value("movement_speed", 100).toInt();
 	m_started = false;
 
 	updateHeightOffsetLabel();
@@ -65,6 +67,7 @@ void RolliVROverlayWidget::updateMovementSpeedLabel()
 void RolliVROverlayWidget::on_decrementHeightOffsetPushButton_clicked()
 {
 	m_currentHeightOffset = qMax(m_currentHeightOffset - 5, -100);
+	m_settings.setValue("height_offset", m_currentHeightOffset);
 	updateHeightOffsetLabel();
 	emit ConfigurationChanged();
 }
@@ -72,6 +75,7 @@ void RolliVROverlayWidget::on_decrementHeightOffsetPushButton_clicked()
 void RolliVROverlayWidget::on_incrementHeightOffsetPushButton_clicked()
 {
 	m_currentHeightOffset = qMin(m_currentHeightOffset + 5, 100);
+	m_settings.setValue("height_offset", m_currentHeightOffset);
 	updateHeightOffsetLabel();
 	emit ConfigurationChanged();
 }
@@ -79,6 +83,7 @@ void RolliVROverlayWidget::on_incrementHeightOffsetPushButton_clicked()
 void RolliVROverlayWidget::on_decrementTurnSpeedPushButton_clicked()
 {
 	m_currentTurnSpeed = qMax(m_currentTurnSpeed - 5, 0);
+	m_settings.setValue("turn_speed", m_currentTurnSpeed);
 	updateTurnSpeedLabel();
 	emit ConfigurationChanged();
 }
@@ -86,6 +91,7 @@ void RolliVROverlayWidget::on_decrementTurnSpeedPushButton_clicked()
 void RolliVROverlayWidget::on_incrementTurnSpeedPushButton_clicked()
 {
 	m_currentTurnSpeed = qMin(m_currentTurnSpeed + 5, 200);
+	m_settings.setValue("turn_speed", m_currentTurnSpeed);
 	updateTurnSpeedLabel();
 	emit ConfigurationChanged();
 }
@@ -93,6 +99,7 @@ void RolliVROverlayWidget::on_incrementTurnSpeedPushButton_clicked()
 void RolliVROverlayWidget::on_decrementMovementSpeedPushButton_clicked()
 {
 	m_currentMovementSpeed = qMax(m_currentMovementSpeed - 5, 0);
+	m_settings.setValue("movement_speed", m_currentMovementSpeed);
 	updateMovementSpeedLabel();
 	emit ConfigurationChanged();
 }
@@ -100,6 +107,7 @@ void RolliVROverlayWidget::on_decrementMovementSpeedPushButton_clicked()
 void RolliVROverlayWidget::on_incrementMovementSpeedPushButton_clicked()
 {
 	m_currentMovementSpeed = qMin(m_currentMovementSpeed + 5, 200);
+	m_settings.setValue("movement_speed", m_currentMovementSpeed);
 	updateMovementSpeedLabel();
 	emit ConfigurationChanged();
 }

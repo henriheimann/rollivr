@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QtWidgets/QWidget>
+#include <QtCore/QtCore>
 
 namespace Ui {
 class RolliVROverlayWidget;
@@ -46,4 +47,6 @@ private:
     int m_currentHeightOffset;
 	int m_currentTurnSpeed;
 	int m_currentMovementSpeed;
+
+	QSettings m_settings;
 };
