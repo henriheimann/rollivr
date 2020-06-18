@@ -102,6 +102,10 @@ private:
 	glm::vec3 m_currentTranslation{};
 	float m_currentRotation{};
 
+	float m_rotationOffset{};
+	float m_xOffset{};
+	float m_yOffset{};
+
 	float m_lastInputX{};
 	float m_lastInputY{};
 };

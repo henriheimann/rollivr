@@ -96,7 +96,7 @@ bool RolliVROverlayController::Init()
 	}
 
 	if (success) {
-		vr::VROverlay()->SetOverlayWidthInMeters(m_overlayHandle, 1.5f);
+		vr::VROverlay()->SetOverlayWidthInMeters(m_overlayHandle, 2.5f);
 		vr::VROverlay()->SetOverlayInputMethod(m_overlayHandle, vr::VROverlayInputMethod_Mouse);
 
 		std::string thumbIconPath = (QCoreApplication::applicationDirPath() + "/thumbicon.png").toStdString();
@@ -199,9 +199,7 @@ void RolliVROverlayController::ProcessUIEvents()
 			}
 
 			case vr::VREvent_MouseButtonDown: {
-				Qt::MouseButton button =
-						vrEvent.data.mouse.button == vr::VRMouseButton_Right ? Qt::RightButton : Qt::LeftButton;
-
+				Qt::MouseButton button = vrEvent.data.mouse.button == vr::VRMouseButton_Right ? Qt::RightButton : Qt::LeftButton;
 				m_lastMouseButtons |= button;
 
 				QPoint globalPoint = m_lastMousePoint.toPoint();
@@ -226,8 +224,7 @@ void RolliVROverlayController::ProcessUIEvents()
 			}
 
 			case vr::VREvent_MouseButtonUp: {
-				Qt::MouseButton button =
-						vrEvent.data.mouse.button == vr::VRMouseButton_Right ? Qt::RightButton : Qt::LeftButton;
+				Qt::MouseButton button = vrEvent.data.mouse.button == vr::VRMouseButton_Right ? Qt::RightButton : Qt::LeftButton;
 				m_lastMouseButtons &= ~button;
 
 				QPoint globalPoint = m_lastMousePoint.toPoint();
@@ -301,9 +298,6 @@ void RolliVROverlayController::ResetZeroPose()
 void RolliVROverlayController::UpdateZeroPose()
 {
 	float heightOffset = (m_widget == nullptr) ? 0.0f : m_widget->GetHeightOffset();
-	float xOffset = (m_widget == nullptr) ? 0.0f : m_widget->GetXOffset();
-	float yOffset = (m_widget == nullptr) ? 0.0f : m_widget->GetYOffset();
-	float rotationOffset = (m_widget == nullptr) ? 0.0f : m_widget->GetRotationOffset();
 	float turnSpeed = (m_widget == nullptr) ? 1.0f : m_widget->GetTurnSpeed();
 	float movementSpeed = (m_widget == nullptr) ? 1.0f : m_widget->GetMovementSpeed();
 
@@ -320,8 +314,8 @@ void RolliVROverlayController::UpdateZeroPose()
 	glm::vec3 forward = glm::vec4(0, 0, 1, 0) * glm::rotate(glm::mat4(1.0f), m_currentRotation, glm::vec3(0, 1, 0));
 	m_currentTranslation += forward * m_lastInputY * delta * movementSpeed;
 
-	glm::mat4 currentZeroPose = glm::translate(glm::mat4(1.0f), glm::vec3(-xOffset, -heightOffset, -yOffset));
-	currentZeroPose = glm::rotate(currentZeroPose, -rotationOffset, glm::vec3(0, 1, 0));
+	glm::mat4 currentZeroPose = glm::translate(glm::mat4(1.0f), glm::vec3(-m_xOffset, -heightOffset, -m_yOffset));
+	currentZeroPose = glm::rotate(currentZeroPose, -m_rotationOffset, glm::vec3(0, 1, 0));
 	currentZeroPose = glm::rotate(currentZeroPose, m_currentRotation, glm::vec3(0, 1, 0));
 	currentZeroPose = glm::translate(currentZeroPose, m_currentTranslation);
 
@@ -342,6 +336,7 @@ void RolliVROverlayController::SetWidget(RolliVROverlayWidget *widget)
 		disconnect(m_widget, &RolliVROverlayWidget::Start, this, &RolliVROverlayController::OnStart);
 		disconnect(m_widget, &RolliVROverlayWidget::Stop, this, &RolliVROverlayController::OnStop);
 		disconnect(m_widget, &RolliVROverlayWidget::ConfigurationChanged, this, &RolliVROverlayController::OnConfigurationChanged);
+		disconnect(m_widget, &RolliVROverlayWidget::Reset, this, &RolliVROverlayController::ResetZeroPose);
 	}
 
 	if (m_scene) {
@@ -353,6 +348,7 @@ void RolliVROverlayController::SetWidget(RolliVROverlayWidget *widget)
 	connect(widget, &RolliVROverlayWidget::Start, this, &RolliVROverlayController::OnStart);
 	connect(widget, &RolliVROverlayWidget::Stop, this, &RolliVROverlayController::OnStop);
 	connect(widget, &RolliVROverlayWidget::ConfigurationChanged, this, &RolliVROverlayController::OnConfigurationChanged);
+	connect(widget, &RolliVROverlayWidget::Reset, this, &RolliVROverlayController::ResetZeroPose);
 
 	m_fbo = new QOpenGLFramebufferObject(widget->width(), widget->height(), GL_TEXTURE_2D);
 
@@ -436,21 +432,17 @@ void RolliVROverlayController::OnStart()
 	headsetMatrix = glm::transpose(headsetMatrix);
 
 	float heightOffset = m_widget->GetHeightOffset();
-	float xOffset = m_widget->GetXOffset();
-	float yOffset = m_widget->GetYOffset();
-	float rotationOffset = m_widget->GetRotationOffset();
 
-	glm::mat4 currentZeroPose =  glm::translate(glm::mat4(1.0f), glm::vec3(-xOffset, -heightOffset, -yOffset));
-	currentZeroPose = glm::rotate(currentZeroPose, -rotationOffset, glm::vec3(0, 1, 0));
+	glm::mat4 currentZeroPose =  glm::translate(glm::mat4(1.0f), glm::vec3(-m_xOffset, -heightOffset, -m_yOffset));
+	currentZeroPose = glm::rotate(currentZeroPose, -m_rotationOffset, glm::vec3(0, 1, 0));
 
 	glm::vec2 forward = glm::normalize((currentZeroPose * (headsetMatrix * glm::vec4(0, 0, 1, 0))).xz());
 	glm::vec2 offset = (currentZeroPose * -(headsetMatrix * glm::vec4(0, 0, 0, 1))).xz();
 
-	float rotation = std::atan2((float)forward.y, (float)forward.x) - M_PI / 2.0f;
-	float x = offset.x;
-	float y = offset.y;
+	m_rotationOffset = std::atan2f((float)forward.y, (float)forward.x) - M_PI / 2.0f;
+	m_xOffset = offset.x;
+	m_yOffset = offset.y;
 
-	m_widget->MoveOffsets(x, y, rotation);
 	UpdateZeroPose();
 }
 
