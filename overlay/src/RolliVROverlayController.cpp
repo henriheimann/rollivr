@@ -104,10 +104,12 @@ bool RolliVROverlayController::Init()
 
 		std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
 		this->m_lastFrameTime = now;
+		this->m_frameTiming = std::chrono::microseconds(0);
 
 		m_pumpEventsTimer = new QTimer(this);
 		connect(m_pumpEventsTimer, &QTimer::timeout, this, &RolliVROverlayController::OnTimeoutPumpEvents);
-		m_pumpEventsTimer->setInterval(10);
+		m_pumpEventsTimer->setInterval(0);
+		m_pumpEventsTimer->setSingleShot(true);
 		m_pumpEventsTimer->start();
 	}
 
@@ -160,14 +162,24 @@ void RolliVROverlayController::OnTimeoutPumpEvents()
 		return;
 	}
 
-	// Update frame timing
-	std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
-	this->m_frameTiming = std::chrono::duration_cast<std::chrono::milliseconds>(now - this->m_lastFrameTime);
-	this->m_lastFrameTime = now;
-
-	//std::cout << "OnTimeoutPumpEvents: " << m_frameTiming.count() << " FPS: " << (1000.0f / m_frameTiming.count()) << std::endl;
 	ProcessUIEvents();
 	ProcessBindings();
+
+	// Update frame timing
+	std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
+	m_frameTiming = std::chrono::duration_cast<std::chrono::microseconds>(now - m_lastFrameTime);
+	m_lastFrameTime = now;
+
+	// Calculate time to sleep
+	std::chrono::microseconds microsecondsToSleep = std::max(std::chrono::microseconds(0), RolliVROverlay::targetFrameTiming - m_frameTiming);
+	std::chrono::milliseconds millisecondsToSleep = std::chrono::duration_cast<std::chrono::milliseconds>(microsecondsToSleep);
+
+	//std::cout << "FPS: " << (1000000.0f / m_frameTiming.count()) << " Time to sleep: " << millisecondsToSleep.count() << "ms" << std::endl;
+
+	// Launch timer for next update
+	m_pumpEventsTimer->setInterval(millisecondsToSleep.count());
+	m_pumpEventsTimer->setSingleShot(true);
+	m_pumpEventsTimer->start();
 }
 
 void RolliVROverlayController::ProcessUIEvents()
@@ -303,7 +315,7 @@ void RolliVROverlayController::UpdateZeroPose()
 	float turnSpeed = (m_widget == nullptr) ? 1.0f : m_widget->GetTurnSpeed();
 	float movementSpeed = (m_widget == nullptr) ? 1.0f : m_widget->GetMovementSpeed();
 
-	float delta = (m_frameTiming.count() / 1000.0f);
+	float delta = (m_frameTiming.count() / 1000000.0f);
 
 	// Don't process input if we are at <10 FPS.
 	if (delta > 0.1f || delta < -0.1f) {

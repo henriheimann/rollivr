@@ -89,7 +89,7 @@ private:
 	QOffscreenSurface *m_offscreenSurface;
 
 	QTimer *m_pumpEventsTimer;
-	std::chrono::milliseconds m_frameTiming;
+	std::chrono::microseconds m_frameTiming;
 	std::chrono::system_clock::time_point m_lastFrameTime;
 
 	RolliVROverlayWidget *m_widget;

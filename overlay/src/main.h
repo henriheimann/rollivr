@@ -1,12 +1,16 @@
 #pragma once
 
 #include <string>
+#include <chrono>
 
 namespace RolliVROverlay
 {
 	constexpr const char *applicationKey = "rollivr.overlay";
 	constexpr const char *qtSettingsApplication = "RolliVR";
 	constexpr const char *qtSettingsOrganization = "HRW";
+
+	constexpr const int targetFps = 100;
+	constexpr std::chrono::milliseconds targetFrameTiming(1000 / targetFps);
 
 	/**
 	 * Installs the OpenVR manifest for this application.
