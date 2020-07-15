@@ -1,4 +1,4 @@
-<img src="/documentation/images/hrw_logo.png" align="right" alt="HRW Logo" width="512"/>
+<img src="/documentation/images/hrw_logo.png" align="right" alt="HRW Logo" width="384"/>
 
 # RolliVR
 
