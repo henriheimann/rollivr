@@ -1,10 +1,11 @@
 <img src="/documentation/images/hrw_logo.png" align="right" alt="HRW Logo" width="384"/>
+<br/>
+<br/>
+<br/>
 
 # RolliVR
 
-OpenVR driver and overlay and embedded software for the HRW RolliVR project.
-
-## Build Status
+OpenVR driver, overlay and embedded software for the HRW RolliVR project.
 
 [![Build Status](https://github.com/henriheimann/rollivr/workflows/build/badge.svg)](https://github.com/henriheimann/rollivr/actions)
 
