@@ -1,11 +1,19 @@
 
 #include <Encoder.h>
 
+#define ROLLING_AVERAGE_SAMPLES 5
+float rollingAverageDistance[ROLLING_AVERAGE_SAMPLES];
+float rollingAverageAngle[ROLLING_AVERAGE_SAMPLES];
+
 Encoder encLeft(6, 7);
 Encoder encRight(9, 10);
 
 void setup() {
-   Serial.begin(9600);
+   Serial.begin(115200);
+
+   for (int i = 0; i < ROLLING_AVERAGE_SAMPLES; i++) {
+    rollingAverageDistance[i] = rollingAverageAngle[i] = 0;
+   }
 }
 
 long oldLeft  = 0;
@@ -26,12 +34,12 @@ int ticks = 128; //anzahl Tiks pro Umdrehung
 float radius = 285.0; //in mm abstand von mitte bis rad da wurde die mitte der rollen gewählt
 
 void loop() {
-  
+
   long newLeft = encLeft.read();
-  long newRight = encRight.read();
+    long newRight = encRight.read();
   
  // Serial.println(oldLeft);
-  if((currentMills + 100) <= millis()){
+  if((currentMills + 10) <= millis()){
     currentMills = millis();
     
     //berechnunge linkes Rad
@@ -48,10 +56,29 @@ void loop() {
     float angle = (distanceLeft - distanceRight)/ radius;
 
     angle = angle * 57.3;
+
+    for (int i = 0; i < ROLLING_AVERAGE_SAMPLES - 1; i++) {
+      rollingAverageDistance[i + 1] = rollingAverageDistance[i];
+      rollingAverageAngle[i + 1] = rollingAverageAngle[i];
+    }
+
+    rollingAverageDistance[0] = distance / 10.0;
+    rollingAverageAngle[0] = angle;
+
+    float averageDistance = 0;
+    float averageAngle = 0;
+    for (int i = 0; i < ROLLING_AVERAGE_SAMPLES; i++) {
+      averageDistance += rollingAverageDistance[i];
+      averageAngle += rollingAverageAngle[i];
+    }
+
+    averageDistance /= ROLLING_AVERAGE_SAMPLES;
+    averageAngle /= ROLLING_AVERAGE_SAMPLES;
     
-    Serial.print(distance / 1000.0); // Convert to meters
+    
+    Serial.print(averageDistance, 5);
     Serial.print(",");
-    Serial.println(angle);
+    Serial.println(averageAngle, 3);
   }
 }
 
