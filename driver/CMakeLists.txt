@@ -18,7 +18,10 @@ elseif(APPLE)
     set(PLATFORM_NAME "osx")
 endif()
 
-# Find precompiled serial library
+# Add serial submodule
+option(USE_CATKIN "" off)
+option(BUILD_SAMPLE "" off)
+option(INSTALL_SERIAL "" off)
 add_subdirectory(libraries/serial)
 
 # RolliVR Driver
