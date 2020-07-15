@@ -1,3 +1,5 @@
+<img src="/documentation/images/hrw_logo.png" align="right" alt="HRW Logo" width="512"/>
+
 # RolliVR
 
 OpenVR driver and overlay and embedded software for the HRW RolliVR project.
