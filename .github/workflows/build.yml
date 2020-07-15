@@ -11,6 +11,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+      submodules: 'recursive'
       
     - name: Cache Qt
       id: cache-qt
