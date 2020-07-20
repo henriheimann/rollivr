@@ -12,27 +12,27 @@ This repository contains the documentation and the software and hardware compone
 
 </br>
 
-<img src="/documentation/images/platform.jpg" align="center" alt="Platform" width="600"/>
+<img src="/documentation/images/platform.jpg" align="left" alt="Platform" width="600"/>
 
 </br>
 </br>
 
-## README Contents
+## Readme Contents
 
-1. [Building the Platform](#1.-building-the-platform)
-    1. [Bill of Materials](#1.1.-bill-of-materials)
-    2. [3D-Printed Components](#1.2.-3D-Printed-Components)
-    3. [Electronics](#1.3.-electronics)
-    4. [Assembly](#1.4.assembly)
-2. [Building the Software](#2.-building-the-software)
-    1. [Required Software](#2.1.-erequired-softwar)
-    2. [Arduino](#2.2.-arduino)
-    3. [Driver and Overlay](#2.3.-driver-and-overlay)
-3. [Usage Guide](#3.-usage-guide)
+- [Building the Platform](#building-the-platform)
+    - [Bill of Materials](#bill-of-materials)
+    - [3D-Printed Components](#3D-Printed-Components)
+    - [Electronics](#electronics)
+    - [Assembly](#assembly)
+- [Building the Software](#building-the-software)
+    - [Required Software](#required-software)
+    - [Arduino](#arduino)
+    - [Driver and Overlay](#driver-and-overlay)
+- [Usage Guide](#usage-guide)
 
-## 1. Building the Platform
+## Building the Platform
 
-### 1.1. Bill of Materials
+### Bill of Materials
 
 | Count | Part |
 | - | - |
@@ -42,20 +42,37 @@ This repository contains the documentation and the software and hardware compone
 | - | Jumper Wires |
 
 
-### 1.2. 3D-Printed Components
-
-### 1.3. Electronics    
-
-### 1.4. Assembly
+### 3D-Printed Components
 
 
-## 2. Building the Software
+#### Encoder Ring
 
-### 2.1. Required Software
+<img src="/documentation/images/encoder-ring.jpg" align="left" alt="Platform" width="384"/>
 
-### 2.2. Arduino
+#### Encoder Holder
 
-### 2.3. Driver and Overlay
+<img src="/documentation/images/encoder-holder.jpg" align="left" alt="Platform" width="384"/>
+
+#### Platform Bracket
+
+<img src="/documentation/images/platform-bracket.jpg" align="left" alt="Platform" width="384"/>
+
+#### Wheelchair Bracket
+
+<img src="/documentation/images/wheelchair-bracket.jpg" align="left" alt="Platform" width="384"/>
+
+### Electronics    
+
+### Assembly
+
+
+## Building the Software
+
+### Required Software
+
+### Arduino
+
+### Driver and Overlay
 
 - OpenVR and GLM libraries need to be installed
     - Recommended installation via https://github.com/Microsoft/vcpkg
@@ -69,7 +86,7 @@ This repository contains the documentation and the software and hardware compone
 	
 Alternatively, you can access the most recent prebuild installer in the latest completed action.
 
-## 3. Usage Guide
+## Usage Guide
 
 - The driver and overlay application should automatically launch with SteamVR
     - If the overlay doesn't start run install_manifest.bat and restart SteamVR
