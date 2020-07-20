@@ -1,3 +1,3 @@
-[submodule "driver/libraries/serial"]
-	path = driver/libraries/serial
+[submodule "software/driver/libraries/serial"]
+	path = software/driver/libraries/serial
 	url = https://github.com/henriheimann/serial
