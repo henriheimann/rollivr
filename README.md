@@ -12,7 +12,7 @@ This repository contains the documentation and the software and hardware compone
 
 </br>
 
-<img src="/documentation/images/platform.jpg" align="left" alt="Platform" width="600"/>
+<img src="/documentation/images/platform.jpg" align="center" alt="Platform" width="600"/>
 
 </br>
 </br>
@@ -47,19 +47,19 @@ This repository contains the documentation and the software and hardware compone
 
 #### Encoder Ring
 
-<img src="/documentation/images/encoder-ring.jpg" align="left" alt="Platform" width="384"/>
+<img src="/documentation/images/encoder-ring.png" align="center" alt="Encoder Ring" width="384"/>
 
 #### Encoder Holder
 
-<img src="/documentation/images/encoder-holder.jpg" align="left" alt="Platform" width="384"/>
+<img src="/documentation/images/encoder-holder.png" align="center" alt="Encoder Holder" width="384"/>
 
 #### Platform Bracket
 
-<img src="/documentation/images/platform-bracket.jpg" align="left" alt="Platform" width="384"/>
+<img src="/documentation/images/platform-bracket.png" align="center" alt="Platform Bracket" width="384"/>
 
 #### Wheelchair Bracket
 
-<img src="/documentation/images/wheelchair-bracket.jpg" align="left" alt="Platform" width="384"/>
+<img src="/documentation/images/wheelchair-bracket.png" align="center" alt="Wheelchair Bracket" width="384"/>
 
 ### Electronics    
 
