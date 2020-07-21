@@ -12,7 +12,7 @@ This repository contains the documentation and the software and hardware compone
 
 </br>
 
-<img src="/documentation/images/platform.jpg" align="center" alt="Platform" width="600"/>
+<img src="/documentation/images/platform.jpg" align="center" alt="Platform" width="800"/>
 
 </br>
 </br>
@@ -65,30 +65,29 @@ This repository contains the documentation and the software and hardware compone
 
 ### 3D-Printed Components
 
-
 #### Encoder Ring
-
-<img src="/documentation/images/encoder-ring.png" align="center" alt="Encoder Ring" width="384"/>
 
 The encoder ring must be printed with a dark filament to properly block the light of the rotary encoder's LEDs. ([.stl](hardware/encoder-ring/encoder-ring.stl))
 
-#### Encoder Holder
+<img src="/documentation/images/encoder-ring.png" align="center" alt="Encoder Ring" width="384"/>
 
-<img src="/documentation/images/encoder-holder.png" align="center" alt="Encoder Holder" width="384"/>
+#### Encoder Holder
 
 The encoder holder can be printed with a filament of your choice. ([.stl](hardware/encoder-holder/encoder-holder.stl))
 
-#### Platform Bracket
+<img src="/documentation/images/encoder-holder.png" align="center" alt="Encoder Holder" width="384"/>
 
-<img src="/documentation/images/platform-bracket.png" align="center" alt="Platform Bracket" width="384"/>
+#### Platform Bracket
 
 Both parts of the platform bracket can be printed with a filament of your choice. ([first .stl](hardware/platform-bracket/platform-bracket-1.stl), [second .stl](hardware/platform-bracket/platform-bracket-2.stl))
 
+<img src="/documentation/images/platform-bracket.png" align="center" alt="Platform Bracket" width="384"/>
+
 #### Wheelchair Bracket
 
-<img src="/documentation/images/wheelchair-bracket.png" align="center" alt="Wheelchair Bracket" width="384"/>
+Most parts of the wheelchair bracket can be printed with a filament of your choice. ([first .stl](hardware/wheelchair-bracket/wheelchair-bracket-1.stl), [second .stl](hardware/wheelchair-bracket/wheelchair-bracket-2.stl)) The part holding onto the wheelchair should be printed with flexible filament (TPU) for a better grip and to prevent any scratches. ([third .stl](hardware/wheelchair-bracket/wheelchair-bracket-3.stl)) The second and third parts (the parts holding onto the wheelchair) have to be printed twice to form the grip.  
 
-Most parts of the wheelchair bracket can be printed with a filament of your choice. ([first .stl](hardware/wheelchair-bracket/wheelchair-bracket-1.stl), [second .stl](hardware/wheelchair-bracket/wheelchair-bracket-2.stl)) The part holding onto the wheelchair should be printed with flexible filament (TPU) for a better grip and to prevent any scratches. ([third .stl](hardware/wheelchair-bracket/wheelchair-bracket-3.stl)) The second and third parts (the parts holding onto the wheelchair) have to be printed twice to form the grip.   
+<img src="/documentation/images/wheelchair-bracket.png" align="center" alt="Wheelchair Bracket" width="384"/> 
 
 ### Assembly
 
@@ -106,7 +105,7 @@ Place the 3d-printed encoder rings over two of the rollers and fixate them using
 
 Use a single screw to fix the optical rotary encoder onto the 3d printed holder. Anchor each load bearing roller between two angle brackets putting the rotary encoder holders (where applicable) and nuts in between as seen in the image below.
 
-<img src="/documentation/images/rollers.jpg" align="center" alt="Rollers" width="768"/>
+<img src="/documentation/images/rollers.jpg" align="center" alt="Rollers" width="800"/>
 
 Screw the angle brackets to the platform afterwards.
 
@@ -114,10 +113,13 @@ Screw the angle brackets to the platform afterwards.
 
 Assemble the wheelchair and platform brackets using the M5 and M3 screws, nuts and washers as seen in the image below.
 
-<img src="/documentation/images/bracket.jpg" align="center" alt="Bracket" width="768"/>
+<img src="/documentation/images/bracket.jpg" align="center" alt="Bracket" width="800"/>
 
 ### Electronics
 
+Both optical encoders need to be connected to the Arduino's VCC and ground pins and the respective digital input pins 6 to 9 as shown in the image below.
+
+<img src="/documentation/images/wiring.jpg" align="center" alt="Wiring" width="800"/>
 
 ## Building the Software
 
