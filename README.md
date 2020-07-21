@@ -34,12 +34,33 @@ This repository contains the documentation and the software and hardware compone
 
 ### Bill of Materials
 
-| Count | Part |
-| - | - |
-| 1 | Arduino Uno (or similar) |
-| 2 | Grove Optical Rotary Encoder (TCUT1600X01) |
-| 2 | Grove Universal 4 Pin Cable |
-| - | Jumper Wires |
+| Count | Part | Used for |
+| - | - | - |
+| 1 | Arduino Uno (or similar) | electronics |
+| 1 | USB cable for the chosen Arduino | electronics |
+| 1 | USB extension cable | electronics |
+| 2 | Grove optical rotary encoder (TCUT1600X01) | electronics |
+| 2 | Grove universal 4 pin cable | electronics |
+| - | jumper wires | electronics |
+| 2 | film coated plywood 1500x7500mm (thickness 18mm) | platform |
+| 2 | hinges | platform |
+| 8 | height adjustable feet (height around 10mm) | platform |
+| 2 | load bearing rollers (length 200mm, diameter 80mm, 12mm thread) | platform |
+| 4 | stainless steel angle brackets | platform |
+| 8+ | M12 nuts | platform |
+| 40+ | M5 pointed screws | platform |
+| 2 | telescopic tubes (length around 1m, diameter 18mm to 22.5mm) | wheelchair bracket |
+| 8+ | M3 screws (length 40mm) | wheelchair bracket |
+| 8+ | M3 nuts | wheelchair bracket |
+| 8+ | M3 washers | wheelchair bracket |
+| 6+ | M5 screws (length 40mm) | wheelchair bracket |
+| 6+ | M5 nuts | wheelchair bracket |
+| 6+ | M5 washers | wheelchair bracket |
+| - | flexible filament (TPU) | wheelchair bracket |
+| - | dark filament | encoder disk |
+| - | any filament | other 3D-printed parts |
+| - | double sided tape | encoder disk |
+| - | duct tape | wiring |
 
 
 ### 3D-Printed Components
