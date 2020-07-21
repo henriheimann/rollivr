@@ -46,7 +46,7 @@ This repository contains the documentation and the software and hardware compone
 | 2 | hinges | platform |
 | 8 | height adjustable feet (height around 10mm) | platform |
 | 2 | load bearing rollers (length 200mm, diameter 80mm, 12mm thread) | platform |
-| 4 | stainless steel angle brackets | platform |
+| 8 | stainless steel angle brackets | platform |
 | 8+ | M12 nuts | platform |
 | 40+ | M5 pointed screws | platform |
 | 2 | telescopic tubes (length around 1m, diameter 18mm to 22.5mm) | wheelchair bracket |
@@ -88,11 +88,35 @@ Both parts of the platform bracket can be printed with a filament of your choice
 
 <img src="/documentation/images/wheelchair-bracket.png" align="center" alt="Wheelchair Bracket" width="384"/>
 
-Most parts of the wheelchair bracket can be printed with a filament of your choice. ([first .stl](hardware/wheelchair-bracket/wheelchair-bracket-1.stl), [second .stl](hardware/wheelchair-bracket/wheelchair-bracket-2.stl)) The part holding onto the wheelchair should be printed with flexible filament (TPU) for a better grip and to prevent any scratches. ([third .stl](hardware/wheelchair-bracket/wheelchair-bracket-3.stl)) The second and third parts (the parts holding onto the wheelchair) have to be printed twice to form the grip.
-
-### Electronics    
+Most parts of the wheelchair bracket can be printed with a filament of your choice. ([first .stl](hardware/wheelchair-bracket/wheelchair-bracket-1.stl), [second .stl](hardware/wheelchair-bracket/wheelchair-bracket-2.stl)) The part holding onto the wheelchair should be printed with flexible filament (TPU) for a better grip and to prevent any scratches. ([third .stl](hardware/wheelchair-bracket/wheelchair-bracket-3.stl)) The second and third parts (the parts holding onto the wheelchair) have to be printed twice to form the grip.   
 
 ### Assembly
+
+#### Platform
+
+Firstly, cut the two film coated plywood boards into semicircles with a diameter of 750mm. Align them and use two hinges to combine the two halves into a complete circle. This allows for easier transport of the platform. Cut out two holes which will later house the load bearing rollers according to the following drawing.
+
+<img src="/documentation/images/platform-drawing.png" align="center" alt="Platform Drawing" width="384"/>
+
+Evenly space out and screw the eight height adjustable feet to the bottom of the board to elevate it to a height of about 10cm.
+
+#### Rollers
+
+Place the 3d-printed encoder rings over two of the rollers and fixate them using double sided tape on their bottom side.
+
+Use a single screw to fix the optical rotary encoder onto the 3d printed holder. Anchor each load bearing roller between two angle brackets putting the rotary encoder holders (where applicable) and nuts in between as seen in the image below.
+
+<img src="/documentation/images/rollers.jpg" align="center" alt="Rollers" width="768"/>
+
+Screw the angle brackets to the platform afterwards.
+
+#### Bracket
+
+Assemble the wheelchair and platform brackets using the M5 and M3 screws, nuts and washers as seen in the image below.
+
+<img src="/documentation/images/bracket.jpg" align="center" alt="Bracket" width="768"/>
+
+### Electronics
 
 
 ## Building the Software
