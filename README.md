@@ -70,17 +70,25 @@ This repository contains the documentation and the software and hardware compone
 
 <img src="/documentation/images/encoder-ring.png" align="center" alt="Encoder Ring" width="384"/>
 
+The encoder ring must be printed with a dark filament to properly block the light of the rotary encoder's LEDs. ([.stl](hardware/encoder-ring/encoder-ring.stl))
+
 #### Encoder Holder
 
 <img src="/documentation/images/encoder-holder.png" align="center" alt="Encoder Holder" width="384"/>
+
+The encoder holder can be printed with a filament of your choice. ([.stl](hardware/encoder-holder/encoder-holder.stl))
 
 #### Platform Bracket
 
 <img src="/documentation/images/platform-bracket.png" align="center" alt="Platform Bracket" width="384"/>
 
+Both parts of the platform bracket can be printed with a filament of your choice. ([first .stl](hardware/platform-bracket/platform-bracket-1.stl), [second .stl](hardware/platform-bracket/platform-bracket-2.stl))
+
 #### Wheelchair Bracket
 
 <img src="/documentation/images/wheelchair-bracket.png" align="center" alt="Wheelchair Bracket" width="384"/>
+
+Most parts of the wheelchair bracket can be printed with a filament of your choice. ([first .stl](hardware/wheelchair-bracket/wheelchair-bracket-1.stl), [second .stl](hardware/wheelchair-bracket/wheelchair-bracket-2.stl)) The part holding onto the wheelchair should be printed with flexible filament (TPU) for a better grip and to prevent any scratches. ([third .stl](hardware/wheelchair-bracket/wheelchair-bracket-3.stl)) The second and third parts (the parts holding onto the wheelchair) have to be printed twice to form the grip.
 
 ### Electronics    
 
