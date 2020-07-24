@@ -5,9 +5,10 @@
 
 # RolliVR
 
-This repository contains the documentation and the software and hardware components of the RolliVR project developed at [Hochschule Ruhr West](https://www.hochschule-ruhr-west.de/). RolliVR aims to create a platform for wheelchair drivers to use their wheelchair to naturally move in existing VR applications and games.
+This repository contains the documentation and the software and hardware components of the RolliVR project developed at [Hochschule Ruhr West](https://www.hochschule-ruhr-west.de/). RolliVR aims to create a platform for wheelchair drivers to use their wheelchair to naturally move in existing VR applications and games. For that purpose, we provide a manual along the design files for 3D-prints to create the platform and an OpenVR driver and software package to use the platform in SteamVR applications.
 
-[![License: TAPR Open Hardware License](https://img.shields.io/badge/License-TAPR_Open_Hardware_License-blue)](https://tapr.org/the-tapr-open-hardware-license/)
+[![Hardware License: TAPR Open Hardware License](https://img.shields.io/badge/Hardware_License-TAPR_Open_Hardware_License-blue)](https://tapr.org/the-tapr-open-hardware-license/)
+[![Software License: MIT](https://img.shields.io/badge/Software_License-MIT-blue)](https://opensource.org/licenses/MIT)
 [![Build Status](https://github.com/henriheimann/rollivr/workflows/build/badge.svg)](https://github.com/henriheimann/rollivr/actions)
 
 </br>
@@ -34,7 +35,7 @@ This repository contains the documentation and the software and hardware compone
 
 ### Bill of Materials
 
-| Count | Part | Used for |
+| Count | Part | Used For |
 | - | - | - |
 | 1 | Arduino Uno (or similar) | electronics |
 | 1 | USB cable for the chosen Arduino | electronics |
@@ -123,23 +124,59 @@ Both optical encoders need to be connected to the Arduino's VCC and ground pins 
 
 ## Building the Software
 
-### Required Software
+### Required Libraries & Tools
 
-### Arduino
+| Software | License | Recommended Installation Method |
+| - | - | - |
+| Qt5 | LGPLv3 | Download and install from [here](https://www.qt.io/download-qt-installer) |
+| OpenVR | BSD 3 | Install via vcpkg |
+| GLM | MIT | Install via vcpkg |
+| Serial | MIT | Fork integrated as submodule of this repository |
+| NSIS | zlib | Download install from [here](https://nsis.sourceforge.io/Download) |
+| NSIS Json Plugin | See LICENSE.txt | Included in this repository |
+| CMake | New BSD | Download and install from [here](https://cmake.org/download/) |
+| Arduino IDE | LGPL | Download and install from [here](https://www.arduino.cc/en/main/software) |
+
 
 ### Driver and Overlay
 
-- OpenVR and GLM libraries need to be installed
-    - Recommended installation via https://github.com/Microsoft/vcpkg
-    - Make sure to install x64-windows triplets
-- Qt5 has to be installed (https://www.qt.io/download-open-source)
-- Execute CMake `mkdir build && cd build && cmake .. -DCMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake -DCMAKE_PREFIX_PATH=C:\Qt\5.14.2\msvc2017_64\lib\cmake`
-- Build with Visual Studio, Clion or the IDE of your choice
-    - The package target creates an installer at `<Path to Repo>\build\RolliVR-Installer.exe`
-	- Driver folder structure and files will available as `<Path to Repo>\build\driver\rollivr`.
-	- Overlay folder structure and files will be copied to the output folder as `<Path to Repo>\build\overlay\rollivr`.
+[CMake](https://cmake.org/download/) is used as build tool. OpenVR and GLM libraries need to be installed on your machine. It is recommended that you download them via [vcpkg](https://github.com/Microsoft/vcpkg). Make sure to install the x64-windows triplets to be able to build the driver and overlay as 64 bit applications:
+
+`vcpkg install openvr glm --triplet x64-windows`
+
+[Qt5](https://www.qt.io/download-open-source) has to be installed to build the overlay, as it is used for the user interface. To build the installer [NSIS](https://nsis.sourceforge.io/Download) has to be installed. With this prerequisites installed and the repository cloned, make sure that you that you have initialized the required submodules via the execution of the following command in the root directory:
+
+`git submodule update --init`
+
+In the software directory, create a build directory and move to it:
+
+`cd software && mkdir build && cd build`
+
+Execute CMake, make sure the TOOLCHAIN_FILE and PREFIX_PATH variables match your installation paths. Set your required release type and specify the generator:
+
+`cmake .. -DCMAKE_BUILD_TYPE=Release -G"Visual Studio 16 2019" -DCMAKE_TOOLCHAIN_FILE=C:\vcpkg\scripts\buildsystems\vcpkg.cmake -DCMAKE_PREFIX_PATH=C:\Qt\5.14.2\msvc2017_64\lib\cmake`
+
+Perform the build:
+
+`cmake --build . --config Release`
+
+After the build, the driver folder structure and files will available as `<Path to Repo>\software\build\driver\rollivr` and the overlay folder structure and files will be copied to the output folder as `<Path to Repo>\software\build\overlay\rollivr`.
+
+If you want to create the installer execute the following command:
+
+`cmake --build . --target package --config Release`
+
+The installer will then be located at `<Path to Repo>\build\RolliVR-Installer.exe`.
 	
 Alternatively, you can access the most recent prebuild installer in the latest completed action.
+
+### Arduino
+
+There are two Arduino projects provided in this repository:
+
+- [arduino-software-debug](embedded/arduino-software-debug) serves as a mean to test the software without the platform. Simply wire two pushbuttons with pullup resistors to the A0 and A5 pins of an Arduino and flash this sketch. Holding down buttons simulates a forward movement of the left and right wheels.
+
+- [arduino-software-encoder](embedded/arduino-software-encoder) is the software required for the real platform. It transmits the movement distance and angle calculated from the values of the optical rotary encoders every 100 milliseconds. It also applies a rolling average filter over 5 samples.
 
 ## Usage Guide
 
