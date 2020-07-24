@@ -70,25 +70,25 @@ This repository contains the documentation and the software and hardware compone
 
 The encoder ring must be printed with a dark filament to properly block the light of the rotary encoder's LEDs. ([.stl](hardware/encoder-ring/encoder-ring.stl))
 
-<img src="/documentation/images/encoder-ring.png" align="center" alt="Encoder Ring" width="384"/>
+<img src="/documentation/images/encoder-ring.png" align="center" alt="Encoder Ring" width="256"/>
 
 #### Encoder Holder
 
 The encoder holder can be printed with a filament of your choice. ([.stl](hardware/encoder-holder/encoder-holder.stl))
 
-<img src="/documentation/images/encoder-holder.png" align="center" alt="Encoder Holder" width="384"/>
+<img src="/documentation/images/encoder-holder.png" align="center" alt="Encoder Holder" width="256"/>
 
 #### Platform Bracket
 
 Both parts of the platform bracket can be printed with a filament of your choice. ([first .stl](hardware/platform-bracket/platform-bracket-1.stl), [second .stl](hardware/platform-bracket/platform-bracket-2.stl))
 
-<img src="/documentation/images/platform-bracket.png" align="center" alt="Platform Bracket" width="384"/>
+<img src="/documentation/images/platform-bracket.png" align="center" alt="Platform Bracket" width="256"/>
 
 #### Wheelchair Bracket
 
 Most parts of the wheelchair bracket can be printed with a filament of your choice. ([first .stl](hardware/wheelchair-bracket/wheelchair-bracket-1.stl), [second .stl](hardware/wheelchair-bracket/wheelchair-bracket-2.stl)) The part holding onto the wheelchair should be printed with flexible filament (TPU) for a better grip and to prevent any scratches. ([third .stl](hardware/wheelchair-bracket/wheelchair-bracket-3.stl)) The second and third parts (the parts holding onto the wheelchair) have to be printed twice to form the grip.  
 
-<img src="/documentation/images/wheelchair-bracket.png" align="center" alt="Wheelchair Bracket" width="384"/> 
+<img src="/documentation/images/wheelchair-bracket.png" align="center" alt="Wheelchair Bracket" width="256"/> 
 
 ### Assembly
 
@@ -179,6 +179,31 @@ There are two Arduino projects provided in this repository:
 - [arduino-software-encoder](embedded/arduino-software-encoder) is the software required for the real platform. It transmits the movement distance and angle calculated from the values of the optical rotary encoders every 100 milliseconds. It also applies a rolling average filter over 5 samples.
 
 ## Usage Guide
+
+After building the installer launch it and install RolliVR to a directory of your choice.
+
+<img src="/documentation/images/usage/setup.png" align="center" alt="Setup" width="512"/>
+
+### Driver
+
+Launch SteamVR after the installation. Connect the Arduino with the firmware flashed to the PC running SteamVR and take a look at the information panel. If no icon is shown at all, make sure an entry in the `external_drivers` array in the `<User>\AppData\Local\openvr\openvrpaths.vrpath` file points to `<RolliVR Installation Directory>\driver\rollivr`. If the RolliVR icon is greyed out, the connection could not be established, if it is blue-greenish, the Arduino is successfully sending data.
+
+<img src="/documentation/images/usage/offline.png" align="left" alt="Offline" width="256"/>
+<img src="/documentation/images/usage/online.png" align="right" alt="Online" width="256"/>
+
+In case of a failed connection go to the SteamVR developer console:
+
+<img src="/documentation/images/usage/webconsole.png" align="center" alt="Web Console" width="512"/>
+
+Search for RolliVR and find the logs of available and accepted hardware ids. Available hardware ids are the ids of serial ports connected to your system. Accepted hardware ids are the ids the driver expects.
+
+<img src="/documentation/images/usage/webconsole_1.png" align="center" alt="Web Console" width="512"/>
+
+If your Arduino has a hardware id that is not accepted, add the hardware id and baudrate to the config file located at `<RolliVR Installation Directory>\driver\rollivr\resources\config\comports.txt`. Restart SteamVR afterwards. The Arduino should successfully connect and you can test the controller by accessing `#/USER/TREADMILL` under Controllers > Test Controller.
+
+<img src="/documentation/images/usage/test_controller.png" align="center" alt="Test Controller" width="512"/>
+
+### Overlay
 
 - The driver and overlay application should automatically launch with SteamVR
     - If the overlay doesn't start run install_manifest.bat and restart SteamVR
