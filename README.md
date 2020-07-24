@@ -189,21 +189,52 @@ After building the installer launch it and install RolliVR to a directory of you
 Launch SteamVR after the installation. Connect the Arduino with the firmware flashed to the PC running SteamVR and take a look at the information panel. If no icon is shown at all, make sure an entry in the `external_drivers` array in the `<User>\AppData\Local\openvr\openvrpaths.vrpath` file points to `<RolliVR Installation Directory>\driver\rollivr`. If the RolliVR icon is greyed out, the connection could not be established, if it is blue-greenish, the Arduino is successfully sending data.
 
 <img src="/documentation/images/usage/offline.png" align="left" alt="Offline" width="256"/>
-<img src="/documentation/images/usage/online.png" align="right" alt="Online" width="256"/>
+<img src="/documentation/images/usage/online.png" align="center" alt="Online" width="256"/>
 
 In case of a failed connection go to the SteamVR developer console:
 
-<img src="/documentation/images/usage/webconsole.png" align="center" alt="Web Console" width="512"/>
+<img src="/documentation/images/usage/webconsole.png" align="center" alt="Web Console" width="256"/>
 
 Search for RolliVR and find the logs of available and accepted hardware ids. Available hardware ids are the ids of serial ports connected to your system. Accepted hardware ids are the ids the driver expects.
 
 <img src="/documentation/images/usage/webconsole_1.png" align="center" alt="Web Console" width="512"/>
 
-If your Arduino has a hardware id that is not accepted, add the hardware id and baudrate to the config file located at `<RolliVR Installation Directory>\driver\rollivr\resources\config\comports.txt`. Restart SteamVR afterwards. The Arduino should successfully connect and you can test the controller by accessing `#/USER/TREADMILL` under Controllers > Test Controller.
+If your Arduino has a hardware id that is not accepted, add the hardware id and baudrate to the config file located at `<RolliVR Installation Directory>\driver\rollivr\resources\config\comports.txt`. Restart SteamVR afterwards. The Arduino should successfully connect and you can test the controller by accessing `#/USER/TREADMILL` under Controllers > Test Controller. VR Applications that allow custom controller bindings can now be configured to use the RolliVR controller as an input.
 
 <img src="/documentation/images/usage/test_controller.png" align="center" alt="Test Controller" width="512"/>
 
 ### Overlay
 
-- The driver and overlay application should automatically launch with SteamVR
-    - If the overlay doesn't start run install_manifest.bat and restart SteamVR
+When using roomscale VR applications with RolliVR, the overlay is required. To make sure the overlay has correctly registered itself as an autostart application, go to Choose Startup Overlay Apps under Startup / Shutdown. If RolliVR is displayed, you are good to continue, otherwise run `install_manifest.bat` in the installation directory and restart SteamVR. RolliVR should now be correctly registered and enabled as autostart application:
+
+<img src="/documentation/images/usage/startup.png" align="center" alt="Autostart Applications" width="512"/>
+
+The driver and the overlay need to be connected next. Go to the Controllers and make sure advanced settings are shown. Click on Show Old Binding UI.
+
+<img src="/documentation/images/usage/controllers.png" align="center" alt="Controllers Menu" width="512"/>
+
+Now proceed to edit the bindings of RolliVR. You may need to click on Show More Applications before it shows up.
+
+<img src="/documentation/images/usage/bindingui.png" align="center" alt="Binding UI" width="512"/>
+
+Firstly, change the controller used for the RolliVR application. This defaults to your VR headsets controllers, but it needs to be changed to the RolliVR Controllers. To do so, click on the name of the Current Controller and select the RolliVR Controller in the following menu.
+
+<img src="/documentation/images/usage/bindingui_1.png" align="center" alt="Binding UI" width="512"/>
+
+<img src="/documentation/images/usage/bindingui_2.png" align="center" alt="Binding UI" width="512"/>
+
+Secondly, activate the default RolliVR Overlay bindings for the RolliVR controller under Official Bindings.
+
+<img src="/documentation/images/usage/bindingui_3.png" align="center" alt="Binding UI" width="512"/>
+
+With that step done, the overlay is fully functional and you can access it in VR using the SteamVR menu. The RolliVR icons appears on the lower left corner.
+
+<img src="/documentation/images/usage/overlay.png" align="center" alt="Overlay" width="512"/>
+
+To start moving in roomscale VR applications, push the Start Forced Movement button while seated on the platform and looking straight ahead. The menu must be closed for the movement to work.
+
+<img src="/documentation/images/usage/overlay_1.png" align="center" alt="Overlay" width="384"/>
+
+Inputs to the wheelchair now move you around the room. To reset your movement and return to the origin, push Reset Accumulated Movement. To stop the movement with the wheelchair, push Stop Forced Movement. Turn and Movement Speeds as well as a height offset can be configured in this menu, too.
+
+<img src="/documentation/images/usage/overlay_2.png" align="center" alt="Overlay" width="384"/>
