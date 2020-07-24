@@ -180,9 +180,7 @@ There are two Arduino projects provided in this repository:
 
 ## Usage Guide
 
-After building the installer launch it and install RolliVR to a directory of your choice.
-
-<img src="/documentation/images/usage/setup.png" align="center" alt="Setup" width="512"/>
+After building `RolliVR-Installer.exe` launch it and install RolliVR to a directory of your choice.
 
 ### Driver
 
