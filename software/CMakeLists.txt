@@ -24,6 +24,7 @@ set(CPACK_PACKAGE_INSTALL_DIRECTORY "RolliVR")
 set(CPACK_PACKAGE_FILE_NAME "RolliVR-Installer")
 set(CPACK_NSIS_ENABLE_UNINSTALL_BEFORE_INSTALL "ON")
 
+set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_SOURCE_DIR}/installer/license.txt")
 set(CPACK_NSIS_EXTRA_DEFS "!addplugindir ${CMAKE_SOURCE_DIR}/installer/plugins/x86-ansi\n!addincludedir ${CMAKE_SOURCE_DIR}/installer\n!include extra_defs.nsh")
 set(CPACK_NSIS_EXTRA_INSTALL_COMMANDS "!include extra_install.nsh")
 set(CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS "!include extra_uninstall.nsh")
